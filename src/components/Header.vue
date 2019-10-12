@@ -2,9 +2,14 @@
   <div>
     <v-app-bar>
       <div class="flex-grow-1"></div>
+      <v-btn
+        text
+        v-if="isSignedIn"
+        @click="signOutOfGoogle">Logout</v-btn>
       <v-btn 
         text
-        @click="signIn">Login</v-btn>
+        v-else
+        @click="signInWithGoogle">Login</v-btn>
     </v-app-bar>
   </div>
 </template>
@@ -12,24 +17,37 @@
 <script>
   import firebase from 'firebase/app'
   import 'firebase/auth'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
+    computed: {
+      ...mapGetters(['isSignedIn']),
+    },
     methods: {
-      signIn() {
+      ...mapActions([
+        'signIn', 
+        'signOut',
+      ]),
+      signInWithGoogle() {
         var provider = new firebase.auth.GoogleAuthProvider()
-        firebase.auth().signInWithRedirect(provider)
-        firebase.auth().getRedirectResult().then(function(result) {
-          if(result.credential) {
-            var token = result.credential.accessToken
-          }
+        firebase.auth().signInWithPopup(provider).then((result) => {
+          var token = result.credential.accessToken
           var user = result.user
-        }).catch(function(error) {
+          this.signIn(token)
+        }).catch((error) => {
           var errorCode = error.code
           var errorMessage = error.message
           var email = error.email
           var credential = error.credential
         })
-      }
+      },
+      signOutOfGoogle() {
+        firebase.auth().signOut().then(() => {
+          this.signOut()
+        }).catch((error) => {
+
+        })
+      },
     }
   }
 </script>
