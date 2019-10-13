@@ -20,6 +20,7 @@
 <script>
   import firebase from 'firebase/app'
   import 'firebase/auth'
+  import 'firebase/firestore'
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
@@ -36,6 +37,17 @@
         firebase.auth().signInWithPopup(provider).then((result) => {
           var token = result.credential.accessToken
           var user = result.user
+
+          // Create the user's document
+          var db = firebase.firestore()
+          db.collection('users').doc(user.uid).set({
+            userName: '',
+            gameName: '',
+            win: 0,
+            lose: 0,
+          })
+
+          // Store the token into local storage
           this.signIn(token)
         }).catch((error) => {
           var errorCode = error.code
