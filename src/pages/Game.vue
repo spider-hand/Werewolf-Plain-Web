@@ -21,7 +21,7 @@
       class="message-list"
       :style="{ 
         height: $viewport.width > 450 ? $viewport.height - 179 + 'px' : $viewport.height - 171 + 'px',
-        width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width }">
+        width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in messages">
             <div class="message">
@@ -35,7 +35,7 @@
     </div>
     <v-textarea
       class="message-input"
-      :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width }"
+      :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
       solo
       flat
       hide-details
