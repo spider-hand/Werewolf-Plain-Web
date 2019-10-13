@@ -9,6 +9,20 @@ import 'firebase/auth'
 
 Vue.config.productionTip = false
 
+const updateSizes = (obj = {}) => {
+  obj.width = window.innerWidth
+  obj.height = window.innerHeight
+  return obj
+}
+
+Object.defineProperty(Vue.prototype, '$viewport', {
+  value: Vue.observable(updateSizes())
+})
+
+window.addEventListener('resize', () => {
+  updateSizes(Vue.prototype.$viewport)
+})
+
 var firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_PROJECT_ID + ".firebaseapp.com",

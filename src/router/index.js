@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store'
 
-import Home from '@/components/Home'
+import Home from '@/pages/Home'
+import Game from '@/pages/Game'
 
 const ifNotAuthenticated = (to, from, next) => {
   // Redirect the user to home page if the user isn't authenticated
@@ -23,5 +24,10 @@ export default new Router ({
       name: 'home',
       component: Home,
     },
+    {
+      path: '/game',
+      name: 'game',
+      component: Game,
+    }
 	]
 })
