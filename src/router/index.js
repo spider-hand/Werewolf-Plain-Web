@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import store from '../store'
 
 import Home from '@/pages/Home'
+import VillageList from '@/pages/VillageList'
 import Game from '@/pages/Game'
 
 const ifNotAuthenticated = (to, from, next) => {
@@ -23,6 +24,11 @@ export default new Router ({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/village-list',
+      name: 'village-list',
+      component: VillageList,
     },
     {
       path: '/game',
