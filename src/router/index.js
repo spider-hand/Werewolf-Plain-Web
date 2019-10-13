@@ -6,9 +6,9 @@ import Home from '@/pages/Home'
 import VillageList from '@/pages/VillageList'
 import Game from '@/pages/Game'
 
-const ifNotAuthenticated = (to, from, next) => {
+const ifAuthenticated = (to, from, next) => {
   // Redirect the user to home page if the user isn't authenticated
-  if (!store.getters.isSignedIn) {
+  if (store.getters.isSignedIn) {
     next()
     return
   }
@@ -29,11 +29,13 @@ export default new Router ({
       path: '/village-list',
       name: 'village-list',
       component: VillageList,
+      beforeEnter: ifAuthenticated,
     },
     {
       path: '/game',
       name: 'game',
       component: Game,
+      beforeEnter: ifAuthenticated,
     }
 	]
 })
