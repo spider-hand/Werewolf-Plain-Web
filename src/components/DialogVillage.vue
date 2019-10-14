@@ -213,9 +213,17 @@
           numberOfParticipants: 1,
           status: 'new',
         })
+        db.collection('rooms').doc(firebase.auth().currentUser.uid).collection('players').doc(firebase.auth().currentUser.uid).set({
+          role: '',
+          name: 'Test Player',
+          avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        })
         .then(() => {
           this.$router.push({
             name: 'game',
+            params: {
+              roomId: firebase.auth().currentUser.uid,
+            },
           })
         })
       },

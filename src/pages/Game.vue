@@ -45,43 +45,30 @@
 </template>
 
 <script>
+  import firebase from 'firebase/app'
+  import 'firebase/firestore'
+
   export default {
+    props: [
+      'roomId',
+    ],
     data() {
       return {
-        players: [
-          { name: 'All', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-          { name: 'Wolves', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-          { name: 'You', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-          { name: 'Player2', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-          { name: 'Player3', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-          { name: 'Player4', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
-          { name: 'Player5', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-          { name: 'Player6', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-          { name: 'Player7', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-          { name: 'Player8', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-          { name: 'Player9', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
-          { name: 'Player10', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-          { name: 'Player11', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-          { name: 'Player12', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-          { name: 'Player13', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-          { name: 'Player14', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
-          { name: 'Player15', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-        ],
-        messages: [
-          { body: 'Hello' },
-          { body: 'How is it going?' },
-          { body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.' },
-          { body: 'Hello' },
-          { body: 'How is it going?' },
-          { body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.' },
-          { body: 'Hello' },
-          { body: 'How is it going?' },
-          { body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.' },
-          { body: 'Hello' },
-          { body: 'How is it going?' },
-          { body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.' },
-        ],
+        players: [],
+        messages: [],
       }
+    },
+    mounted() {
+      const that = this
+      var db = firebase.firestore()
+
+      // Get players
+      db.collection('rooms').doc(this.roomId).collection('players').get()
+        .then(function(querySnapShot) {
+          querySnapShot.forEach(function(doc) {
+            that.players.push(doc.data())
+          })
+        })
     }
   }
 </script>
