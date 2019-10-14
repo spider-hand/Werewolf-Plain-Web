@@ -29,8 +29,10 @@
                   <th class="text-left"></th>
                 </tr>
               </thead>
-              <tbody>
-                <tr v-for="village in newVillages">
+              <tbody v-for="(village, index) in newVillages">
+                <tr
+                  :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                  @click="onClickTableRow(index)">
                   <td width="3%">
                     <v-icon 
                       v-if="village.isPrivate == true"
@@ -38,13 +40,25 @@
                       >mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.name }}</td>
-                  <td>{{ village.numberOfParticipants }} / {{ village.capacity }}</td>
+                  <td width="60%">{{ village.roomName }}</td>
+                  <td>{{ village.numberOfParticipants }} / {{ village.roomCapacity }}</td>
                   <td>
                     <v-btn 
                       text
                       :small="$viewport.width < 450">
                       Details
+                    </v-btn>
+                  </td>
+                </tr>
+                <tr 
+                  v-if="tabs == 0 && clickedTableRow == index"
+                  style="background-color: #FFFFFF;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn depressed>
+                      Enter
                     </v-btn>
                   </td>
                 </tr>
@@ -74,7 +88,7 @@
                       >mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.name }}</td>
+                  <td width="60%">{{ village.roomName }}</td>
                   <td>{{ village.numberOfParticipants }}</td>
                   <td>
                     <v-btn 
@@ -110,7 +124,7 @@
                       mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.name }}</td>
+                  <td width="60%">{{ village.roomName }}</td>
                   <td>{{ village.numberOfParticipants }}</td>
                   <td>
                     <v-btn 
@@ -130,6 +144,9 @@
 </template>
 
 <script>
+  import firebase from 'firebase/app'
+  import 'firebase/firestore'
+
   import DialogVillage from '@/components/DialogVillage'
 
   export default {
@@ -139,80 +156,37 @@
     data() {
       return {
         tabs: 0,
-        newVillages: [
-          {
-            name: 'Village 1',
-            numberOfParticipants: 3,
-            capacity: 15,
-            isPrivate: true,
-          },
-          {
-            name: 'Village 2',
-            numberOfParticipants: 7,
-            capacity: 11,
-            isPrivate: false,
-          },
-          {
-            name: 'Village 3',
-            numberOfParticipants: 10,
-            capacity: 15,
-            isPrivate: false,
-          },
-          {
-            name: 'Village 4',
-            numberOfParticipants: 4,
-            capacity: 9,
-            isPrivate: true,
-          },
-          {
-            name: 'Village 6',
-            numberOfParticipants: 12,
-            capacity: 15,
-            isPrivate: false,
-          },
-          {
-            name: 'Village 123',
-            numberOfParticipants: 14,
-            capacity: 15,
-            isPrivate: false,
-          },
-        ],
-        ongoingVillages: [
-          {
-            name: 'Village 1',
-            numberOfParticipants: 15,
-            capacity: 15,
-            isPrivate: false,
-          },
-          {
-            name: 'Village 2',
-            numberOfParticipants: 11,
-            capacity: 11,
-            isPrivate: true,
-          },
-          {
-            name: 'Village 3',
-            numberOfParticipants: 15,
-            capacity: 15,
-            isPrivate: false,
-          },
-        ],
-        closedVillages: [
-          {
-            name: 'Village 1',
-            numberOfParticipants: 15,
-            capacity: 15,
-            isPrivate: false,
-          },
-          {
-            name: 'Village 16',
-            numberOfParticipants: 11,
-            capacity: 11,
-            isPrivate: true,
-          },
-        ],
+        clickedTableRow: null,
+        newVillages: [],
+        ongoingVillages: [],
+        closedVillages: [],
       }
-    }
+    },
+    methods: {
+      onClickTableRow(index) {
+        this.clickedTableRow = index
+      },
+    },
+    mounted() {
+      const that = this
+      var db = firebase.firestore()
+
+      // Get rooms
+      db.collection('rooms').get()
+        .then(function(querySnapShot) {
+          querySnapShot.forEach(function(doc) {
+            if (doc.data().status == 'new') {
+              that.newVillages.push(doc.data())
+            }
+            else if (doc.data().status == 'ongoing') {
+              that.ongoingVillages.push(doc.data())
+            }
+            else {
+              that.closedVillages.push(doc.data())
+            }
+          })
+        })
+    },
   }
 </script>
 
