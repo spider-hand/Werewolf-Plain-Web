@@ -1,10 +1,21 @@
 <template>
   <div>
     <v-container>
+      <v-container fill-height>
+        <v-layout>
+          <DialogVillage />
+          <div class="flex-grow-1"></div>
+          <v-btn depressed>
+            <v-icon>mdi-refresh</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-container>
+
       <v-tabs v-model="tabs">
         <v-tab>New</v-tab>
         <v-tab>Ongoing</v-tab>
         <v-tab>Closed</v-tab>
+
         <v-tab-item 
           transition="false"
           reverse-transition="false">
@@ -119,7 +130,12 @@
 </template>
 
 <script>
+  import DialogVillage from '@/components/DialogVillage'
+
   export default {
+    components: {
+      DialogVillage,
+    },
     data() {
       return {
         tabs: 0,
