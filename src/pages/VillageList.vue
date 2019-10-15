@@ -5,7 +5,9 @@
         <v-layout>
           <DialogVillage />
           <div class="flex-grow-1"></div>
-          <v-btn depressed>
+          <v-btn 
+            depressed
+            @click="updateVillageList">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </v-layout>
@@ -192,26 +194,33 @@
           })
         })
       },
+      updateVillageList() {
+        this.newVillages = []
+        this.ongoingVillages = []
+        this.closedVillages = []
+
+        const that = this
+        var db = firebase.firestore()
+
+        // Get rooms
+        db.collection('rooms').get()
+          .then(function(querySnapShot) {
+            querySnapShot.forEach(function(doc) {
+              if (doc.data().status == 'new') {
+                that.newVillages.push(doc.data())
+              }
+              else if (doc.data().status == 'ongoing') {
+                that.ongoingVillages.push(doc.data())
+              }
+              else {
+                that.closedVillages.push(doc.data())
+              }
+            })
+          })        
+      },
     },
     mounted() {
-      const that = this
-      var db = firebase.firestore()
-
-      // Get rooms
-      db.collection('rooms').get()
-        .then(function(querySnapShot) {
-          querySnapShot.forEach(function(doc) {
-            if (doc.data().status == 'new') {
-              that.newVillages.push(doc.data())
-            }
-            else if (doc.data().status == 'ongoing') {
-              that.ongoingVillages.push(doc.data())
-            }
-            else {
-              that.closedVillages.push(doc.data())
-            }
-          })
-        })
+      this.updateVillageList()
     },
   }
 </script>
