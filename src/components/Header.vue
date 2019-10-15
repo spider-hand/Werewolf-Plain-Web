@@ -2,17 +2,23 @@
   <div>
     <v-app-bar>
       <div class="flex-grow-1"></div>
-      <div v-if="isSignedIn">
-        <v-btn text>Profile</v-btn>
-        <v-btn text>Settings</v-btn>
-        <v-btn
-          text
-          @click="signOutOfGoogle">Logout</v-btn>
+      <div v-if="$route.name == 'game'">
+        <v-btn text>Details</v-btn>
+        <DialogVillageLeave />
       </div>
-      <v-btn 
-        text
-        v-else
-        @click="signInWithGoogle">Login</v-btn>
+      <div v-else>
+        <div v-if="isSignedIn">
+          <v-btn text>Profile</v-btn>
+          <v-btn text>Settings</v-btn>
+          <v-btn
+            text
+            @click="signOutOfGoogle">Logout</v-btn>
+        </div>
+        <v-btn 
+          text
+          v-else
+          @click="signInWithGoogle">Login</v-btn>
+      </div>
     </v-app-bar>
   </div>
 </template>
@@ -23,7 +29,12 @@
   import 'firebase/firestore'
   import { mapGetters, mapActions } from 'vuex'
 
+  import DialogVillageLeave from '@/components/DialogVillageLeave'
+
   export default {
+    components: {
+      DialogVillageLeave,
+    },
     computed: {
       ...mapGetters(['isSignedIn']),
     },

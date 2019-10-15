@@ -57,7 +57,9 @@
                   <td></td>
                   <td></td>
                   <td>
-                    <v-btn depressed>
+                    <v-btn 
+                      depressed
+                      @click="enterVillage(village.roomId)">
                       Enter
                     </v-btn>
                   </td>
@@ -145,6 +147,7 @@
 
 <script>
   import firebase from 'firebase/app'
+  import 'firebase/auth'
   import 'firebase/firestore'
 
   import DialogVillage from '@/components/DialogVillage'
@@ -165,6 +168,29 @@
     methods: {
       onClickTableRow(index) {
         this.clickedTableRow = index
+      },
+      enterVillage(roomId) {
+        var db = firebase.firestore()
+        var room = db.collection('rooms').doc(roomId)
+
+        room.update({
+          numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+        })
+
+        room.collection('players').doc(firebase.auth().currentUser.uid).set({
+          playerId: firebase.auth().currentUser.uid,
+          role: '',
+          name: 'Test Player2',
+          avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        })
+        .then(() => {
+          this.$router.push({
+            name: 'game',
+            params: {
+              roomId: roomId,
+            }
+          })
+        })
       },
     },
     mounted() {

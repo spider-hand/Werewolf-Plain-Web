@@ -1,88 +1,86 @@
 <template>
-  <div>
-    <v-dialog 
-      persistent
-      :fullscreen="$viewport.width < 450"
-      v-model="dialogVillage"
-      max-width="600">
-      <template v-slot:activator="{ on }">
+  <v-dialog 
+    persistent
+    :fullscreen="$viewport.width < 450"
+    v-model="dialogVillage"
+    max-width="600">
+    <template v-slot:activator="{ on }">
+      <v-btn 
+        depressed
+        v-on="on">Host Game</v-btn>
+    </template>
+    <v-card>
+      <v-card-title>
+        <span>Host Game</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation>
+            <v-text-field
+              v-model="roomName"
+              :rules="[v => !!v || 'Required']"
+              label="Village Name"
+              outlined></v-text-field>
+            <v-textarea
+              v-model="roomDescription"
+              name="input-7-4"
+              label="Description (Opitonal)"
+              outlined></v-textarea>
+            <v-select 
+              v-model="roomCapacity"
+              label="Capacity"
+              outlined
+              :items="roomCapacityItems"></v-select>
+            <v-row>
+              <v-col cols="6">
+                <v-select
+                  v-model="dayLength"
+                  label="Day (minutes)"
+                  outlined
+                  :items="dayLengthItems"></v-select>
+              </v-col>
+              <v-col cols="6">
+                <v-select
+                  v-model="nightLength"
+                  label="Night (minutes)"
+                  outlined
+                  :items="nightLengthItems"></v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3">
+                <v-checkbox
+                  v-model="isPrivate" 
+                  label="Private"></v-checkbox>
+              </v-col>
+              <v-col cols="9">
+                <v-text-field 
+                  :disabled="!isPrivate"
+                  :rules="accessCodeRules"
+                  ref="accessCodeInput"
+                  v-model="accessCode"
+                  outlined
+                  label="Access Code"
+                  prepend-icon="mdi-lock"></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <div class="flex-grow-1"></div>
         <v-btn 
           depressed
-          v-on="on">Host Game</v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <span>Host Game</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-form
-              ref="form"
-              v-model="valid"
-              lazy-validation>
-              <v-text-field
-                v-model="roomName"
-                :rules="[v => !!v || 'Required']"
-                label="Village Name"
-                outlined></v-text-field>
-              <v-textarea
-                v-model="roomDescription"
-                name="input-7-4"
-                label="Description (Opitonal)"
-                outlined></v-textarea>
-              <v-select 
-                v-model="roomCapacity"
-                label="Capacity"
-                outlined
-                :items="roomCapacityItems"></v-select>
-              <v-row>
-                <v-col cols="6">
-                  <v-select
-                    v-model="dayLength"
-                    label="Day (minutes)"
-                    outlined
-                    :items="dayLengthItems"></v-select>
-                </v-col>
-                <v-col cols="6">
-                  <v-select
-                    v-model="nightLength"
-                    label="Night (minutes)"
-                    outlined
-                    :items="nightLengthItems"></v-select>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="3">
-                  <v-checkbox
-                    v-model="isPrivate" 
-                    label="Private"></v-checkbox>
-                </v-col>
-                <v-col cols="9">
-                  <v-text-field 
-                    :disabled="!isPrivate"
-                    :rules="accessCodeRules"
-                    ref="accessCodeInput"
-                    v-model="accessCode"
-                    outlined
-                    label="Access Code"
-                    prepend-icon="mdi-lock"></v-text-field>
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <div class="flex-grow-1"></div>
-          <v-btn 
-            depressed
-            @click="validate">OK</v-btn>
-          <v-btn 
-            depressed
-            @click="cancel">CANCEL</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+          @click="validate">OK</v-btn>
+        <v-btn 
+          depressed
+          @click="cancel">CANCEL</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -203,6 +201,7 @@
         // Create the room's document
         var db = firebase.firestore()
         db.collection('rooms').doc(firebase.auth().currentUser.uid).set({
+          roomId: firebase.auth().currentUser.uid,
           roomName: this.roomName,
           roomDescription: this.roomDescription,
           roomCapacity: this.roomCapacity,
@@ -214,6 +213,7 @@
           status: 'new',
         })
         db.collection('rooms').doc(firebase.auth().currentUser.uid).collection('players').doc(firebase.auth().currentUser.uid).set({
+          playerId: firebase.auth().currentUser.uid,
           role: '',
           name: 'Test Player',
           avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',

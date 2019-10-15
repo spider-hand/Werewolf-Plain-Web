@@ -102,15 +102,23 @@
       var db = firebase.firestore()
       var room = db.collection('rooms').doc(this.roomId)
 
-      // Get players
-      room.collection('players').get()
-        .then(function(querySnapShot) {
-          querySnapShot.forEach(function(doc) {
-            that.players.push(doc.data())
-          })
+      // Set listener and update the players when entering and leaving the room
+      room.collection('players').onSnapshot(function(querySnapShot) {
+        querySnapShot.docChanges().forEach(function(change) {
+          if (change.type === 'added') {
+            that.players.push(change.doc.data())
+          }
+          if (change.type === 'removed') {
+            for (var i = 0; i < that.players.length; i++) {
+              if (that.players[i].playerId == change.doc.data().playerId) {
+                that.players.splice(i, 1)
+              }
+            }
+          }
         })
+      })
 
-      // Set listener and retrieve the latest message every time when a messsage is added
+      // Set listener and retrieve the latest message every time when a message is added
       room.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot(function(querySnapShot) {
           querySnapShot.forEach(function(doc) {
             if (!doc.metadata.hasPendingWrites) {
