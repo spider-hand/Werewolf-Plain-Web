@@ -19,9 +19,9 @@
     </v-navigation-drawer>
     <div 
       class="message-list"
-      :style="{ 
-        height: $viewport.width > 450 ? $viewport.height - 179 + 'px' : $viewport.height - 171 + 'px',
-        width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
+      :style="{
+          height: $viewport.height - 199 + 'px',
+          width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in messages">
             <div class="message">
@@ -33,14 +33,29 @@
           </li>
         </ul>
     </div>
-    <v-textarea
-      class="message-input"
-      :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
-      solo
-      flat
-      hide-details
-      name="input-7-4">
-    </v-textarea>
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation>
+      <v-textarea
+        class="message-input"
+        :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
+        :rules="[v => !!v || 'Required']"
+        v-model="message"
+        solo
+        flat
+        hide-details
+        name="input-7-4">
+      </v-textarea>
+
+      <v-btn 
+        class="send-button"
+        depressed
+        small
+        @click="validate">
+        <v-icon color="blue">mdi-send</v-icon>
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
@@ -56,19 +71,53 @@
       return {
         players: [],
         messages: [],
+        message: '',
+        valid: true,
+      }
+    },
+    methods: {
+      validate() {
+        if (this.$refs.form.validate()) {
+          this.sendMessage()
+        }
+      },
+      sendMessage() {
+        const that = this
+        var db = firebase.firestore()
+        var numberOfMessages = this.messages.length
+
+        // Save the message
+        db.collection('rooms').doc(this.roomId).collection('messages').doc('message' + numberOfMessages).set({
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          body: that.message,
+          from: firebase.auth().currentUser.uid,
+        })
+        .then(() => {
+          that.message = ''
+        })
       }
     },
     mounted() {
       const that = this
       var db = firebase.firestore()
+      var room = db.collection('rooms').doc(this.roomId)
 
       // Get players
-      db.collection('rooms').doc(this.roomId).collection('players').get()
+      room.collection('players').get()
         .then(function(querySnapShot) {
           querySnapShot.forEach(function(doc) {
             that.players.push(doc.data())
           })
         })
+
+      // Set listener and retrieve the latest message every time when a messsage is added
+      room.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot(function(querySnapShot) {
+          querySnapShot.forEach(function(doc) {
+            if (!doc.metadata.hasPendingWrites) {
+              that.messages.push(doc.data())
+            }
+          })
+      })
     }
   }
 </script>
@@ -96,6 +145,7 @@
 
   .message {
     padding: 0 12px;
+    white-space: pre-wrap;
   }
 
   .message-avator {
@@ -119,6 +169,12 @@
   .message-input {
     position: fixed; 
     right: 0px; 
-    bottom: 2px;
+    bottom: 28px;
+  }
+
+  .send-button {
+    position: fixed;
+    right: 20px;
+    bottom: 0px;
   }
 </style>
