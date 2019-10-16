@@ -3,7 +3,7 @@
     <v-app-bar>
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
-        <v-btn text>Details</v-btn>
+        <DialogVillageDetails />
         <DialogVillageLeave />
       </div>
       <div v-else>
@@ -29,10 +29,12 @@
   import 'firebase/firestore'
   import { mapGetters, mapActions } from 'vuex'
 
+  import DialogVillageDetails from '@/components/DialogVillageDetails'
   import DialogVillageLeave from '@/components/DialogVillageLeave'
 
   export default {
     components: {
+      DialogVillageDetails,
       DialogVillageLeave,
     },
     computed: {
