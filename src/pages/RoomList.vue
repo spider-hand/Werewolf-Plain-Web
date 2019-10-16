@@ -4,6 +4,10 @@
       <v-container fill-height>
         <v-layout>
           <DialogRoomCreate />
+          <DialogAccessCode 
+            ref="dialogAccessCode"
+            :validAccessCode="validAccessCode"
+            @validateAccessCode="enterRoom" />
           <div class="flex-grow-1"></div>
           <v-btn 
             depressed
@@ -34,7 +38,7 @@
               <tbody v-for="(room, index) in newRooms">
                 <tr
                   :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
-                  @click="onClickTableRow(index)">
+                  @click="onClickTableRow(index, room.accessCode)">
                   <td width="3%">
                     <v-icon 
                       v-if="room.isPrivate == true"
@@ -61,7 +65,7 @@
                   <td>
                     <v-btn 
                       depressed
-                      @click="enterRoom(index)">
+                      @click="room.isPrivate != true ? enterRoom() : beforeEnterRoom()">
                       Enter
                     </v-btn>
                   </td>
@@ -154,15 +158,18 @@
   import { mapActions } from 'vuex'
 
   import DialogRoomCreate from '@/components/DialogRoomCreate'
+  import DialogAccessCode from '@/components/DialogAccessCode'
 
   export default {
     components: {
       DialogRoomCreate,
+      DialogAccessCode,
     },
     data() {
       return {
         tabs: 0,
         clickedTableRow: null,
+        validAccessCode: '',
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
@@ -175,12 +182,16 @@
       ...mapActions([
         'joinGame',
       ]),
-      onClickTableRow(index) {
+      onClickTableRow(index, accessCode) {
         this.clickedTableRow = index
+        this.validAccessCode = accessCode
       },
-      enterRoom(index) {
+      beforeEnterRoom() {
+        this.$refs.dialogAccessCode.open()
+      },
+      enterRoom() {
         var db = firebase.firestore()
-        var roomId = this.newRoomIds[index]
+        var roomId = this.newRoomIds[this.clickedTableRow]
         var room = db.collection('rooms').doc(roomId)
 
         room.update({
