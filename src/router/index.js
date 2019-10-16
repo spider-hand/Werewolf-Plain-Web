@@ -36,7 +36,6 @@ export default new Router ({
       name: 'game',
       component: Game,
       beforeEnter: ifAuthenticated,
-      props: true,
     }
 	]
 })

@@ -87,6 +87,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
+  import { mapActions } from 'vuex'
 
   export default {
     data() {
@@ -192,6 +193,9 @@
       }
     },
     methods: {
+      ...mapActions([
+        'enterRoom',
+      ]),
       validate() {
         if (this.$refs.form.validate()) {
           this.createRoom()
@@ -200,8 +204,7 @@
       createRoom() {
         // Create the room's document
         var db = firebase.firestore()
-        db.collection('rooms').doc(firebase.auth().currentUser.uid).set({
-          roomId: firebase.auth().currentUser.uid,
+        db.collection('rooms').add({
           roomName: this.roomName,
           roomDescription: this.roomDescription,
           roomCapacity: this.roomCapacity,
@@ -212,18 +215,19 @@
           numberOfParticipants: 1,
           status: 'new',
         })
-        db.collection('rooms').doc(firebase.auth().currentUser.uid).collection('players').doc(firebase.auth().currentUser.uid).set({
-          playerId: firebase.auth().currentUser.uid,
-          role: '',
-          name: 'Test Player',
-          avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-        })
-        .then(() => {
-          this.$router.push({
-            name: 'game',
-            params: {
-              roomId: firebase.auth().currentUser.uid,
-            },
+        .then((docRef) => {
+          db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({
+            playerId: firebase.auth().currentUser.uid,
+            role: '',
+            name: 'Test Player',
+            avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+          })
+          .then(() => {
+            // Store the roomId into local storage
+            this.enterRoom(docRef.id)
+            this.$router.push({
+              name: 'game',
+            })
           })
         })
       },

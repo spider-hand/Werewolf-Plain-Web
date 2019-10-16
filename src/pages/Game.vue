@@ -64,9 +64,6 @@
   import 'firebase/firestore'
 
   export default {
-    props: [
-      'roomId',
-    ],
     data() {
       return {
         players: [],
@@ -87,7 +84,7 @@
         var numberOfMessages = this.messages.length
 
         // Save the message
-        db.collection('rooms').doc(this.roomId).collection('messages').doc('message' + numberOfMessages).set({
+        db.collection('rooms').doc(this.$store.state.game.roomId).collection('messages').doc('message' + numberOfMessages).set({
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           body: that.message,
           from: firebase.auth().currentUser.uid,
@@ -100,7 +97,7 @@
     mounted() {
       const that = this
       var db = firebase.firestore()
-      var room = db.collection('rooms').doc(this.roomId)
+      var room = db.collection('rooms').doc(this.$store.state.game.roomId)
 
       // Set listener and update the players when entering and leaving the room
       room.collection('players').onSnapshot(function(querySnapShot) {

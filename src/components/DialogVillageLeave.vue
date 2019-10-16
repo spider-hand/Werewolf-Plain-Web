@@ -35,6 +35,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
+  import { mapActions } from 'vuex'
 
   export default {
     data() {
@@ -43,10 +44,13 @@
       }
     },
     methods: {
+      ...mapActions([
+        'leaveRoom',
+      ]),
       leaveVillage() {
         // Remove the player's document from the collection
         var db = firebase.firestore()
-        var room = db.collection('rooms').doc(this.$route.params.roomId)
+        var room = db.collection('rooms').doc(this.$store.state.game.roomId)
 
         room.update({
           numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
@@ -54,6 +58,8 @@
 
         room.collection('players').doc(firebase.auth().currentUser.uid).delete()
             .then(() => {
+              // Remove the roomId from local storage
+              this.leaveRoom()
               this.$router.push({
                 name: 'village-list',
               })

@@ -61,7 +61,7 @@
                   <td>
                     <v-btn 
                       depressed
-                      @click="enterVillage(village.roomId)">
+                      @click="enterVillage(index)">
                       Enter
                     </v-btn>
                   </td>
@@ -151,6 +151,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
+  import { mapActions } from 'vuex'
 
   import DialogVillage from '@/components/DialogVillage'
 
@@ -165,14 +166,21 @@
         newVillages: [],
         ongoingVillages: [],
         closedVillages: [],
+        newVillageIds: [],
+        ongoingVillageIds: [],
+        closedVillageIds: [],
       }
     },
     methods: {
+      ...mapActions([
+        'enterRoom',
+      ]),
       onClickTableRow(index) {
         this.clickedTableRow = index
       },
-      enterVillage(roomId) {
+      enterVillage(index) {
         var db = firebase.firestore()
+        var roomId = this.newVillageIds[index]
         var room = db.collection('rooms').doc(roomId)
 
         room.update({
@@ -186,11 +194,9 @@
           avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
         })
         .then(() => {
+          this.enterRoom(roomId)
           this.$router.push({
             name: 'game',
-            params: {
-              roomId: roomId,
-            }
           })
         })
       },
@@ -208,12 +214,15 @@
             querySnapShot.forEach(function(doc) {
               if (doc.data().status == 'new') {
                 that.newVillages.push(doc.data())
+                that.newVillageIds.push(doc.id)
               }
               else if (doc.data().status == 'ongoing') {
                 that.ongoingVillages.push(doc.data())
+                that.ongoingVillageIds.push(doc.id)
               }
               else {
                 that.closedVillages.push(doc.data())
+                that.closedVillageIds.push(doc.id)
               }
             })
           })        
