@@ -3,25 +3,25 @@ const state = {
 }
 
 const getters = {
-	isInRoom: state => !!state.roomId,
+	isInGame: state => !!state.roomId,
 }
 
 const actions = {
-	enterRoom({ commit }, roomId) {
+	joinGame({ commit }, roomId) {
 		localStorage.setItem('roomId', roomId)
-		commit('enteredRoom', roomId)
+		commit('joinedGame', roomId)
 	},
-	leaveRoom({ commit }) {
+	leaveGame({ commit }) {
 		localStorage.removeItem('roomId')
-		commit('leftRoom')
+		commit('leftGame')
 	},
 }
 
 const mutations = {
-	enteredRoom(state, roomId) {
+	joinedGame(state, roomId) {
 		state.roomId = roomId
 	},
-	leftRoom(state) {
+	leftGame(state) {
 		state.roomId = ''
 	},
 }

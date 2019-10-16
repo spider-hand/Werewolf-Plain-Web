@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     :fullscreen="$viewport.width < 450"
-    v-model="dialogVillageDetails"
+    v-model="dialogRoomDetails"
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
@@ -11,11 +11,11 @@
     <v-card>
       <v-card-title>
         <v-icon v-if="room.isPrivate == true">mdi-lock</v-icon>
-        <span>{{ room.roomName }}</span>
+        <span>{{ room.name }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <div class="room-description">{{ room.roomDescription }}</div>
+          <div class="room-description">{{ room.description }}</div>
           <v-divider></v-divider>
           <v-row>
             <v-col>
@@ -27,7 +27,7 @@
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
-              <strong>Capacity: {{ room.roomCapacity }}</strong>
+              <strong>Capacity: {{ room.capacity }}</strong>
             </v-col>
           </v-row>
         </v-container>
@@ -49,13 +49,13 @@
   export default {
     data() {
       return {
-        dialogVillageDetails: false,
+        dialogRoomDetails: false,
         room: null,
       }
     },
     methods: {
       close() {
-        this.dialogVillageDetails = false
+        this.dialogRoomDetails = false
       }
     },
     mounted() {

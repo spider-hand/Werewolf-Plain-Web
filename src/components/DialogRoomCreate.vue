@@ -2,7 +2,7 @@
   <v-dialog 
     persistent
     :fullscreen="$viewport.width < 450"
-    v-model="dialogVillage"
+    v-model="dialog"
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
@@ -20,20 +20,20 @@
             v-model="valid"
             lazy-validation>
             <v-text-field
-              v-model="roomName"
+              v-model="name"
               :rules="[v => !!v || 'Required']"
               label="Village Name"
               outlined></v-text-field>
             <v-textarea
-              v-model="roomDescription"
+              v-model="description"
               name="input-7-4"
               label="Description (Opitonal)"
               outlined></v-textarea>
             <v-select 
-              v-model="roomCapacity"
+              v-model="capacity"
               label="Capacity"
               outlined
-              :items="roomCapacityItems"></v-select>
+              :items="capacityItems"></v-select>
             <v-row>
               <v-col cols="6">
                 <v-select
@@ -92,12 +92,12 @@
   export default {
     data() {
       return {
-        dialogVillage: false,
+        dialog: false,
         valid: true,
-        roomName: '',
-        roomDescription: '',
-        roomCapacity: 15,
-        roomCapacityItems: [
+        name: '',
+        description: '',
+        capacity: 15,
+        capacityItems: [
           {
             text: '9',
             value: 9,
@@ -194,7 +194,7 @@
     },
     methods: {
       ...mapActions([
-        'enterRoom',
+        'joinGame',
       ]),
       validate() {
         if (this.$refs.form.validate()) {
@@ -205,9 +205,9 @@
         // Create the room's document
         var db = firebase.firestore()
         db.collection('rooms').add({
-          roomName: this.roomName,
-          roomDescription: this.roomDescription,
-          roomCapacity: this.roomCapacity,
+          name: this.name,
+          description: this.description,
+          capacity: this.capacity,
           dayLength: this.dayLength,
           nightLength: this.nightLength,
           isPrivate: this.isPrivate,
@@ -217,14 +217,14 @@
         })
         .then((docRef) => {
           db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({
-            playerId: firebase.auth().currentUser.uid,
+            id: firebase.auth().currentUser.uid,
             role: '',
             name: 'Test Player',
             avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
           })
           .then(() => {
             // Store the roomId into local storage
-            this.enterRoom(docRef.id)
+            this.joinGame(docRef.id)
             this.$router.push({
               name: 'game',
             })
@@ -232,7 +232,7 @@
         })
       },
       cancel() {
-        this.dialogVillage = false
+        this.dialog = false
       },
     }
   }

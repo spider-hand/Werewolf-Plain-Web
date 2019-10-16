@@ -3,8 +3,8 @@
     <v-app-bar>
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
-        <DialogVillageDetails />
-        <DialogVillageLeave />
+        <DialogRoomDetails />
+        <DialogRoomLeave />
       </div>
       <div v-else>
         <div v-if="isSignedIn">
@@ -29,13 +29,13 @@
   import 'firebase/firestore'
   import { mapGetters, mapActions } from 'vuex'
 
-  import DialogVillageDetails from '@/components/DialogVillageDetails'
-  import DialogVillageLeave from '@/components/DialogVillageLeave'
+  import DialogRoomDetails from '@/components/DialogRoomDetails'
+  import DialogRoomLeave from '@/components/DialogRoomLeave'
 
   export default {
     components: {
-      DialogVillageDetails,
-      DialogVillageLeave,
+      DialogRoomDetails,
+      DialogRoomLeave,
     },
     computed: {
       ...mapGetters(['isSignedIn']),

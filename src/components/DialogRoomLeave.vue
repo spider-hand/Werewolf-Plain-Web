@@ -2,7 +2,7 @@
   <v-dialog
     persistent
     :fullscreen="$viewport.width < 450"
-    v-model="dialogVillageLeave"
+    v-model="dialogRoomLeave"
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
@@ -11,18 +11,18 @@
     </template>
     <v-card>
       <v-card-title>
-        <span>Leave Village</span>
+        <span>Leave Room</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <span>Are you sure you want to leave this village?</span>
+          <span>Are you sure you want to leave this room?</span>
         </v-container>
       </v-card-text>
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn
           depressed
-          @click="leaveVillage">OK</v-btn>
+          @click="leaveRoom">OK</v-btn>
         <v-btn
           depressed
           @click="cancel">CANCEL</v-btn>
@@ -40,14 +40,14 @@
   export default {
     data() {
       return {
-        dialogVillageLeave: false,
+        dialogRoomLeave: false,
       }
     },
     methods: {
       ...mapActions([
-        'leaveRoom',
+        'leaveGame',
       ]),
-      leaveVillage() {
+      leaveRoom() {
         // Remove the player's document from the collection
         var db = firebase.firestore()
         var room = db.collection('rooms').doc(this.$store.state.game.roomId)
@@ -59,14 +59,14 @@
         room.collection('players').doc(firebase.auth().currentUser.uid).delete()
             .then(() => {
               // Remove the roomId from local storage
-              this.leaveRoom()
+              this.leaveGame()
               this.$router.push({
-                name: 'village-list',
+                name: 'room-list',
               })
             })
       },
       cancel() {
-        this.dialogVillageLeave = false
+        this.dialogRoomLeave = false
       }
     }
   }

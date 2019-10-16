@@ -3,11 +3,11 @@
     <v-container>
       <v-container fill-height>
         <v-layout>
-          <DialogVillage />
+          <DialogRoomCreate />
           <div class="flex-grow-1"></div>
           <v-btn 
             depressed
-            @click="updateVillageList">
+            @click="updateRoomList">
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
         </v-layout>
@@ -31,19 +31,19 @@
                   <th class="text-left"></th>
                 </tr>
               </thead>
-              <tbody v-for="(village, index) in newVillages">
+              <tbody v-for="(room, index) in newRooms">
                 <tr
                   :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
                   @click="onClickTableRow(index)">
                   <td width="3%">
                     <v-icon 
-                      v-if="village.isPrivate == true"
+                      v-if="room.isPrivate == true"
                       :small="$viewport.width < 450"
                       >mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.roomName }}</td>
-                  <td>{{ village.numberOfParticipants }} / {{ village.roomCapacity }}</td>
+                  <td width="60%">{{ room.name }}</td>
+                  <td>{{ room.numberOfParticipants }} / {{ room.capacity }}</td>
                   <td>
                     <v-btn 
                       text
@@ -61,7 +61,7 @@
                   <td>
                     <v-btn 
                       depressed
-                      @click="enterVillage(index)">
+                      @click="enterRoom(index)">
                       Enter
                     </v-btn>
                   </td>
@@ -84,16 +84,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="village in ongoingVillages">
+                <tr v-for="room in ongoingRooms">
                   <td width="3%">
                     <v-icon 
-                      v-if="village.isPrivate == true"
+                      v-if="room.isPrivate == true"
                       :small="$viewport.width < 450"
                       >mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.roomName }}</td>
-                  <td>{{ village.numberOfParticipants }}</td>
+                  <td width="60%">{{ room.name }}</td>
+                  <td>{{ room.numberOfParticipants }}</td>
                   <td>
                     <v-btn 
                       text
@@ -120,16 +120,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="village in closedVillages">
+                <tr v-for="room in closedRooms">
                   <td width="3%">
                     <v-icon 
-                      v-if="village.isPrivate == true"
+                      v-if="room.isPrivate == true"
                       :small="$viewport.width < 450">
                       mdi-lock
                     </v-icon>
                   </td>
-                  <td width="60%">{{ village.roomName }}</td>
-                  <td>{{ village.numberOfParticipants }}</td>
+                  <td width="60%">{{ room.name }}</td>
+                  <td>{{ room.numberOfParticipants }}</td>
                   <td>
                     <v-btn 
                       text
@@ -153,34 +153,34 @@
   import 'firebase/firestore'
   import { mapActions } from 'vuex'
 
-  import DialogVillage from '@/components/DialogVillage'
+  import DialogRoomCreate from '@/components/DialogRoomCreate'
 
   export default {
     components: {
-      DialogVillage,
+      DialogRoomCreate,
     },
     data() {
       return {
         tabs: 0,
         clickedTableRow: null,
-        newVillages: [],
-        ongoingVillages: [],
-        closedVillages: [],
-        newVillageIds: [],
-        ongoingVillageIds: [],
-        closedVillageIds: [],
+        newRooms: [],
+        ongoingRooms: [],
+        closedRooms: [],
+        newRoomIds: [],
+        ongoingRoomIds: [],
+        closedRoomIds: [],
       }
     },
     methods: {
       ...mapActions([
-        'enterRoom',
+        'joinGame',
       ]),
       onClickTableRow(index) {
         this.clickedTableRow = index
       },
-      enterVillage(index) {
+      enterRoom(index) {
         var db = firebase.firestore()
-        var roomId = this.newVillageIds[index]
+        var roomId = this.newRoomIds[index]
         var room = db.collection('rooms').doc(roomId)
 
         room.update({
@@ -188,22 +188,22 @@
         })
 
         room.collection('players').doc(firebase.auth().currentUser.uid).set({
-          playerId: firebase.auth().currentUser.uid,
+          id: firebase.auth().currentUser.uid,
           role: '',
           name: 'Test Player2',
           avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
         })
         .then(() => {
-          this.enterRoom(roomId)
+          this.joinGame(roomId)
           this.$router.push({
             name: 'game',
           })
         })
       },
-      updateVillageList() {
-        this.newVillages = []
-        this.ongoingVillages = []
-        this.closedVillages = []
+      updateRoomList() {
+        this.newRooms = []
+        this.ongoingRooms = []
+        this.closedRooms = []
 
         const that = this
         var db = firebase.firestore()
@@ -213,23 +213,23 @@
           .then(function(querySnapShot) {
             querySnapShot.forEach(function(doc) {
               if (doc.data().status == 'new') {
-                that.newVillages.push(doc.data())
-                that.newVillageIds.push(doc.id)
+                that.newRooms.push(doc.data())
+                that.newRoomIds.push(doc.id)
               }
               else if (doc.data().status == 'ongoing') {
-                that.ongoingVillages.push(doc.data())
-                that.ongoingVillageIds.push(doc.id)
+                that.ongoingRooms.push(doc.data())
+                that.ongoingRoomIds.push(doc.id)
               }
               else {
-                that.closedVillages.push(doc.data())
-                that.closedVillageIds.push(doc.id)
+                that.closedRooms.push(doc.data())
+                that.closedRoomIds.push(doc.id)
               }
             })
           })        
       },
     },
     mounted() {
-      this.updateVillageList()
+      this.updateRoomList()
     },
   }
 </script>
