@@ -8,7 +8,9 @@
       </div>
       <div v-else>
         <div v-if="isSignedIn">
-          <v-btn text>Profile</v-btn>
+          <v-btn 
+            text
+            @click="$router.push('profile')">Profile</v-btn>
           <v-btn text>Settings</v-btn>
           <v-btn
             text
@@ -31,7 +33,7 @@
 
   import DialogRoomDetails from '@/components/DialogRoomDetails'
   import DialogRoomLeave from '@/components/DialogRoomLeave'
-
+  
   export default {
     components: {
       DialogRoomDetails,
@@ -53,11 +55,30 @@
 
           // Create the user's document
           var db = firebase.firestore()
-          db.collection('users').doc(user.uid).set({
-            userName: '',
-            gameName: '',
-            win: 0,
-            lose: 0,
+          var docRef = db.collection('users').doc(user.uid)
+
+          docRef.get().then((doc) => {
+            if (!doc.exists) {
+              docRef.set({
+                userName: '',
+                lastTimeUserNameEdited: null,
+                gameName: '',
+                bio: '',
+                avatar: '',
+                villagerWin: 0,
+                villagerLose: 0,
+                wolfWin: 0,
+                wolfLose: 0,
+                seerWin: 0,
+                seerLose: 0,
+                mediumWin: 0,
+                mediumLose: 0,
+                doctorWin: 0,
+                doctorLose: 0,
+                minionWin: 0,
+                minionLose: 0,
+              })
+            }
           })
 
           // Store the token into local storage
@@ -76,7 +97,7 @@
 
         })
       },
-    }
+    },
   }
 </script>
 

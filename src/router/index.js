@@ -5,6 +5,7 @@ import store from '../store'
 import Home from '@/pages/Home'
 import RoomList from '@/pages/RoomList'
 import Game from '@/pages/Game'
+import Profile from '@/pages/Profile'
 
 const ifAuthenticated = (to, from, next) => {
   // Redirect the user to home page if the user isn't authenticated
@@ -36,6 +37,11 @@ export default new Router ({
       name: 'game',
       component: Game,
       beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
     }
 	]
 })
