@@ -99,6 +99,10 @@
         capacity: 15,
         capacityItems: [
           {
+            text: '5',
+            value: 5,
+          },
+          {
             text: '9',
             value: 9,
           },

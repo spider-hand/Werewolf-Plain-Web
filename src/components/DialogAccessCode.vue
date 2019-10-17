@@ -2,7 +2,7 @@
   <v-dialog
     persist
     :fullscreen="$viewport.width < 450"
-    v-model="dialogAccessCode"
+    v-model="dialog"
     max-width="600">
     <v-card>
       <v-card-title>
@@ -38,7 +38,7 @@
     ],
     data() {
       return {
-        dialogAccessCode: false,
+        dialog: false,
         accessCode: '',
         errorMessage: '',
       }
@@ -52,10 +52,10 @@
         }
       },
       open() {
-        this.dialogAccessCode = true
+        this.dialog = true
       },
       close() {
-        this.dialogAccessCode = false
+        this.dialog = false
         this.accessCode = ''
         this.errorMessage = ''
       }

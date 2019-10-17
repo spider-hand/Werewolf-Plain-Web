@@ -2,7 +2,7 @@
   <v-dialog
     persistent
     :fullscreen="$viewport.width < 450"
-    v-model="dialogRoomLeave"
+    v-model="dialog"
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
@@ -40,7 +40,7 @@
   export default {
     data() {
       return {
-        dialogRoomLeave: false,
+        dialog: false,
       }
     },
     methods: {
@@ -50,13 +50,13 @@
       leaveRoom() {
         // Remove the player's document from the collection
         var db = firebase.firestore()
-        var room = db.collection('rooms').doc(this.$store.state.game.roomId)
+        var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
 
-        room.update({
+        docRef.update({
           numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
         })
 
-        room.collection('players').doc(firebase.auth().currentUser.uid).delete()
+        docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
             .then(() => {
               // Remove the roomId from local storage
               this.leaveGame()
@@ -66,7 +66,7 @@
             })
       },
       cancel() {
-        this.dialogRoomLeave = false
+        this.dialog = false
       }
     }
   }

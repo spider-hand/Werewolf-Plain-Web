@@ -79,36 +79,34 @@
         }
       },
       sendMessage() {
-        const that = this
         var db = firebase.firestore()
         var numberOfMessages = this.messages.length
 
         // Save the message
         db.collection('rooms').doc(this.$store.state.game.roomId).collection('messages').doc('message' + numberOfMessages).set({
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: that.message,
+          body: this.message,
           from: firebase.auth().currentUser.uid,
         })
         .then(() => {
-          that.message = ''
+          this.message = ''
         })
       }
     },
     mounted() {
-      const that = this
       var db = firebase.firestore()
-      var room = db.collection('rooms').doc(this.$store.state.game.roomId)
+      var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
 
       // Set listener and update the players when entering and leaving the room
-      room.collection('players').onSnapshot(function(querySnapShot) {
-        querySnapShot.docChanges().forEach(function(change) {
+      docRef.collection('players').onSnapshot((querySnapShot) => {
+        querySnapShot.docChanges().forEach((change) => {
           if (change.type === 'added') {
-            that.players.push(change.doc.data())
+            this.players.push(change.doc.data())
           }
           if (change.type === 'removed') {
-            for (var i = 0; i < that.players.length; i++) {
-              if (that.players[i].playerId == change.doc.data().playerId) {
-                that.players.splice(i, 1)
+            for (var i = 0; i < this.players.length; i++) {
+              if (this.players[i].id == change.doc.data().id) {
+                this.players.splice(i, 1)
               }
             }
           }
@@ -116,10 +114,10 @@
       })
 
       // Set listener and retrieve the latest message every time when a message is added
-      room.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot(function(querySnapShot) {
-          querySnapShot.forEach(function(doc) {
+      docRef.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapShot) => {
+          querySnapShot.forEach((doc) => {
             if (!doc.metadata.hasPendingWrites) {
-              that.messages.push(doc.data())
+              this.messages.push(doc.data())
             }
           })
       })

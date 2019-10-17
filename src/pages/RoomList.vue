@@ -216,24 +216,23 @@
         this.ongoingRooms = []
         this.closedRooms = []
 
-        const that = this
         var db = firebase.firestore()
 
         // Get rooms
         db.collection('rooms').get()
-          .then(function(querySnapShot) {
-            querySnapShot.forEach(function(doc) {
+          .then((querySnapShot) => {
+            querySnapShot.forEach((doc) => {
               if (doc.data().status == 'new') {
-                that.newRooms.push(doc.data())
-                that.newRoomIds.push(doc.id)
+                this.newRooms.push(doc.data())
+                this.newRoomIds.push(doc.id)
               }
               else if (doc.data().status == 'ongoing') {
-                that.ongoingRooms.push(doc.data())
-                that.ongoingRoomIds.push(doc.id)
+                this.ongoingRooms.push(doc.data())
+                this.ongoingRoomIds.push(doc.id)
               }
               else {
-                that.closedRooms.push(doc.data())
-                that.closedRoomIds.push(doc.id)
+                this.closedRooms.push(doc.data())
+                this.closedRoomIds.push(doc.id)
               }
             })
           })        
