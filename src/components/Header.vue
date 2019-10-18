@@ -10,7 +10,7 @@
         <div v-if="isSignedIn">
           <v-btn 
             text
-            @click="$router.push('profile')">Profile</v-btn>
+            @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
           <v-btn text>Settings</v-btn>
           <v-btn
             text
@@ -41,6 +41,9 @@
     },
     computed: {
       ...mapGetters(['isSignedIn']),
+      getUserId() {
+        return firebase.auth().currentUser.uid
+      }
     },
     methods: {
       ...mapActions([
@@ -61,7 +64,7 @@
             if (!doc.exists) {
               docRef.set({
                 userName: '',
-                lastTimeUserNameEdited: null,
+                lastTimeUsernameEdited: null,
                 gameName: '',
                 bio: '',
                 avatar: '',

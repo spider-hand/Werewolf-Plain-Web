@@ -39,9 +39,10 @@ export default new Router ({
       beforeEnter: ifAuthenticated,
     },
     {
-      path: '/profile',
+      path: '/profile/:uid',
       name: 'profile',
       component: Profile,
+      props: true,
     }
 	]
 })
