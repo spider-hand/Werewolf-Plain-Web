@@ -26,7 +26,7 @@
           <li v-for="message in messages">
             <div class="message">
               <v-img 
-                class="message-avator"
+                class="message-avatar"
                 src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
               <div class="message-body">{{ message.body }}</div>
             </div>
@@ -151,7 +151,7 @@
     white-space: pre-wrap;
   }
 
-  .message-avator {
+  .message-avatar {
     width: 45px;
     height: 45px;
     border-radius: 50%;

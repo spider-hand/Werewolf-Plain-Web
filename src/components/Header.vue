@@ -11,7 +11,7 @@
           <v-btn 
             text
             @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
-          <v-btn text>Settings</v-btn>
+          <DialogSettings />
           <v-btn
             text
             @click="signOutOfGoogle">Logout</v-btn>
@@ -33,11 +33,13 @@
 
   import DialogRoomDetails from '@/components/DialogRoomDetails'
   import DialogRoomLeave from '@/components/DialogRoomLeave'
+  import DialogSettings from '@/components/DialogSettings'
   
   export default {
     components: {
       DialogRoomDetails,
       DialogRoomLeave,
+      DialogSettings,
     },
     computed: {
       ...mapGetters(['isSignedIn']),
@@ -67,7 +69,6 @@
                 lastTimeUsernameEdited: null,
                 gameName: '',
                 bio: '',
-                avatar: '',
                 villagerWin: 0,
                 villagerLose: 0,
                 wolfWin: 0,
