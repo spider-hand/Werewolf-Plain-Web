@@ -3,7 +3,9 @@
     <v-container>
       <v-container fill-height>
         <v-layout>
-          <DialogRoomCreate />
+          <DialogRoomCreate
+            :gameName="gameName"
+            :avatar="avatar" />
           <DialogAccessCode 
             ref="dialogAccessCode"
             :validAccessCode="validAccessCode"
@@ -176,6 +178,8 @@
         newRoomIds: [],
         ongoingRoomIds: [],
         closedRoomIds: [],
+        gameName: '',
+        avatar: '',
       }
     },
     methods: {
@@ -201,8 +205,8 @@
         room.collection('players').doc(firebase.auth().currentUser.uid).set({
           id: firebase.auth().currentUser.uid,
           role: '',
-          name: 'Test Player2',
-          avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+          name: this.gameName,
+          avatar: this.avatar,
         })
         .then(() => {
           this.joinGame(roomId)
@@ -240,6 +244,14 @@
     },
     mounted() {
       this.updateRoomList()
+
+      firebase.auth().onAuthStateChanged((user) => {
+        var db = firebase.firestore()
+        db.collection('users').doc(user.uid).get().then((doc) => {
+          this.gameName = doc.data().gameName
+          this.avatar = doc.data().avatar
+        })
+      })
     },
   }
 </script>

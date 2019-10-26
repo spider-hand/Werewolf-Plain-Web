@@ -33,7 +33,7 @@
             <v-col cols="8">
               <v-btn 
                 depressed
-                @click="uploadAvatar">UPLOAD AVATAR</v-btn>
+                @click="onClickAvatarInput">UPLOAD AVATAR</v-btn>
               <input 
                 type="file"
                 accept="image/*"
@@ -136,17 +136,6 @@
       },
       updateSettings() {
         this.isEditing = false
-        var db = firebase.firestore()
-        var docRef = db.collection('users').doc(firebase.auth().currentUser.uid)
-        docRef.update({
-          gameName: this.newGameName,
-        })
-        .then(() => {
-          docRef.get().then((doc) => {
-            this.gameName = doc.data().gameName
-            this.newGameName = doc.data().gameName
-          })
-        })
         if (this.newAvatar != null) {
           var storage = firebase.storage()
           var storageRef = storage.ref('avatars/' + firebase.auth().currentUser.uid)
@@ -155,11 +144,36 @@
               this.avatarUrl = url
               this.newAvatarUrl = ''
               this.newAvatar = null
+
+              var db = firebase.firestore()
+              var docRef = db.collection('users').doc(firebase.auth().currentUser.uid)
+              docRef.update({
+                gameName: this.newGameName,
+                avatar: url,
+              })
+              .then(() => {
+                docRef.get().then((doc) => {
+                  this.gameName = doc.data().gameName
+                  this.newGameName = doc.data().gameName
+                })
+              })
             })
           })
+        } else {
+          var db = firebase.firestore()
+          var docRef = db.collection('users').doc(firebase.auth().currentUser.uid)
+          docRef.update({
+            gameName: this.newGameName,
+          })
+          .then(() => {
+            docRef.get().then((doc) => {
+              this.gameName = doc.data().gameName
+              this.newGameName = doc.data().gameName
+            })
+          })          
         }
       },
-      uploadAvatar() {
+      onClickAvatarInput() {
         this.$refs.avatarInput.click()
       },
       getFile(event) {
@@ -190,12 +204,7 @@
         db.collection('users').doc(user.uid).get().then((doc) => {
           this.gameName = doc.data().gameName
           this.newGameName = doc.data().gameName
-        })
-
-        var storage = firebase.storage()
-        var storageRef = storage.ref('avatars/' + user.uid)
-        storageRef.getDownloadURL().then((url) => {
-          this.avatarUrl = url
+          this.avatarUrl = doc.data().avatar
         })
       })
     },

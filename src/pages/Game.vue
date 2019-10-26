@@ -27,7 +27,8 @@
             <div class="message">
               <v-img 
                 class="message-avatar"
-                src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
+                :src="message.avatar"></v-img>
+              <small class="message-from">{{ message.gameName }}</small>
               <div class="message-body">{{ message.body }}</div>
             </div>
           </li>
@@ -70,6 +71,8 @@
         messages: [],
         message: '',
         valid: true,
+        gameName: '',
+        avatar: '',
       }
     },
     methods: {
@@ -84,9 +87,11 @@
 
         // Save the message
         db.collection('rooms').doc(this.$store.state.game.roomId).collection('messages').doc('message' + numberOfMessages).set({
+          from: firebase.auth().currentUser.uid,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           body: this.message,
-          from: firebase.auth().currentUser.uid,
+          gameName: this.gameName,
+          avatar: this.avatar,
         })
         .then(() => {
           this.message = ''
@@ -120,6 +125,14 @@
               this.messages.push(doc.data())
             }
           })
+      })
+
+      // Get gamename and avatar
+      firebase.auth().onAuthStateChanged((user) => {
+        db.collection('users').doc(user.uid).get().then((doc) => {
+          this.gameName = doc.data().gameName
+          this.avatar = doc.data().avatar
+        })
       })
     }
   }
@@ -155,8 +168,14 @@
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    margin: 0 14px 0 0;
+    margin: 5px 14px 0 0;
     float: left;
+  }
+
+  .message-from {
+    display: block;
+    padding: 0 15px 2px 0;
+    font-weight: 500;
   }
 
   .message-body {

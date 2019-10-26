@@ -68,6 +68,7 @@
                 userName: '',
                 lastTimeUsernameEdited: null,
                 gameName: '',
+                avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
                 bio: '',
                 villagerWin: 0,
                 villagerLose: 0,

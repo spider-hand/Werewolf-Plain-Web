@@ -90,6 +90,10 @@
   import { mapActions } from 'vuex'
 
   export default {
+    props: [
+      'gameName',
+      'avatar',
+    ],
     data() {
       return {
         dialog: false,
@@ -223,8 +227,8 @@
           db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({
             id: firebase.auth().currentUser.uid,
             role: '',
-            name: 'Test Player',
-            avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+            name: this.gameName,
+            avatar: this.avatar,
           })
           .then(() => {
             // Store the roomId into local storage
