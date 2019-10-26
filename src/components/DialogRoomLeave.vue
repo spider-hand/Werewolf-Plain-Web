@@ -52,16 +52,30 @@
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
 
-        docRef.update({
-          numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-        })
-
         docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
             .then(() => {
-              // Remove the roomId from local storage
-              this.leaveGame()
-              this.$router.push({
-                name: 'room-list',
+              docRef.update({
+                numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+              }).then(() => {
+                docRef.get().then((doc) => {
+                  if (doc.data().numberOfParticipants <= 0) {
+                    docRef.delete()
+                    docRef.collection('messages').get()
+                      .then((querySnapShot) => {
+                        querySnapShot.forEach((doc) => {
+                          doc.ref.delete()
+                        })
+                    })
+                  } else {
+                    // Transfer the ownership into one of the other players
+
+                  }
+                  // Remove the roomId from local storage
+                  this.leaveGame()
+                  this.$router.push({
+                    name: 'room-list',
+                  })
+                })
               })
             })
       },
