@@ -19,136 +19,189 @@
         </v-layout>
       </v-container>
 
-      <v-tabs v-model="tabs">
-        <v-tab>New</v-tab>
-        <v-tab>Ongoing</v-tab>
-        <v-tab>Closed</v-tab>
+      <v-container>
+        <v-simple-table v-if="currentRoom != null">
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left"></th>
+                <th class="text-left">Name</th>
+                <th class="text-left">Participants</th>
+                <th class="text-left"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr 
+                :style="{ backgroundColor: isCurrentRoomClicked == true ? '#BBDEFB' : '#FFFFFF' }"
+                @click="onClickCurrentRoom">
+                <td width="3%">
+                  <v-icon 
+                    v-if="currentRoom.isPrivate == true"
+                    :small="$viewport.width < 450"
+                    >mdi-lock
+                  </v-icon>
+                </td>
+                <td width="60%">{{ currentRoom.name }}</td>
+                <td>{{ currentRoom.numberOfParticipants }} / {{ currentRoom.capacity }}</td>
+                <td>
+                  <v-btn 
+                    text
+                    :small="$viewport.width < 450">
+                    Details
+                  </v-btn>
+                </td>
+              </tr>
+              <tr 
+                v-if="isCurrentRoomClicked"
+                style="background-color: #FFFFFF;">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <v-btn 
+                    depressed
+                    @click="reenterRoom">
+                    Enter
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-container>
 
-        <v-tab-item 
-          transition="false"
-          reverse-transition="false">
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left"></th>
-                  <th class="text-left">Name</th>
-                  <th class="text-left">Participants</th>
-                  <th class="text-left"></th>
-                </tr>
-              </thead>
-              <tbody v-for="(room, index) in newRooms">
-                <tr
-                  :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
-                  @click="onClickTableRow(index, room.accessCode)">
-                  <td width="3%">
-                    <v-icon 
-                      v-if="room.isPrivate == true"
-                      :small="$viewport.width < 450"
-                      >mdi-lock
-                    </v-icon>
-                  </td>
-                  <td width="60%">{{ room.name }}</td>
-                  <td>{{ room.numberOfParticipants }} / {{ room.capacity }}</td>
-                  <td>
-                    <v-btn 
-                      text
-                      :small="$viewport.width < 450">
-                      Details
-                    </v-btn>
-                  </td>
-                </tr>
-                <tr 
-                  v-if="tabs == 0 && clickedTableRow == index"
-                  style="background-color: #FFFFFF;">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <v-btn 
-                      depressed
-                      @click="room.isPrivate != true ? enterRoom() : beforeEnterRoom()">
-                      Enter
-                    </v-btn>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-tab-item>
-        <v-tab-item 
-          transition="false"
-          reverse-transition="false">
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left"></th>
-                  <th class="text-left">Name</th>
-                  <th class="text-left">Participants</th>
-                  <th class="text-left"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="room in ongoingRooms">
-                  <td width="3%">
-                    <v-icon 
-                      v-if="room.isPrivate == true"
-                      :small="$viewport.width < 450"
-                      >mdi-lock
-                    </v-icon>
-                  </td>
-                  <td width="60%">{{ room.name }}</td>
-                  <td>{{ room.numberOfParticipants }}</td>
-                  <td>
-                    <v-btn 
-                      text
-                      :small="$viewport.width < 450">
-                      Details
-                    </v-btn>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-tab-item>
-        <v-tab-item 
-          transition="false"
-          reverse-transition="false">
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th class="text-left"></th>
-                  <th class="text-left">Name</th>
-                  <th class="text-left">Participants</th>
-                  <th class="text-left"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="room in closedRooms">
-                  <td width="3%">
-                    <v-icon 
-                      v-if="room.isPrivate == true"
-                      :small="$viewport.width < 450">
-                      mdi-lock
-                    </v-icon>
-                  </td>
-                  <td width="60%">{{ room.name }}</td>
-                  <td>{{ room.numberOfParticipants }}</td>
-                  <td>
-                    <v-btn 
-                      text
-                      :small="$viewport.width < 450">
-                      Details
-                    </v-btn>
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-tab-item>
-      </v-tabs>
+      <v-container>
+        <v-tabs v-model="tabs">
+          <v-tab>New</v-tab>
+          <v-tab>Ongoing</v-tab>
+          <v-tab>Closed</v-tab>
+
+          <v-tab-item 
+            transition="false"
+            reverse-transition="false">
+            <v-simple-table>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left"></th>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Participants</th>
+                    <th class="text-left"></th>
+                  </tr>
+                </thead>
+                <tbody v-for="(room, index) in newRooms">
+                  <tr
+                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    @click="onClickTableRow(index, room.accessCode)">
+                    <td width="3%">
+                      <v-icon 
+                        v-if="room.isPrivate == true"
+                        :small="$viewport.width < 450"
+                        >mdi-lock
+                      </v-icon>
+                    </td>
+                    <td width="60%">{{ room.name }}</td>
+                    <td>{{ room.numberOfParticipants }} / {{ room.capacity }}</td>
+                    <td>
+                      <v-btn 
+                        text
+                        :small="$viewport.width < 450">
+                        Details
+                      </v-btn>
+                    </td>
+                  </tr>
+                  <tr 
+                    v-if="tabs == 0 && clickedTableRow == index"
+                    style="background-color: #FFFFFF;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <v-btn 
+                        depressed
+                        @click="room.isPrivate != true ? enterRoom() : beforeEnterRoom()">
+                        Enter
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-tab-item>
+          <v-tab-item 
+            transition="false"
+            reverse-transition="false">
+            <v-simple-table>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left"></th>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Participants</th>
+                    <th class="text-left"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="room in ongoingRooms">
+                    <td width="3%">
+                      <v-icon 
+                        v-if="room.isPrivate == true"
+                        :small="$viewport.width < 450"
+                        >mdi-lock
+                      </v-icon>
+                    </td>
+                    <td width="60%">{{ room.name }}</td>
+                    <td>{{ room.numberOfParticipants }}</td>
+                    <td>
+                      <v-btn 
+                        text
+                        :small="$viewport.width < 450">
+                        Details
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-tab-item>
+          <v-tab-item 
+            transition="false"
+            reverse-transition="false">
+            <v-simple-table>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left"></th>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Participants</th>
+                    <th class="text-left"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="room in closedRooms">
+                    <td width="3%">
+                      <v-icon 
+                        v-if="room.isPrivate == true"
+                        :small="$viewport.width < 450">
+                        mdi-lock
+                      </v-icon>
+                    </td>
+                    <td width="60%">{{ room.name }}</td>
+                    <td>{{ room.numberOfParticipants }}</td>
+                    <td>
+                      <v-btn 
+                        text
+                        :small="$viewport.width < 450">
+                        Details
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-tab-item>
+        </v-tabs>
+      </v-container>
     </v-container>
   </div>
 </template>
@@ -157,7 +210,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
-  import { mapActions } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   import DialogRoomCreate from '@/components/DialogRoomCreate'
   import DialogAccessCode from '@/components/DialogAccessCode'
@@ -172,6 +225,8 @@
         tabs: 0,
         clickedTableRow: null,
         validAccessCode: '',
+        currentRoom: null,
+        isCurrentRoomClicked: false,
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
@@ -182,13 +237,20 @@
         avatar: '',
       }
     },
+    computed: {
+      ...mapGetters(['isInGame']),
+    },
     methods: {
       ...mapActions([
         'joinGame',
+        'leaveGame',
       ]),
       onClickTableRow(index, accessCode) {
         this.clickedTableRow = index
         this.validAccessCode = accessCode
+      },
+      onClickCurrentRoom() {
+        this.isCurrentRoomClicked = true
       },
       beforeEnterRoom() {
         this.$refs.dialogAccessCode.open()
@@ -213,6 +275,11 @@
           this.$router.push({
             name: 'game',
           })
+        })
+      },
+      reenterRoom() {
+        this.$router.push({
+          name: 'game',
         })
       },
       updateRoomList() {
@@ -241,9 +308,25 @@
             })
           })        
       },
+      getCurrentRoom() {
+        var db = firebase.firestore()
+        var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+
+        docRef.get().then((doc) => {
+          if (doc.exists) {
+            this.currentRoom = doc.data()
+          } else {
+            this.leaveGame()
+          }
+        })
+      },
     },
     mounted() {
       this.updateRoomList()
+
+      if (this.isInGame == true) {
+        this.getCurrentRoom()
+      }
 
       firebase.auth().onAuthStateChanged((user) => {
         var db = firebase.firestore()
