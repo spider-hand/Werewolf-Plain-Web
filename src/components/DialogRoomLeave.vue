@@ -58,18 +58,25 @@
                 numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
               }).then(() => {
                 docRef.get().then((doc) => {
-                  if (doc.data().numberOfParticipants <= 0) {
+                  // Remove the room document and its subcollection when the owner left
+                  if (doc.data().ownerId == firebase.auth().currentUser.uid) {
                     docRef.delete()
+
+                    docRef.collection('players').get()
+                      .then((querySnapShot) => {
+                        querySnapShot.forEach((doc) => {
+                          doc.ref.delete()
+                        })
+                      })
+
                     docRef.collection('messages').get()
                       .then((querySnapShot) => {
                         querySnapShot.forEach((doc) => {
                           doc.ref.delete()
                         })
-                    })
-                  } else {
-                    // Transfer the ownership into one of the other players
-
+                      })
                   }
+
                   // Remove the roomId from local storage
                   this.leaveGame()
                   this.$router.push({

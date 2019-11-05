@@ -222,6 +222,7 @@
           accessCode: this.accessCode,
           numberOfParticipants: 1,
           status: 'new',
+          ownerId: firebase.auth().currentUser.uid,
         })
         .then((docRef) => {
           db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({

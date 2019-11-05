@@ -63,6 +63,7 @@
 <script>
   import firebase from 'firebase/app'
   import 'firebase/firestore'
+  import { mapActions } from 'vuex'
 
   export default {
     data() {
@@ -76,6 +77,9 @@
       }
     },
     methods: {
+      ...mapActions([
+        'leaveGame',
+      ]),
       validate() {
         if (this.$refs.form.validate()) {
           this.sendMessage()
@@ -101,6 +105,16 @@
     mounted() {
       var db = firebase.firestore()
       var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+
+      // Force the player to exit the game if the doc is already deleted
+      docRef.onSnapshot((doc) => {
+        if (!doc.exists) {
+          this.leaveGame()
+          this.$router.push({
+            name: 'room-list',
+          })
+        }
+      })
 
       // Set listener and update the players when entering and leaving the room
       docRef.collection('players').onSnapshot((querySnapShot) => {
