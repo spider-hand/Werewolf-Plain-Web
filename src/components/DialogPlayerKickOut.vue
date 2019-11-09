@@ -56,6 +56,7 @@
           .then(() => {
             docRef.update({
               numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+              banList: firebase.firestore.FieldValue.arrayUnion(this.uid),
             })
           })
       },

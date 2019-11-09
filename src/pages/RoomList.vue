@@ -259,25 +259,38 @@
         var db = firebase.firestore()
         var roomId = this.newRoomIds[this.clickedTableRow]
         var room = db.collection('rooms').doc(roomId)
+        var isBanned = false
+        var i
 
         room.get().then((doc) => {
           if (doc.exists) {
-            room.update({
-              numberOfParticipants: firebase.firestore.FieldValue.increment(1),
-            })
+            for (i = 0; i < doc.data().banList.length; i++) {
+              if (doc.data().banList[i] == firebase.auth().currentUser.uid) {
+                isBanned = true
+                break
+              }
+            }
 
-            room.collection('players').doc(firebase.auth().currentUser.uid).set({
-              id: firebase.auth().currentUser.uid,
-              role: '',
-              name: this.gameName,
-              avatar: this.avatar,
-            })
-            .then(() => {
-              this.joinGame(roomId)
-              this.$router.push({
-                name: 'game',
+            if (isBanned == false) {
+              room.update({
+                numberOfParticipants: firebase.firestore.FieldValue.increment(1),
               })
-            })            
+
+              room.collection('players').doc(firebase.auth().currentUser.uid).set({
+                id: firebase.auth().currentUser.uid,
+                role: '',
+                name: this.gameName,
+                avatar: this.avatar,
+              })
+              .then(() => {
+                this.joinGame(roomId)
+                this.$router.push({
+                  name: 'game',
+                })
+              })                
+            } else {
+              console.log("You are banned from this room..")
+            }         
           } else {
             console.log("Can't find this room..")
           }
