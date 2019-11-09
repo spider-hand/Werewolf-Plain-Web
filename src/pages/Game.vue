@@ -14,6 +14,9 @@
           <v-list-item-content>
             <v-list-item-title>{{ player.name }}</v-list-item-title>
           </v-list-item-content>
+          <v-list-item-action v-if="isOwner() == true && isMyself(player.id) == false">
+            <DialogPlayerKickOut :uid="player.id" />
+          </v-list-item-action>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -62,12 +65,19 @@
 
 <script>
   import firebase from 'firebase/app'
+  import 'firebase/auth'
   import 'firebase/firestore'
   import { mapActions } from 'vuex'
 
+  import DialogPlayerKickOut from '@/components/DialogPlayerKickOut'
+
   export default {
+    components: {
+      DialogPlayerKickOut,
+    },
     data() {
       return {
+        room: null,
         players: [],
         messages: [],
         message: '',
@@ -83,6 +93,20 @@
       validate() {
         if (this.$refs.form.validate()) {
           this.sendMessage()
+        }
+      },
+      isOwner() {
+        if (firebase.auth().currentUser.uid == this.room.ownerId) {
+          return true
+        } else {
+          return false
+        }
+      },
+      isMyself(uid) {
+        if (firebase.auth().currentUser.uid == uid) {
+          return true
+        } else {
+          return false
         }
       },
       sendMessage() {
@@ -113,6 +137,8 @@
           this.$router.push({
             name: 'room-list',
           })
+        } else {
+          this.room = doc.data()
         }
       })
 
@@ -127,6 +153,16 @@
               if (this.players[i].id == change.doc.data().id) {
                 this.players.splice(i, 1)
               }
+
+              // Force the player to exit the game when the owner kicked the player out
+              firebase.auth().onAuthStateChanged((user) => {
+                if (user.uid == change.doc.data().id) {
+                  this.leaveGame()
+                  this.$router.push({
+                    name: 'room-list',
+                  })            
+                }
+              })
             }
           }
         })

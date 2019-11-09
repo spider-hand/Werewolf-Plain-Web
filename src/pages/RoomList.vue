@@ -260,22 +260,30 @@
         var roomId = this.newRoomIds[this.clickedTableRow]
         var room = db.collection('rooms').doc(roomId)
 
-        room.update({
-          numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+        room.get().then((doc) => {
+          if (doc.exists) {
+            room.update({
+              numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+            })
+
+            room.collection('players').doc(firebase.auth().currentUser.uid).set({
+              id: firebase.auth().currentUser.uid,
+              role: '',
+              name: this.gameName,
+              avatar: this.avatar,
+            })
+            .then(() => {
+              this.joinGame(roomId)
+              this.$router.push({
+                name: 'game',
+              })
+            })            
+          } else {
+            console.log("Can't find this room..")
+          }
         })
 
-        room.collection('players').doc(firebase.auth().currentUser.uid).set({
-          id: firebase.auth().currentUser.uid,
-          role: '',
-          name: this.gameName,
-          avatar: this.avatar,
-        })
-        .then(() => {
-          this.joinGame(roomId)
-          this.$router.push({
-            name: 'game',
-          })
-        })
+
       },
       reenterRoom() {
         this.$router.push({
@@ -293,7 +301,7 @@
         db.collection('rooms').get()
           .then((querySnapShot) => {
             querySnapShot.forEach((doc) => {
-              if (doc.data().status == 'new') {
+              if (doc.data().status == 'new' && doc.data().numberOfParticipants > 0) {
                 this.newRooms.push(doc.data())
                 this.newRoomIds.push(doc.id)
               }
