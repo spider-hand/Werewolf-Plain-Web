@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <Header />
-    <router-view />
+    <Header :room="room" />
+    <router-view @updateRoom="updateRoom" />
   </v-app>
 </template>
 
@@ -11,6 +11,16 @@
   export default {
     components: {
       Header,
+    },
+    data() {
+      return {
+        room: null,
+      }
+    },
+    methods: {
+      updateRoom(room) {
+        this.room = room
+      }
     }
   }
 </script>

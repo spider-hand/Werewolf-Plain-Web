@@ -64,10 +64,12 @@
   import 'firebase/firestore'
 
   export default {
+    props: [
+      'room',
+    ],
     data() {
       return {
         dialog: false,
-        room: null,
       }
     },
     methods: {
@@ -75,14 +77,6 @@
         this.dialog = false
       }
     },
-    mounted() {
-      var db = firebase.firestore()
-      var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
-
-      docRef.get().then((doc) => {
-        this.room = doc.data()
-      })
-    }
   }
 </script>
 

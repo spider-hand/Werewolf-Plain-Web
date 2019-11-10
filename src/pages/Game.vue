@@ -139,6 +139,7 @@
           })
         } else {
           this.room = doc.data()
+          this.$emit('updateRoom', doc.data())
         }
       })
 
