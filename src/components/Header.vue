@@ -3,7 +3,11 @@
     <v-app-bar>
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
-        <DialogRoomDetails />
+        <v-btn 
+          text
+          v-if="isOwner"
+          @click="startGame">Start</v-btn>
+        <DialogRoomDetails :room="room" />
         <DialogRoomLeave />
       </div>
       <div v-else>
@@ -36,6 +40,9 @@
   import DialogSettings from '@/components/DialogSettings'
   
   export default {
+    props: [
+      'room',
+    ],
     components: {
       DialogRoomDetails,
       DialogRoomLeave,
@@ -45,7 +52,18 @@
       ...mapGetters(['isSignedIn']),
       getUserId() {
         return firebase.auth().currentUser.uid
-      }
+      },
+      isOwner() {
+        try {
+          if (this.room.ownerId == firebase.auth().currentUser.uid) {
+            return true
+          } else {
+            return false
+          }
+        } catch(err) {
+          return false
+        }
+      },
     },
     methods: {
       ...mapActions([
@@ -102,6 +120,23 @@
 
         })
       },
+      startGame() {
+        if (this.room.numberOfParticipants == this.room.capacity) {
+          var db = firebase.firestore()
+          var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+
+          docRef.update({
+            status: 'ongoing',
+          })
+
+          // Decide the roles randomly
+
+          // Deploy scheduled cloud functions
+
+        } else {
+          console.log('This room is not ready.')
+        }
+      }
     },
   }
 </script>
