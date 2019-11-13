@@ -7,15 +7,6 @@ import RoomList from '@/pages/RoomList'
 import Game from '@/pages/Game'
 import Profile from '@/pages/Profile'
 
-const ifAuthenticated = (to, from, next) => {
-  // Redirect the user to home page if the user isn't authenticated
-  if (store.getters.isSignedIn) {
-    next()
-    return
-  }
-  next('/')
-}
-
 Vue.use(Router)
 
 export default new Router ({
@@ -30,13 +21,11 @@ export default new Router ({
       path: '/room-list',
       name: 'room-list',
       component: RoomList,
-      beforeEnter: ifAuthenticated,
     },
     {
       path: '/game',
       name: 'game',
       component: Game,
-      beforeEnter: ifAuthenticated,
     },
     {
       path: '/profile/:uid',
