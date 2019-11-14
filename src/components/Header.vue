@@ -5,10 +5,10 @@
       <div v-if="$route.name == 'game'">
         <v-btn 
           text
-          v-if="isOwner"
+          v-if="isOwner()"
           @click="startGame">Start</v-btn>
         <DialogRoomDetails :room="room" />
-        <DialogRoomLeave />
+        <DialogRoomLeave v-if="isJoiningThisGame" />
       </div>
       <div v-else>
         <div v-if="isSignedIn">
@@ -42,6 +42,7 @@
   export default {
     props: [
       'room',
+      'isJoiningThisGame',
     ],
     components: {
       DialogRoomDetails,
@@ -52,17 +53,6 @@
       ...mapGetters(['isSignedIn']),
       getUserId() {
         return firebase.auth().currentUser.uid
-      },
-      isOwner() {
-        try {
-          if (this.room.ownerId == firebase.auth().currentUser.uid) {
-            return true
-          } else {
-            return false
-          }
-        } catch(err) {
-          return false
-        }
       },
     },
     methods: {
@@ -135,6 +125,21 @@
 
         } else {
           console.log('This room is not ready.')
+        }
+      },
+      isOwner() {
+        try {
+          if (firebase.auth().currentUser) {
+            if (this.room.ownerId == firebase.auth().currentUser.uid) {
+              return true
+            } else {
+              return false
+            }          
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
         }
       }
     },

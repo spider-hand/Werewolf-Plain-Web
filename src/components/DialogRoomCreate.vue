@@ -6,6 +6,7 @@
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
+        :disabled="!isSignedIn"
         depressed
         v-on="on">Host Game</v-btn>
     </template>
@@ -87,7 +88,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
-  import { mapActions } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     props: [
@@ -192,6 +193,9 @@
         ]
       }
     },
+    computed: {
+      ...mapGetters(['isSignedIn']),
+    },
     watch: {
       isPrivate: function(newVal, oldVal) {
         if (newVal == false) {
@@ -237,6 +241,7 @@
             this.joinGame(docRef.id)
             this.$router.push({
               name: 'game',
+              params:{ id: docRef.id },
             })
           })
         })

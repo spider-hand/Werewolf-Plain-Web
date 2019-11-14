@@ -23,7 +23,7 @@
     <div 
       class="message-list"
       :style="{
-          height: $viewport.height - 199 + 'px',
+          height: isChatVisible == true ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
           width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in messages">
@@ -39,6 +39,7 @@
     </div>
     <v-form
       ref="form"
+      v-if="isChatVisible"
       v-model="valid"
       lazy-validation>
       <v-textarea
@@ -78,13 +79,22 @@
     data() {
       return {
         room: null,
+        myself: null,
         players: [],
         messages: [],
         message: '',
         valid: true,
-        gameName: '',
-        avatar: '',
+        isChatEnabled: false,
       }
+    },
+    computed: {
+      isChatVisible() {
+        if (this.isChatEnabled) {
+          return true
+        } else {
+          return false
+        }
+      },
     },
     methods: {
       ...mapActions([
@@ -96,30 +106,61 @@
         }
       },
       isOwner() {
-        if (firebase.auth().currentUser.uid == this.room.ownerId) {
-          return true
+        if (firebase.auth().currentUser) {
+          if (firebase.auth().currentUser.uid == this.room.ownerId) {
+            return true
+          } else {
+            return false
+          }          
         } else {
           return false
         }
       },
       isMyself(uid) {
-        if (firebase.auth().currentUser.uid == uid) {
-          return true
+        if (firebase.auth().currentUser) {
+          if (firebase.auth().currentUser.uid == uid) {
+            return true
+          } else {
+            return false
+          }          
         } else {
           return false
         }
+      },
+      isJoiningThisGame() {
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            var db = firebase.firestore()
+            var docRef = db.collection('rooms').doc(this.$route.params.id)
+              .collection('players').doc(firebase.auth().currentUser.uid)
+            
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                  this.isChatEnabled = true
+                  this.$emit('isJoiningThisGame', true)
+                } else {
+                  this.isChatEnabled = false
+                  this.$emit('isJoiningThisGame', false)
+                }
+              })
+          } else {
+            this.isChatEnabled = false
+            this.$emit('isJoiningThisGame', false)
+          }
+        })
       },
       sendMessage() {
         var db = firebase.firestore()
         var numberOfMessages = this.messages.length
 
         // Save the message
-        db.collection('rooms').doc(this.$store.state.game.roomId).collection('messages').doc('message' + numberOfMessages).set({
+        db.collection('rooms').doc(this.$store.state.game.roomId)
+          .collection('messages').doc('message' + numberOfMessages).set({
           from: firebase.auth().currentUser.uid,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           body: this.message,
-          gameName: this.gameName,
-          avatar: this.avatar,
+          gameName: this.myself.name,
+          avatar: this.myself.avatar,
         })
         .then(() => {
           this.message = ''
@@ -127,12 +168,14 @@
       }
     },
     mounted() {
-      var db = firebase.firestore()
-      var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+      this.isJoiningThisGame()
 
-      // Force the player to exit the game if the doc is already deleted
+      var db = firebase.firestore()
+      var docRef = db.collection('rooms').doc(this.$route.params.id)
+
       docRef.onSnapshot((doc) => {
         if (!doc.exists) {
+          // Force the player to exit the game if the room is already deleted
           this.leaveGame()
           this.$router.push({
             name: 'room-list',
@@ -143,29 +186,45 @@
         }
       })
 
-      // Set listener and update the players when entering and leaving the room
+      // Listener for player's status
       docRef.collection('players').onSnapshot((querySnapShot) => {
         querySnapShot.docChanges().forEach((change) => {
           if (change.type === 'added') {
             this.players.push(change.doc.data())
           }
+
+          if (change.type === 'modified') {
+            for (var i = 0; i < this.players.length; i++) {
+              if (this.players[i].id == change.doc.data().id) {
+                this.players[i] = change.doc.data()
+              }
+            }
+          }
+
           if (change.type === 'removed') {
             for (var i = 0; i < this.players.length; i++) {
               if (this.players[i].id == change.doc.data().id) {
                 this.players.splice(i, 1)
               }
+            }
+          }
 
-              // Force the player to exit the game when the owner kicked the player out
-              firebase.auth().onAuthStateChanged((user) => {
-                if (user.uid == change.doc.data().id) {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              if (user.uid == change.doc.data().id) {
+                if (change.type === 'added' || change.type === 'modified') {
+                    // Update my data as a player
+                    this.myself = change.doc.data()
+                } else {
+                  // Force to exit the game when the player's doc is removed
                   this.leaveGame()
                   this.$router.push({
                     name: 'room-list',
-                  })            
-                }
-              })
+                  })
+                }                
+              }
             }
-          }
+          })
         })
       })
 
@@ -176,14 +235,6 @@
               this.messages.push(doc.data())
             }
           })
-      })
-
-      // Get gamename and avatar
-      firebase.auth().onAuthStateChanged((user) => {
-        db.collection('users').doc(user.uid).get().then((doc) => {
-          this.gameName = doc.data().gameName
-          this.avatar = doc.data().avatar
-        })
       })
     }
   }

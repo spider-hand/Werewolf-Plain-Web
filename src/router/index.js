@@ -23,7 +23,7 @@ export default new Router ({
       component: RoomList,
     },
     {
-      path: '/game',
+      path: '/game/:id',
       name: 'game',
       component: Game,
     },
@@ -31,7 +31,6 @@ export default new Router ({
       path: '/profile/:uid',
       name: 'profile',
       component: Profile,
-      props: true,
     }
 	]
 })

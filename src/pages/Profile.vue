@@ -19,7 +19,7 @@
             <div class="flex-grow-1"></div>
             <v-btn 
               icon
-              v-if="getUserId == uid && isEditing == false"
+              v-if="getMyUserId == $route.params.uid && isEditing == false"
               @click="editProfile">
               <v-icon>mdi-account-edit</v-icon>
             </v-btn>
@@ -126,9 +126,6 @@
   import 'firebase/firestore'
 
   export default {
-    props: [
-      'uid',
-    ],
     data() {
       return {
         isEditing: false,
@@ -139,7 +136,7 @@
       }
     },
     computed: {
-      getUserId() {
+      getMyUserId() {
         return firebase.auth().currentUser.uid
       },
       getWin() {
@@ -175,22 +172,22 @@
         var db = firebase.firestore()
 
         if (this.isUsernameEditable == false) {
-          db.collection('users').doc(this.uid).update({
+          db.collection('users').doc(this.$route.params.uid).update({
             bio: this.newBio,
           })
           .then(() => {
-            db.collection('users').doc(this.uid).get().then((doc) => {
+            db.collection('users').doc(this.$route.params.uid).get().then((doc) => {
               this.user = doc.data()
             })          
           })          
         } else {
-          db.collection('users').doc(this.uid).update({
+          db.collection('users').doc(this.$route.params.uid).update({
             username: this.newUsername,
             lastTimeUsernameEdited: firebase.firestore.FieldValue.serverTimestamp(),
             bio: this.newBio,
           })
           .then(() => {
-            db.collection('users').doc(this.uid).get().then((doc) => {
+            db.collection('users').doc(this.$route.params.uid).get().then((doc) => {
               this.user = doc.data()
             })          
           })
@@ -203,7 +200,7 @@
     mounted() {
       var db = firebase.firestore()
 
-      db.collection('users').doc(this.uid).get().then((doc) => {
+      db.collection('users').doc(this.$route.params.uid).get().then((doc) => {
         this.user = doc.data()
         this.newUsername = doc.data().username
         this.newBio = doc.data().bio

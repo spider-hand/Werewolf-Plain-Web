@@ -230,9 +230,6 @@
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
-        newRoomIds: [],
-        ongoingRoomIds: [],
-        closedRoomIds: [],
         gameName: '',
         avatar: '',
       }
@@ -256,51 +253,59 @@
         this.$refs.dialogAccessCode.open()
       },
       enterRoom() {
-        var db = firebase.firestore()
-        var roomId = this.newRoomIds[this.clickedTableRow]
-        var room = db.collection('rooms').doc(roomId)
-        var isBanned = false
-        var i
+        var roomId = this.newRooms[this.clickedTableRow].id
 
-        room.get().then((doc) => {
-          if (doc.exists) {
-            for (i = 0; i < doc.data().banList.length; i++) {
-              if (doc.data().banList[i] == firebase.auth().currentUser.uid) {
-                isBanned = true
-                break
+        if (firebase.auth().currentUser) {
+          var db = firebase.firestore()
+          var room = db.collection('rooms').doc(roomId)
+          var isBanned = false
+
+          room.get().then((doc) => {
+            if (doc.exists) {
+              for (var i = 0; i < doc.data().banList.length; i++) {
+                if (doc.data().banList[i] == firebase.auth().currentUser.uid) {
+                  isBanned = true
+                  break
+                }
               }
-            }
 
-            if (isBanned == false) {
-              room.update({
-                numberOfParticipants: firebase.firestore.FieldValue.increment(1),
-              })
-
-              room.collection('players').doc(firebase.auth().currentUser.uid).set({
-                id: firebase.auth().currentUser.uid,
-                role: '',
-                name: this.gameName,
-                avatar: this.avatar,
-              })
-              .then(() => {
-                this.joinGame(roomId)
-                this.$router.push({
-                  name: 'game',
+              if (isBanned == false) {
+                room.update({
+                  numberOfParticipants: firebase.firestore.FieldValue.increment(1),
                 })
-              })                
+
+                room.collection('players').doc(firebase.auth().currentUser.uid).set({
+                  id: firebase.auth().currentUser.uid,
+                  role: '',
+                  name: this.gameName,
+                  avatar: this.avatar,
+                })
+                .then(() => {
+                  this.joinGame(roomId)
+                  this.$router.push({
+                    name: 'game',
+                    params:{ id: roomId },
+                  })
+                })                
+              } else {
+                console.log("You are banned from this room..")
+              }         
             } else {
-              console.log("You are banned from this room..")
-            }         
-          } else {
-            console.log("Can't find this room..")
-          }
-        })
-
-
+              console.log("Can't find this room..")
+            }
+          })
+        } else {
+          // User who doesn't log in can see the game as a viewer
+          this.$router.push({
+            name: 'game',
+            params: { id: roomId },
+          })
+        }
       },
       reenterRoom() {
         this.$router.push({
           name: 'game',
+          params: { id: this.currentRoom.id },
         })
       },
       updateRoomList() {
@@ -316,15 +321,15 @@
             querySnapShot.forEach((doc) => {
               if (doc.data().status == 'new' && doc.data().numberOfParticipants > 0) {
                 this.newRooms.push(doc.data())
-                this.newRoomIds.push(doc.id)
+                this.newRooms[this.newRooms.length - 1].id = doc.id
               }
               else if (doc.data().status == 'ongoing') {
                 this.ongoingRooms.push(doc.data())
-                this.ongoingRoomIds.push(doc.id)
+                this.ongoingRooms[this.ongoingRooms.length - 1].id = doc.id
               }
               else {
                 this.closedRooms.push(doc.data())
-                this.closedRoomIds.push(doc.id)
+                this.closedRooms[this.closedRooms.length - 1].id = doc.id
               }
             })
           })        
@@ -336,6 +341,7 @@
         docRef.get().then((doc) => {
           if (doc.exists) {
             this.currentRoom = doc.data()
+            this.currentRoom.id = doc.id
           } else {
             this.leaveGame()
           }
@@ -350,11 +356,13 @@
       }
 
       firebase.auth().onAuthStateChanged((user) => {
-        var db = firebase.firestore()
-        db.collection('users').doc(user.uid).get().then((doc) => {
-          this.gameName = doc.data().gameName
-          this.avatar = doc.data().avatar
-        })
+        if (user) { 
+          var db = firebase.firestore()
+          db.collection('users').doc(user.uid).get().then((doc) => {
+            this.gameName = doc.data().gameName
+            this.avatar = doc.data().avatar
+          })
+        }
       })
     },
   }

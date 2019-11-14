@@ -1,7 +1,11 @@
 <template>
   <v-app>
-    <Header :room="room" />
-    <router-view @updateRoom="updateRoom" />
+    <Header 
+      :room="room"
+      :isJoiningThisGame="flag" />
+    <router-view 
+      @updateRoom="updateRoom"
+      @isJoiningThisGame="isJoiningThisGame" />
   </v-app>
 </template>
 
@@ -15,12 +19,16 @@
     data() {
       return {
         room: null,
+        flag: false,
       }
     },
     methods: {
       updateRoom(room) {
         this.room = room
-      }
+      },
+      isJoiningThisGame(flag) {
+        this.flag = flag
+      },
     }
   }
 </script>
