@@ -2,7 +2,7 @@
   <v-app>
     <Header 
       :room="room"
-      :isJoiningThisGame="flag" />
+      :isJoiningThisGame="isJoining" />
     <router-view 
       @updateRoom="updateRoom"
       @isJoiningThisGame="isJoiningThisGame" />
@@ -19,15 +19,15 @@
     data() {
       return {
         room: null,
-        flag: false,
+        isJoining: false,
       }
     },
     methods: {
       updateRoom(room) {
         this.room = room
       },
-      isJoiningThisGame(flag) {
-        this.flag = flag
+      isJoiningThisGame(isJoining) {
+        this.isJoining = isJoining
       },
     }
   }

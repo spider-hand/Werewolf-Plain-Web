@@ -23,7 +23,7 @@
     <div 
       class="message-list"
       :style="{
-          height: isChatVisible == true ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
+          height: isJoiningThisGame == true ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
           width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in messages">
@@ -39,7 +39,7 @@
     </div>
     <v-form
       ref="form"
-      v-if="isChatVisible"
+      v-if="isJoiningThisGame"
       v-model="valid"
       lazy-validation>
       <v-textarea
@@ -84,17 +84,8 @@
         messages: [],
         message: '',
         valid: true,
-        isChatEnabled: false,
+        isJoiningThisGame: false,
       }
-    },
-    computed: {
-      isChatVisible() {
-        if (this.isChatEnabled) {
-          return true
-        } else {
-          return false
-        }
-      },
     },
     methods: {
       ...mapActions([
@@ -127,28 +118,6 @@
           return false
         }
       },
-      isJoiningThisGame() {
-        firebase.auth().onAuthStateChanged((user) => {
-          if (user) {
-            var db = firebase.firestore()
-            var docRef = db.collection('rooms').doc(this.$route.params.id)
-              .collection('players').doc(firebase.auth().currentUser.uid)
-            
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                  this.isChatEnabled = true
-                  this.$emit('isJoiningThisGame', true)
-                } else {
-                  this.isChatEnabled = false
-                  this.$emit('isJoiningThisGame', false)
-                }
-              })
-          } else {
-            this.isChatEnabled = false
-            this.$emit('isJoiningThisGame', false)
-          }
-        })
-      },
       sendMessage() {
         var db = firebase.firestore()
         var numberOfMessages = this.messages.length
@@ -168,7 +137,7 @@
       }
     },
     mounted() {
-      this.isJoiningThisGame()
+      this.$emit('isJoiningThisGame', false)
 
       var db = firebase.firestore()
       var docRef = db.collection('rooms').doc(this.$route.params.id)
@@ -212,6 +181,9 @@
           firebase.auth().onAuthStateChanged((user) => {
             if (user) {
               if (user.uid == change.doc.data().id) {
+                this.isJoiningThisGame = true
+                this.$emit('isJoiningThisGame', true)
+
                 if (change.type === 'added' || change.type === 'modified') {
                     // Update my data as a player
                     this.myself = change.doc.data()
