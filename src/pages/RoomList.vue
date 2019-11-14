@@ -259,6 +259,7 @@
           var db = firebase.firestore()
           var room = db.collection('rooms').doc(roomId)
           var isBanned = false
+          var isJoiningThisGame = false
 
           room.get().then((doc) => {
             if (doc.exists) {
@@ -270,23 +271,36 @@
               }
 
               if (isBanned == false) {
-                room.update({
-                  numberOfParticipants: firebase.firestore.FieldValue.increment(1),
-                })
+                room.collection('players').doc(firebase.auth().currentUser.uid).get().then((doc) => {
+                  if (doc.exists) {
+                    isJoiningThisGame = true
+                  }
 
-                room.collection('players').doc(firebase.auth().currentUser.uid).set({
-                  id: firebase.auth().currentUser.uid,
-                  role: '',
-                  name: this.gameName,
-                  avatar: this.avatar,
+                  if (isJoiningThisGame == false) {
+                    room.update({
+                      numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+                    })
+
+                    room.collection('players').doc(firebase.auth().currentUser.uid).set({
+                      id: firebase.auth().currentUser.uid,
+                      role: '',
+                      name: this.gameName,
+                      avatar: this.avatar,
+                    })
+                    .then(() => {
+                      this.joinGame(roomId)
+                      this.$router.push({
+                        name: 'game',
+                        params:{ id: roomId },
+                      })
+                    }) 
+                  } else {
+                    this.$router.push({
+                      name: 'game',
+                      params:{ id: roomId },
+                    })
+                  }
                 })
-                .then(() => {
-                  this.joinGame(roomId)
-                  this.$router.push({
-                    name: 'game',
-                    params:{ id: roomId },
-                  })
-                })                
               } else {
                 console.log("You are banned from this room..")
               }         
