@@ -118,12 +118,14 @@
   import 'firebase/storage'
 
   export default {
+    props: [
+      'gameName',
+      'avatar',
+    ],
     data() {
       return {
         dialog: false,
         isEditing: false,
-        gameName: '',
-        avatar: '',
         avatarErrorMessage: '',
         newGameName: '',
         newAvatarUrl: '',
@@ -141,7 +143,6 @@
           var storageRef = storage.ref('avatars/' + firebase.auth().currentUser.uid)
           storageRef.put(this.newAvatar).then((snapshot) => {
             storageRef.getDownloadURL().then((url) => {
-              this.avatar = url
               this.newAvatarUrl = ''
               this.newAvatar = null
 
@@ -153,9 +154,8 @@
               })
               .then(() => {
                 docRef.get().then((doc) => {
-                  this.gameName = doc.data().gameName
                   this.newGameName = doc.data().gameName
-                  this.$emit('updateSettings', this.gameName, this.avatar)
+                  this.$emit('updateSettings', doc.data().gameName, url)
                 })
               })
             })
@@ -168,9 +168,8 @@
           })
           .then(() => {
             docRef.get().then((doc) => {
-              this.gameName = doc.data().gameName
               this.newGameName = doc.data().gameName
-              this.$emit('updateSettings', this.gameName, this.avatar)
+              this.$emit('updateSettings', doc.data().gameName, this.avatar)
             })
           })          
         }
@@ -199,20 +198,6 @@
       close() {
         this.dialog = false
       },
-    },
-    mounted() {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          var db = firebase.firestore()
-          db.collection('users').doc(user.uid).get().then((doc) => {
-            this.gameName = doc.data().gameName
-            this.newGameName = doc.data().gameName
-            this.avatar = doc.data().avatar
-
-            this.$emit('updateSettings', this.gameName, this.avatar)
-          })          
-        }
-      })
     },
   }
 </script>

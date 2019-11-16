@@ -15,7 +15,10 @@
           <v-btn 
             text
             @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
-          <DialogSettings @updateSettings="updateSettings" />
+          <DialogSettings 
+            :gameName="gameName"
+            :avatar="avatar"
+            @updateSettings="updateSettings" />
           <v-btn
             text
             @click="signOutOfGoogle">Logout</v-btn>
@@ -48,6 +51,12 @@
       DialogRoomDetails,
       DialogRoomLeave,
       DialogSettings,
+    },
+    data() {
+      return {
+        gameName: '',
+        avatar: '',
+      }
     },
     computed: {
       ...mapGetters(['isSignedIn']),
@@ -90,12 +99,22 @@
                 doctorLose: 0,
                 minionWin: 0,
                 minionLose: 0,
-              })
-            }
-          })
+              }).then(() => {
+                this.gameName = ''
+                this.avatar = 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
 
-          // Store the token into local storage
-          this.signIn(token)
+                this.$emit('updateSettings', this.gameName, this.avatar)
+              })
+            } else {
+              this.gameName = doc.data().gameName
+              this.avatar = doc.data().avatar
+
+              this.$emit('updateSettings', this.gameName, this.avatar)
+            }
+
+            // Store the token into local storage
+            this.signIn(token)
+          })
         }).catch((error) => {
           var errorCode = error.code
           var errorMessage = error.message
@@ -143,8 +162,25 @@
         }
       },
       updateSettings(gameName, avatar) {
+        this.gameName = gameName
+        this.avatar = avatar
         this.$emit('updateSettings', gameName, avatar)
       },
+    },
+    mounted() {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          var db = firebase.firestore()
+          db.collection('users').doc(user.uid).get().then((doc) => {
+            if (doc.exists) {
+              this.gameName = doc.data().gameName
+              this.avatar = doc.data().avatar
+
+              this.$emit('updateSettings', this.gameName, this.avatar)
+            }
+          })
+        }
+      })
     },
   }
 </script>
