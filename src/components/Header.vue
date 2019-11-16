@@ -15,7 +15,7 @@
           <v-btn 
             text
             @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
-          <DialogSettings />
+          <DialogSettings @updateSettings="updateSettings" />
           <v-btn
             text
             @click="signOutOfGoogle">Logout</v-btn>
@@ -141,7 +141,10 @@
         } catch (err) {
           return false
         }
-      }
+      },
+      updateSettings(gameName, avatar) {
+        this.$emit('updateSettings', gameName, avatar)
+      },
     },
   }
 </script>

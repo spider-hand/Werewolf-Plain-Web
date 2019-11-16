@@ -216,6 +216,10 @@
   import DialogAccessCode from '@/components/DialogAccessCode'
 
   export default {
+    props: [
+      'gameName',
+      'avatar',
+    ],
     components: {
       DialogRoomCreate,
       DialogAccessCode,
@@ -230,8 +234,6 @@
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
-        gameName: '',
-        avatar: '',
       }
     },
     computed: {
@@ -368,16 +370,6 @@
       if (this.isInGame == true) {
         this.getCurrentRoom()
       }
-
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) { 
-          var db = firebase.firestore()
-          db.collection('users').doc(user.uid).get().then((doc) => {
-            this.gameName = doc.data().gameName
-            this.avatar = doc.data().avatar
-          })
-        }
-      })
     },
   }
 </script>

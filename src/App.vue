@@ -2,8 +2,11 @@
   <v-app>
     <Header 
       :room="room"
-      :isJoiningThisGame="isJoining" />
+      :isJoiningThisGame="isJoining"
+      @updateSettings="updateSettings" />
     <router-view 
+      :gameName="gameName"
+      :avatar="avatar"
       @updateRoom="updateRoom"
       @isJoiningThisGame="isJoiningThisGame" />
   </v-app>
@@ -20,11 +23,17 @@
       return {
         room: null,
         isJoining: false,
+        gameName: '',
+        avatar: '',
       }
     },
     methods: {
       updateRoom(room) {
         this.room = room
+      },
+      updateSettings(gameName, avatar) {
+        this.gameName = gameName
+        this.avatar = avatar
       },
       isJoiningThisGame(isJoining) {
         this.isJoining = isJoining

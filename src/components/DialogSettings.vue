@@ -87,7 +87,7 @@
               class="pt-0">
               <v-img 
                 class="avatar"
-                :src="avatarUrl"></v-img>              
+                :src="avatar"></v-img>              
             </v-col>
           </v-row>
         </v-container>
@@ -123,7 +123,7 @@
         dialog: false,
         isEditing: false,
         gameName: '',
-        avatarUrl: '',
+        avatar: '',
         avatarErrorMessage: '',
         newGameName: '',
         newAvatarUrl: '',
@@ -141,7 +141,7 @@
           var storageRef = storage.ref('avatars/' + firebase.auth().currentUser.uid)
           storageRef.put(this.newAvatar).then((snapshot) => {
             storageRef.getDownloadURL().then((url) => {
-              this.avatarUrl = url
+              this.avatar = url
               this.newAvatarUrl = ''
               this.newAvatar = null
 
@@ -155,6 +155,7 @@
                 docRef.get().then((doc) => {
                   this.gameName = doc.data().gameName
                   this.newGameName = doc.data().gameName
+                  this.$emit('updateSettings', this.gameName, this.avatar)
                 })
               })
             })
@@ -169,6 +170,7 @@
             docRef.get().then((doc) => {
               this.gameName = doc.data().gameName
               this.newGameName = doc.data().gameName
+              this.$emit('updateSettings', this.gameName, this.avatar)
             })
           })          
         }
@@ -200,12 +202,16 @@
     },
     mounted() {
       firebase.auth().onAuthStateChanged((user) => {
-        var db = firebase.firestore()
-        db.collection('users').doc(user.uid).get().then((doc) => {
-          this.gameName = doc.data().gameName
-          this.newGameName = doc.data().gameName
-          this.avatarUrl = doc.data().avatar
-        })
+        if (user) {
+          var db = firebase.firestore()
+          db.collection('users').doc(user.uid).get().then((doc) => {
+            this.gameName = doc.data().gameName
+            this.newGameName = doc.data().gameName
+            this.avatar = doc.data().avatar
+
+            this.$emit('updateSettings', this.gameName, this.avatar)
+          })          
+        }
       })
     },
   }
