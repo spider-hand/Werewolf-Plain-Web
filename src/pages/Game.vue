@@ -15,7 +15,9 @@
             <v-list-item-title>{{ player.name }}</v-list-item-title>
           </v-list-item-content>
           <v-list-item-action v-if="isOwner() == true && isMyself(player.id) == false">
-            <DialogPlayerKickOut :uid="player.id" />
+            <DialogPlayerKickOut 
+              v-if="!hasGameStarted"
+              :uid="player.id" />
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -86,6 +88,15 @@
         valid: true,
         isJoiningThisGame: false,
       }
+    },
+    computed: {
+      hasGameStarted() {
+        if (this.room.status != 'new') {
+          return true
+        } else {
+          return false
+        }
+      },
     },
     methods: {
       ...mapActions([
