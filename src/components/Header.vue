@@ -5,10 +5,10 @@
       <div v-if="$route.name == 'game'">
         <v-btn 
           text
-          v-if="isOwner()"
+          v-if="isOwner() && !hasGameStarted"
           @click="startGame">Start</v-btn>
         <DialogRoomDetails :room="room" />
-        <DialogRoomLeave v-if="isJoiningThisGame" />
+        <DialogRoomLeave v-if="isJoiningThisGame  && !hasGameStarted" />
       </div>
       <div v-else>
         <div v-if="isSignedIn">
@@ -62,6 +62,13 @@
       ...mapGetters(['isSignedIn']),
       getUserId() {
         return firebase.auth().currentUser.uid
+      },
+      hasGameStarted() {
+        if (this.room.status != 'new') {
+          return true
+        } else {
+          return false
+        }
       },
     },
     methods: {
@@ -139,12 +146,59 @@
           })
 
           // Decide the roles randomly
+          this.decideRoles(this.room.capacity)
 
           // Deploy scheduled cloud functions
 
         } else {
           console.log('This room is not ready.')
         }
+      },
+      decideRoles(capacity) {
+        var roles
+        switch (capacity) {
+          case 5:
+            roles = ['villager', 'villager', 'villager', 'wolf', 'seer']
+            break
+          case 9:
+            roles = ['villager', 'villager', 'villager', 'villager', 
+            'wolf', 'wolf', 'seer', 'doctor', 'minion']
+            break
+          case 11:
+            roles = ['villager', 'villager', 'villager', 'villager', 
+            'villager', 'wolf', 'wolf', 'seer', 'medium', 'doctor', 'minion']
+            break
+          case 15:
+            roles = ['villager', 'villager', 'villager', 'villager', 
+            'villager', 'villager', 'villager', 'villager', 'wolf', 
+            'wolf', 'wolf', 'seer', 'medium', 'doctor', 'minion']
+            break
+        }
+
+        // Shuffle roles
+        for (var i = roles.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1))
+          var temp = roles[i]
+          roles[i] = roles[j]
+          roles[j] = temp
+        }
+
+        var db = firebase.firestore()
+        var collectionRef = db.collection('rooms').doc(this.$route.params.id).collection('players')
+
+        var k = 0
+        collectionRef.get()
+          .then((querySnapShot) => {
+            querySnapShot.forEach((doc) => {
+              var docRef = collectionRef.doc(doc.id)
+
+              docRef.update({
+                role: roles[k]
+              })
+
+              k++
+            })
+          })
       },
       isOwner() {
         try {
