@@ -14,11 +14,49 @@
           <v-list-item-content>
             <v-list-item-title>{{ player.name }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action v-if="isOwner() == true && isMyself(player.id) == false">
+          <v-list-item-action>
             <DialogPlayerKickOut 
-              v-if="!hasGameStarted"
+              v-if="!hasGameStarted && isOwner() && !isMyself(player.id)"
               :uid="player.id" />
           </v-list-item-action>
+          <v-list-item-action>
+            <v-btn
+              v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
+              icon
+              @click="">
+              <v-icon>mdi-vote</v-icon>
+            </v-btn>
+          </v-list-item-action>
+          <v-list-item-action>
+            <v-btn
+              v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
+              icon
+              @click="">
+              <v-icon>mdi-skull</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
+              icon
+              @click="">
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="hasGameStarted && isJoiningThisGame && isDoctor && !isMyself(player.id)"
+              icon
+              @click="">
+              <v-icon>mdi-shield-half-full</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item 
+          v-if="isWolf"
+          @click="">
+          <v-list-item-avatar>
+            <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>Wolf Chat</v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -94,6 +132,50 @@
         if (this.room.status != 'new') {
           return true
         } else {
+          return false
+        }
+      },
+      isWolf() {
+        try {
+          if (this.myself.role == 'wolf') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
+      },
+      isSeer() {
+        try {
+          if (this.myself.role == 'seer') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
+      },
+      isMedium() {
+        try {
+          if (this.myself.role == 'medium') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
+      },
+      isDoctor() {
+        try {
+          if (this.myself.role == 'doctor') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
           return false
         }
       },
