@@ -139,7 +139,7 @@
       startGame() {
         if (this.room.numberOfParticipants == this.room.capacity) {
           var db = firebase.firestore()
-          var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+          var docRef = db.collection('rooms').doc(this.$route.params.id)
 
           docRef.update({
             status: 'ongoing',

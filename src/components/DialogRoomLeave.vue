@@ -50,7 +50,7 @@
       leaveRoom() {
         // Remove the player's document from the collection
         var db = firebase.firestore()
-        var docRef = db.collection('rooms').doc(this.$store.state.game.roomId)
+        var docRef = db.collection('rooms').doc(this.$route.params.id)
 
         docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
             .then(() => {
