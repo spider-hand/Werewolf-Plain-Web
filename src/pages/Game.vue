@@ -125,6 +125,7 @@
         message: '',
         valid: true,
         isJoiningThisGame: false,
+        isInitialTriggerDone: false,
       }
     },
     computed: {
@@ -216,7 +217,7 @@
         var numberOfMessages = this.messages.length
 
         // Save the message
-        db.collection('rooms').doc(this.$store.state.game.roomId)
+        db.collection('rooms').doc(this.$route.params.id)
           .collection('messages').doc('message' + numberOfMessages).set({
           from: firebase.auth().currentUser.uid,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -293,12 +294,20 @@
         })
       })
 
+      // Get all current messages
+      docRef.collection('messages').orderBy('timestamp', 'asc').get().then((querySnapShot) => {
+        querySnapShot.forEach((doc) => {
+          this.messages.push(doc.data())
+        })
+      })
+
       // Set listener and retrieve the latest message every time when a message is added
       docRef.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapShot) => {
           querySnapShot.forEach((doc) => {
-            if (!doc.metadata.hasPendingWrites) {
+            if (!doc.metadata.hasPendingWrites && this.isInitialTriggerDone) {
               this.messages.push(doc.data())
             }
+            this.isInitialTriggerDone = true
           })
       })
     }
