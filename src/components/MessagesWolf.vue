@@ -1,73 +1,73 @@
 <template>
-	<div>
-	  <div 
-	    class="message-list"
-	    :style="{
-	        height: isJoiningThisGame ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
-	        width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
-	      <ul>
-	        <li v-for="message in wolfMessages">
-	          <div class="message">
-	            <v-img 
-	              class="message-avatar"
-	              :src="message.avatar"></v-img>
-	            <small class="message-from">{{ message.gameName }}</small>
-	            <div class="message-body">{{ message.body }}</div>
-	          </div>
-	        </li>
-	      </ul>
-	  </div>
-	  <v-form
-	    ref="form"
-	    v-if="isJoiningThisGame"
-	    v-model="valid"
-	    lazy-validation>
-	    <v-textarea
-	      class="message-input"
-	      :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
-	      :rules="[v => !!v || 'Required']"
-	      v-model="message"
-	      solo
-	      flat
-	      hide-details
-	      name="input-7-4">
-	    </v-textarea>
-	    <v-btn 
-	      class="send-button"
-	      depressed
-	      small
-	      @click="validate">
-	      <v-icon color="blue">mdi-send</v-icon>
-	    </v-btn>
-	  </v-form>
-	</div>	
+  <div>
+    <div 
+      class="message-list"
+      :style="{
+          height: isJoiningThisGame ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
+          width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
+        <ul>
+          <li v-for="message in wolfMessages">
+            <div class="message">
+              <v-img 
+                class="message-avatar"
+                :src="message.avatar"></v-img>
+              <small class="message-from">{{ message.gameName }}</small>
+              <div class="message-body">{{ message.body }}</div>
+            </div>
+          </li>
+        </ul>
+    </div>
+    <v-form
+      ref="form"
+      v-if="isJoiningThisGame"
+      v-model="valid"
+      lazy-validation>
+      <v-textarea
+        class="message-input"
+        :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
+        :rules="[v => !!v || 'Required']"
+        v-model="message"
+        solo
+        flat
+        hide-details
+        name="input-7-4">
+      </v-textarea>
+      <v-btn 
+        class="send-button"
+        depressed
+        small
+        @click="validate">
+        <v-icon color="blue">mdi-send</v-icon>
+      </v-btn>
+    </v-form>
+  </div>  
 </template>
 
 <script>
-	import firebase from 'firebase/app'
-	import 'firebase/auth'
-	import 'firebase/firestore'
+    import firebase from 'firebase/app'
+    import 'firebase/auth'
+    import 'firebase/firestore'
 
-	export default {
-		props: [
-			'myself',
-			'wolfMessages',
-			'isJoiningThisGame',
-		],
-		data() {
-			return {
-				message: '',
-				valid: true,
-			}
-		},
-		methods: {
+    export default {
+    props: [
+      'myself',
+      'wolfMessages',
+      'isJoiningThisGame',
+    ],
+    data() {
+      return {
+        message: '',
+        valid: true,
+      }
+    },
+    methods: {
       validate() {
         if (this.$refs.form.validate()) {
           this.sendMessageToWolf()
         }
       },
       sendMessageToWolf() {
-      	var db = firebase.firestore()
+        var db = firebase.firestore()
         var numberOfMessages = this.wolfMessages.length
 
         // Save the message
@@ -82,9 +82,9 @@
         .then(() => {
           this.message = ''
         })
-      },		
-		}
-	}
+      },    
+    }
+  }
 </script>
 
 <style scoped>
