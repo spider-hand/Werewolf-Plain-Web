@@ -5,67 +5,75 @@
       absolute
       permanent>
       <v-list>
-        <v-list-item
-          v-for="player in players"
-          @click="">
-          <v-list-item-avatar>
-            <v-img :src="player.avatar"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>{{ player.name }}</v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-action>
-            <DialogPlayerKickOut 
-              v-if="!hasGameStarted && isOwner() && !isMyself(player.id)"
-              :uid="player.id" />
-          </v-list-item-action>
-          <v-list-item-action>
-            <v-btn
-              v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
-              icon
-              @click="">
-              <v-icon>mdi-vote</v-icon>
-            </v-btn>
-          </v-list-item-action>
-          <v-list-item-action>
-            <v-btn
-              v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
-              icon
-              @click="">
-              <v-icon>mdi-skull</v-icon>
-            </v-btn>
-            <v-btn
-              v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
-              icon
-              @click="">
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-            <v-btn
-              v-if="hasGameStarted && isJoiningThisGame && isDoctor && !isMyself(player.id)"
-              icon
-              @click="">
-              <v-icon>mdi-shield-half-full</v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item 
-          v-if="isWolf"
-          @click="switchChat"
-          :input-value="isWolfChatOpened"
-          color="red">
-          <v-list-item-avatar>
-            <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>Wolf Chat</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-list-item-group v-model="player">
+          <v-list-item color="red">
+            <v-list-item-avatar>
+              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>All</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider />
+          <v-list-item v-for="player in players">
+            <v-list-item-avatar>
+              <v-img :src="player.avatar"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ player.name }}</v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action>
+              <DialogPlayerKickOut 
+                v-if="!hasGameStarted && isOwner() && !isMyself(player.id)"
+                :uid="player.id" />
+            </v-list-item-action>
+            <v-list-item-action>
+              <v-btn
+                v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
+                icon
+                @click="">
+                <v-icon>mdi-vote</v-icon>
+              </v-btn>
+            </v-list-item-action>
+            <v-list-item-action>
+              <v-btn
+                v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
+                icon
+                @click="">
+                <v-icon>mdi-skull</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
+                icon
+                @click="">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="hasGameStarted && isJoiningThisGame && isDoctor && !isMyself(player.id)"
+                icon
+                @click="">
+                <v-icon>mdi-shield-half-full</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider v-if="isWolf" />
+          <v-list-item 
+            v-if="isWolf"
+            color="red">
+            <v-list-item-avatar>
+              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>Wolf Chat</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
     <div 
       class="message-list"
       :style="{
-          height: isJoiningThisGame ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
+          height: isFormVisible ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
           width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in getMessages">
@@ -81,7 +89,7 @@
     </div>
     <v-form
       ref="form"
-      v-if="isJoiningThisGame"
+      v-if="isFormVisible"
       v-model="valid"
       lazy-validation>
       <v-textarea
@@ -121,15 +129,17 @@
       return {
         room: null,
         myself: null,
+        player: 0,
         players: [],
         messages: [],
         wolfMessages: [],
         isJoiningThisGame: false,
         isInitialTriggerDone: false,
         isInitialWolfTriggerDone: false,
-        isWolfChatOpened: false,
         message: '',
         valid: true,
+        isChatAllOpened: true,
+        isWolfChatOpened: false,
       }
     },
     computed: {
@@ -184,11 +194,26 @@
           return false
         }
       },
+      isFormVisible() {
+        if (this.isJoiningThisGame && this.isChatAllOpened || this.isWolfChatOpened) {
+          return true
+        } else {
+          return false
+        }
+      },
       getMessages() {
-        if (this.isWolfChatOpened) {
+        if (this.isChatAllOpened) {
+          return this.messages
+        } else if (this.isWolfChatOpened) {
           return this.wolfMessages
         } else {
-          return this.messages
+          var individualMessages = []
+          for (var i = 0; i < this.messages.length; i++) {
+            if (this.messages[i].from == this.players[this.player - 1].id) {
+              individualMessages.push(this.messages[i])
+            }
+          }
+          return individualMessages
         }
       },
     },
@@ -217,14 +242,6 @@
         } else {
           return false
         }
-      },
-      switchChat() {
-        if (this.isWolfChatOpened) {
-          this.isWolfChatOpened = false
-        } else {
-          this.isWolfChatOpened = true
-        }
-        this.message = ''
       },
       validate() {
         if (this.$refs.form.validate()) {
@@ -266,6 +283,21 @@
           })
         }
       },
+    },
+    watch: {
+      player: function(newVal, oldVal) {
+        const that = this
+        if (newVal == 0 || newVal === undefined) {
+          that.isChatAllOpened = true
+          that.isWolfChatOpened = false
+        } else if (newVal == that.players.length + 1) {
+          that.isWolfChatOpened = true
+          that.isChatAllOpened = false
+        } else {
+          that.isChatAllOpened = false
+          that.isWolfChatOpened = false
+        }
+      }
     },
     mounted() {
       this.$emit('isJoiningThisGame', false)
