@@ -226,6 +226,7 @@
           accessCode: this.accessCode,
           numberOfParticipants: 1,
           status: 'new',
+          isNight: false,
           ownerId: firebase.auth().currentUser.uid,
           banList: [],
         })
