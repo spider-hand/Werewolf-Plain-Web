@@ -119,7 +119,7 @@
                     <td>
                       <v-btn 
                         depressed
-                        @click="room.isPrivate != true ? enterRoom() : beforeEnterRoom()">
+                        @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom()">
                         Enter
                       </v-btn>
                     </td>
@@ -141,8 +141,10 @@
                     <th class="text-left"></th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for="room in ongoingRooms">
+                <tbody v-for="(room, index) in ongoingRooms">
+                  <tr 
+                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    @click="onClickTableRow(index, room.accessCode)">
                     <td width="3%">
                       <v-icon 
                         v-if="room.isPrivate == true"
@@ -157,6 +159,20 @@
                         text
                         :small="$viewport.width < 450">
                         Details
+                      </v-btn>
+                    </td>
+                  </tr>
+                  <tr 
+                    v-if="tabs == 1 && clickedTableRow == index"
+                    style="background-color: #FFFFFF;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <v-btn 
+                        depressed
+                        @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom()">
+                        Enter
                       </v-btn>
                     </td>
                   </tr>
@@ -177,8 +193,10 @@
                     <th class="text-left"></th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for="room in closedRooms">
+                <tbody v-for="(room, index) in closedRooms">
+                  <tr
+                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    @click="onClickTableRow(index, room.accessCode)">
                     <td width="3%">
                       <v-icon 
                         v-if="room.isPrivate == true"
@@ -193,6 +211,20 @@
                         text
                         :small="$viewport.width < 450">
                         Details
+                      </v-btn>
+                    </td>
+                  </tr>
+                  <tr 
+                    v-if="tabs == 2 && clickedTableRow == index"
+                    style="background-color: #FFFFFF;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <v-btn 
+                        depressed
+                        @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom()">
+                        Enter
                       </v-btn>
                     </td>
                   </tr>
@@ -254,14 +286,24 @@
       beforeEnterRoom() {
         this.$refs.dialogAccessCode.open()
       },
-      enterRoom() {
-        var roomId = this.newRooms[this.clickedTableRow].id
+      enterRoom(status) {
+        var roomId
+        switch (status) {
+          case 'new':
+            roomId = this.newRooms[this.clickedTableRow].id
+            break
+          case 'ongoing':
+            roomId = this.ongoingRooms[this.clickedTableRow].id
+            break
+          case 'closed':
+            roomId = this.closedRooms[this.clickedTableRow].id
+            break
+        }
 
         if (firebase.auth().currentUser) {
           var db = firebase.firestore()
           var room = db.collection('rooms').doc(roomId)
           var isBanned = false
-          var isJoiningThisGame = false
 
           room.get().then((doc) => {
             if (doc.exists) {
@@ -274,11 +316,7 @@
 
               if (isBanned == false) {
                 room.collection('players').doc(firebase.auth().currentUser.uid).get().then((doc) => {
-                  if (doc.exists) {
-                    isJoiningThisGame = true
-                  }
-
-                  if (isJoiningThisGame == false) {
+                  if (!doc.exists  && doc.data().status == 'new' && doc.data().numberOfParticipants < doc.data().capacity) {
                     room.update({
                       numberOfParticipants: firebase.firestore.FieldValue.increment(1),
                     })
