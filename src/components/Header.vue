@@ -103,8 +103,8 @@
                 seerLose: 0,
                 mediumWin: 0,
                 mediumLose: 0,
-                doctorWin: 0,
-                doctorLose: 0,
+                knightWin: 0,
+                knightLose: 0,
                 minionWin: 0,
                 minionLose: 0,
               }).then(() => {
@@ -164,16 +164,16 @@
             break
           case 9:
             roles = ['villager', 'villager', 'villager', 'villager', 
-            'wolf', 'wolf', 'seer', 'doctor', 'minion']
+            'wolf', 'wolf', 'seer', 'knight', 'minion']
             break
           case 11:
             roles = ['villager', 'villager', 'villager', 'villager', 
-            'villager', 'wolf', 'wolf', 'seer', 'medium', 'doctor', 'minion']
+            'villager', 'wolf', 'wolf', 'seer', 'medium', 'knight', 'minion']
             break
           case 15:
             roles = ['villager', 'villager', 'villager', 'villager', 
             'villager', 'villager', 'villager', 'villager', 'wolf', 
-            'wolf', 'wolf', 'seer', 'medium', 'doctor', 'minion']
+            'wolf', 'wolf', 'seer', 'medium', 'knight', 'minion']
             break
         }
 

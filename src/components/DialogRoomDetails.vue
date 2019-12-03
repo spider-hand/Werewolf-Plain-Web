@@ -37,13 +37,13 @@
                 (Villager: 3 / Wolf: 1 / Seer: 1)
               </span>
               <span v-if="room.capacity == 9">
-               (Villager: 4 / Wolf: 2 / Seer: 1 / Doctor: 1 / Minion: 1)
+               (Villager: 4 / Wolf: 2 / Seer: 1 / Knight: 1 / Minion: 1)
               </span>
               <span v-if="room.capacity == 11">
-                (Villager: 5 / Wolf: 2 / Seer: 1 / Medium: 1 / Doctor: 1 / Minion: 1)
+                (Villager: 5 / Wolf: 2 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)
               </span>
               <span v-if="room.capacity == 15">
-                (Villager: 8 / Wolf: 3 / Seer: 1 / Medium: 1 / Doctor: 1 / Minion: 1)
+                (Villager: 8 / Wolf: 3 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)
               </span>
             </v-col>
           </v-row>

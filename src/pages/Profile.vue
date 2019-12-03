@@ -100,8 +100,8 @@
                     </tr>
                     <tr>
                       <td>Doctor</td>
-                      <td>{{ user.doctorWin }}</td>
-                      <td>{{ user.doctorLose }}</td>
+                      <td>{{ user.knightWin }}</td>
+                      <td>{{ user.knightLose }}</td>
                       <td>0 %</td>
                     </tr>
                     <tr>
@@ -140,11 +140,11 @@
         return firebase.auth().currentUser.uid
       },
       getWin() {
-        var win = this.user.villagerWin + this.user.wolfWin + this.user.seerWin + this.user.mediumWin + this.user.doctorWin + this.user.minionWin
+        var win = this.user.villagerWin + this.user.wolfWin + this.user.seerWin + this.user.mediumWin + this.user.knightWin + this.user.minionWin
         return win
       },
       getLose() {
-        var lose = this.user.villagerLose + this.user.wolfLose + this.user.seerLose + this.user.mediumLose + this.user.doctorLose + this.user.minionLose
+        var lose = this.user.villagerLose + this.user.wolfLose + this.user.seerLose + this.user.mediumLose + this.user.knightLose + this.user.minionLose
         return lose
       },
       isUsernameEditable() {

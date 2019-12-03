@@ -49,7 +49,7 @@
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isDoctor && !isMyself(player.id)"
+                v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id)"
                 icon
                 @click="">
                 <v-icon>mdi-shield-half-full</v-icon>
@@ -183,9 +183,9 @@
           return false
         }
       },
-      isDoctor() {
+      isKnight() {
         try {
-          if (this.myself.role == 'doctor') {
+          if (this.myself.role == 'knight') {
             return true
           } else {
             return false
