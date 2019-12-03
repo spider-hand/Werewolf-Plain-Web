@@ -36,6 +36,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
+  import 'firebase/functions'
   import { mapGetters, mapActions } from 'vuex'
 
   import DialogRoomDetails from '@/components/DialogRoomDetails'
@@ -148,7 +149,8 @@
           // Decide the roles randomly
           this.decideRoles(this.room.capacity)
 
-          // Deploy scheduled cloud functions
+          // Add a scheduled task to trigger cloud functions
+          this.callCloudFunction()
 
         } else {
           console.log('This room is not ready.')
@@ -199,6 +201,14 @@
               k++
             })
           })
+      },
+      callCloudFunction() {
+        var functions = firebase.functions()
+        var addTasks = functions.httpsCallable('addTasks')
+        addTasks({
+          roomId: this.$route.params.id,
+          dayLength: this.room.dayLength,
+        })
       },
       isOwner() {
         try {
