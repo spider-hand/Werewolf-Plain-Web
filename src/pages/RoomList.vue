@@ -305,18 +305,18 @@
           var room = db.collection('rooms').doc(roomId)
           var isBanned = false
 
-          room.get().then((doc) => {
-            if (doc.exists) {
-              for (var i = 0; i < doc.data().banList.length; i++) {
-                if (doc.data().banList[i] == firebase.auth().currentUser.uid) {
+          room.get().then((roomDoc) => {
+            if (roomDoc.exists) {
+              for (var i = 0; i < roomDoc.data().banList.length; i++) {
+                if (roomDoc.data().banList[i] == firebase.auth().currentUser.uid) {
                   isBanned = true
                   break
                 }
               }
 
-              if (isBanned == false) {
-                room.collection('players').doc(firebase.auth().currentUser.uid).get().then((doc) => {
-                  if (!doc.exists  && doc.data().status == 'new' && doc.data().numberOfParticipants < doc.data().capacity) {
+              if (!isBanned) {
+                room.collection('players').doc(firebase.auth().currentUser.uid).get().then((playerDoc) => {
+                  if (!playerDoc.exists  && roomDoc.data().status == 'new' && roomDoc.data().numberOfParticipants < roomDoc.data().capacity) {
                     room.update({
                       numberOfParticipants: firebase.firestore.FieldValue.increment(1),
                     })
