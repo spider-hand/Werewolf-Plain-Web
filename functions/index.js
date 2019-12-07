@@ -22,10 +22,10 @@ exports.addTasks = functions.https.onCall((data, context) => {
     httpRequest: {
       httpMethod: 'POST',
       url: url,
-      scheduleTime: {
-        seconds: dayLength * 60 + Date.now() / 1000,
-      }, 
-    }
+    },
+    scheduleTime: {
+      seconds: dayLength * 60 + Date.now() / 1000,
+    }, 
   }
 
   const request = {
