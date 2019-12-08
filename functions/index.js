@@ -33,7 +33,9 @@ exports.addTasks = functions.https.onCall((data, context) => {
     task: task,
   }
 
-  client.createTask(request)
+  return client.createTask(request).then((response) => {
+    return response
+  })
 })
 
 exports.atNight = functions.https.onRequest((req, res) => {
@@ -41,7 +43,9 @@ exports.atNight = functions.https.onRequest((req, res) => {
   var roomId = req.query.roomId
   var docRef = db.collection('rooms').doc(roomId)
 
-  docRef.update({
+  return docRef.update({
     isNight: true,
+  }).then(() => {
+    return { isNight: true }
   })
 })
