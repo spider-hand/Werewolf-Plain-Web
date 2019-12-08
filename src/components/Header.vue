@@ -204,10 +204,18 @@
       },
       callCloudFunction() {
         var functions = firebase.functions()
-        var addTasks = functions.httpsCallable('addTasks')
-        addTasks({
+        var addNightTask = functions.httpsCallable('addNightTask')
+        var addDaytimeTask = functions.httpsCallable('addDaytimeTask')
+        
+        addNightTask({
           roomId: this.$route.params.id,
           dayLength: this.room.dayLength,
+        }).then((result) => {
+          addDaytimeTask({
+            roomId: this.$route.params.id,
+            dayLength: this.room.dayLength,
+            nightLength: this.room.nightLength,
+          })
         })
       },
       isOwner() {

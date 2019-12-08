@@ -5,7 +5,7 @@ admin.initializeApp()
 
 const tasks = require('@google-cloud/tasks')
 
-exports.addTasks = functions.https.onCall((data, context) => {
+exports.addNightTask = functions.https.onCall((data, context) => {
   const client = new tasks.CloudTasksClient()
 
   const projectId = functions.config().werewolf.id
@@ -38,14 +38,60 @@ exports.addTasks = functions.https.onCall((data, context) => {
   })
 })
 
+exports.addDaytimeTask = functions.https.onCall((data, context) => {
+  const client = new tasks.CloudTasksClient()
+
+  const projectId = functions.config().werewolf.id
+  const queue = 'daytime'
+  const location = functions.config().werewolf.location
+
+  const parent = client.queuePath(projectId, location, queue)
+
+  const roomId = data.roomId
+  const dayLength = data.dayLength
+  const nightLength = data.nightLength
+  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId
+  
+  const task = {
+    httpRequest: {
+      httpMethod: 'POST',
+      url: url,
+    },
+    scheduleTime: {
+      seconds: (dayLength + nightLength) * 60 + Date.now() / 1000,
+    }, 
+  }
+
+  const request = {
+    parent: parent,
+    task: task,
+  }
+
+  return client.createTask(request).then((response) => {
+    return response
+  })
+})
+
 exports.atNight = functions.https.onRequest((req, res) => {
   var db = admin.firestore()
   var roomId = req.query.roomId
   var docRef = db.collection('rooms').doc(roomId)
 
-  return docRef.update({
+  docRef.update({
     isNight: true,
   }).then(() => {
-    return { isNight: true }
+    res.send("It's night.")
+  })
+})
+
+exports.inDaytime = functions.https.onRequest((req, res) => {
+  var db = admin.firestore()
+  var roomId = req.query.roomId
+  var docRef = db.collection('rooms').doc(roomId)
+
+  docRef.update({
+    isNight: false,
+  }).then(() => {
+    res.send("It's daytime.")
   })
 })
