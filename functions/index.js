@@ -89,6 +89,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var roomId = req.query.roomId
   var docRef = db.collection('rooms').doc(roomId)
 
+  // TODO: Check the day's result
+  // Kill the selected player if the player isn't protected
+  // Execute the selected player
+  // End the game if the number of wolves are greater than the number of villagers or there's no wolves
+  // Add tasks for the next day if the game still continues
+
   docRef.update({
     isNight: false,
   }).then(() => {

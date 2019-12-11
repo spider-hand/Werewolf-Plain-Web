@@ -31,7 +31,7 @@
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
                 icon
-                @click="">
+                @click="vote(player.id)">
                 <v-icon>mdi-vote</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -39,19 +39,19 @@
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
                 icon
-                @click="">
+                @click="bite(player.id)">
                 <v-icon>mdi-skull</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
                 icon
-                @click="">
+                @click="checkRole(player.id)">
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id)"
                 icon
-                @click="">
+                @click="protect(player.id)">
                 <v-icon>mdi-shield-half-full</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -196,6 +196,7 @@
       },
       isFormVisible() {
         if (this.isJoiningThisGame && this.isChatAllOpened || this.isWolfChatOpened) {
+          // TODO: Only wolves can chat during the night
           return true
         } else {
           return false
@@ -282,6 +283,26 @@
             this.message = ''
           })
         }
+      },
+      vote(uid) {
+        console.log(`You will vote ${uid}`)
+
+        // TODO: Save the result in firestore
+      },
+      bite(uid) {
+        console.log(`You will bite ${uid}`)
+
+        // TODO: Save the result in firestore
+      },
+      checkRole(uid) {
+        console.log(`You will check ${uid}'s role`)
+
+        // TODO: Save the selected player in firestore
+      },
+      protect(uid) {
+        console.log(`You will protect ${uid}`)
+
+        // TODO: Save the selected player in firestore
       },
     },
     watch: {
