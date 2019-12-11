@@ -8,9 +8,12 @@
       <v-btn 
         :disabled="!isSignedIn"
         depressed
-        v-on="on">Host Game</v-btn>
+        color="#2F3136"
+        v-on="on">
+        <span>Host Game</span>
+      </v-btn>
     </template>
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <span>Host Game</span>
       </v-card-title>
@@ -24,16 +27,25 @@
               v-model="name"
               :rules="[v => !!v || 'Required']"
               label="Village Name"
-              outlined></v-text-field>
+              outlined
+              color="#8E9297"
+              background-color="#2F3136"
+              dark></v-text-field>
             <v-textarea
               v-model="description"
               name="input-7-4"
               label="Description (Opitonal)"
-              outlined></v-textarea>
+              outlined
+              color="#8E9297"
+              background-color="#2F3136"
+              dark></v-textarea>
             <v-select 
               v-model="capacity"
               label="Capacity"
               outlined
+              color="#8E9297"
+              background-color="#2F3136"
+              dark
               :items="capacityItems"></v-select>
             <v-row>
               <v-col cols="6">
@@ -41,6 +53,9 @@
                   v-model="dayLength"
                   label="Day (minutes)"
                   outlined
+                  color="#8E9297"
+                  background-color="#2F3136"
+                  dark
                   :items="dayLengthItems"></v-select>
               </v-col>
               <v-col cols="6">
@@ -48,14 +63,19 @@
                   v-model="nightLength"
                   label="Night (minutes)"
                   outlined
+                  color="#8E9297"
+                  background-color="#2F3136"
+                  dark
                   :items="nightLengthItems"></v-select>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="3">
                 <v-checkbox
-                  v-model="isPrivate" 
-                  label="Private"></v-checkbox>
+                  v-model="isPrivate"
+                  label="Private"
+                  color="#8E9297"
+                  dark></v-checkbox>
               </v-col>
               <v-col cols="9">
                 <v-text-field 
@@ -65,6 +85,9 @@
                   v-model="accessCode"
                   outlined
                   label="Access Code"
+                  color="#8E9297"
+                  background-color="#2F3136"
+                  dark
                   prepend-icon="mdi-lock"></v-text-field>
               </v-col>
             </v-row>
@@ -75,10 +98,16 @@
         <div class="flex-grow-1"></div>
         <v-btn 
           depressed
-          @click="validate">OK</v-btn>
+          color="#2F3136"
+          @click="validate">
+          <span>OK</span>
+        </v-btn>
         <v-btn 
           depressed
-          @click="cancel">CANCEL</v-btn>
+          color="#2F3136"
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -255,5 +284,7 @@
 </script>
 
 <style scoped>
-  
+  span {
+    color: #FFFFFF;
+  }
 </style>

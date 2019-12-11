@@ -3,7 +3,8 @@
     <v-navigation-drawer
       width="320"
       absolute
-      permanent>
+      permanent
+      color="#2F3136">
       <v-list>
         <v-list-item-group v-model="player">
           <v-list-item color="red">
@@ -11,7 +12,9 @@
               <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>All</v-list-item-title>
+              <v-list-item-title>
+                <span>All</span>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-divider />
@@ -20,7 +23,9 @@
               <v-img :src="player.avatar"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>{{ player.name }}</v-list-item-title>
+              <v-list-item-title>
+                <span>{{ player.name }}</span>
+              </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <DialogPlayerKickOut 
@@ -32,7 +37,7 @@
                 v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
                 icon
                 @click="vote(player.id)">
-                <v-icon>mdi-vote</v-icon>
+                <v-icon color="#757575">mdi-vote</v-icon>
               </v-btn>
             </v-list-item-action>
             <v-list-item-action>
@@ -40,19 +45,19 @@
                 v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
                 icon
                 @click="bite(player.id)">
-                <v-icon>mdi-skull</v-icon>
+                <v-icon color="#757575">mdi-skull</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
                 icon
                 @click="checkRole(player.id)">
-                <v-icon>mdi-eye</v-icon>
+                <v-icon color="#757575">mdi-eye</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id)"
                 icon
                 @click="protect(player.id)">
-                <v-icon>mdi-shield-half-full</v-icon>
+                <v-icon color="#757575">mdi-shield-half-full</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -64,7 +69,9 @@
               <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>Wolf Chat</v-list-item-title>
+              <v-list-item-title>
+                <span>Wolf Chat</span>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -73,7 +80,7 @@
     <div 
       class="message-list"
       :style="{
-          height: isFormVisible ? $viewport.height - 199 + 'px' : $viewport.height - 64 + 'px',
+          height: isFormVisible ? $viewport.height - 207 + 'px' : $viewport.height - 64 + 'px',
           width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }">
         <ul>
           <li v-for="message in getMessages">
@@ -84,6 +91,7 @@
               <small class="message-from">{{ message.gameName }}</small>
               <div class="message-body">{{ message.body }}</div>
             </div>
+            <v-divider class="message-divider" />
           </li>
         </ul>
     </div>
@@ -97,17 +105,20 @@
         :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
         :rules="[v => !!v || 'Required']"
         v-model="message"
+        background-color="#40444B"
         solo
         flat
+        dark
         hide-details
         name="input-7-4">
       </v-textarea>
       <v-btn 
         class="send-button"
         depressed
+        color="#2F3136"
         small
         @click="validate">
-        <v-icon color="blue">mdi-send</v-icon>
+        <v-icon color="#FFFFFF">mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>
@@ -428,12 +439,17 @@
   }
 
   li {
-    margin-bottom: 45px;
+    margin: 5px 0 15px 0;
+  }
+
+  span {
+    color: #FFFFFF;
   }
 
   #game-page {
     position: relative;
     height: 100%;
+    background-color: #36393F;
   }
 
   .message-list {
@@ -441,11 +457,13 @@
     right: 0px;
     padding-top: 20px;
     overflow-y: scroll;
+    background-color: #36393F;
   }
 
   .message {
-    padding: 0 12px;
+    padding: 0 3px;
     white-space: pre-wrap;
+    color: #FFFFFF;
   }
 
   .message-avatar {
@@ -468,8 +486,10 @@
     padding: 4px 15px;
     font-size: 16px;
     word-break: break-all;
-    background-color: #FFFFFF;
-    border-radius: 5px;
+  }
+
+  .message-divider {
+    margin: 10px 30px 0 0;
   }
 
   .message-input {

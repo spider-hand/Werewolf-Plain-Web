@@ -7,28 +7,37 @@
     <template v-slot:activator="{ on }">
       <v-btn 
         text
+        color="#FFFFFF"
         v-on="on">Details</v-btn>
     </template>
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <v-icon v-if="room.isPrivate == true">mdi-lock</v-icon>
         <span>{{ room.name }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <div class="room-description">{{ room.description }}</div>
+          <div class="room-description">
+            <span>{{ room.description }}</span>
+          </div>
           <v-divider></v-divider>
           <v-row>
             <v-col cols="3">
-              <strong>Day: {{ room.dayLength }} minutes</strong>
+              <span>
+                <strong>Day: {{ room.dayLength }} minutes</strong>
+              </span>
             </v-col>
             <v-col cols="3">
-              <strong>Night: {{ room.nightLength }} minutes</strong>
+              <span>
+                <strong>Night: {{ room.nightLength }} minutes</strong>
+              </span>
             </v-col>
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
-              <strong>Capacity: {{ room.capacity }}</strong>
+              <span>
+                <strong>Capacity: {{ room.capacity }}</strong>
+              </span>
             </v-col>
           </v-row>
           <v-row>
@@ -53,7 +62,10 @@
         <div class="flex-grow-1"></div>
         <v-btn
           depressed
-          @click="close">CLOSE</v-btn>
+          color="#2F3136"
+          @click="close">
+          <span>CLOSE</span>
+        </v-btn>
       </v-card-actions>
     </v-card> 
   </v-dialog>
@@ -81,6 +93,10 @@
 </script>
 
 <style scoped>
+  span {
+    color: #FFFFFF;
+  }
+
   .room-description {
     white-space: pre-wrap;
   }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar>
+    <v-app-bar color="#2C2F33">
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
         <v-btn 
@@ -14,6 +14,7 @@
         <div v-if="isSignedIn">
           <v-btn 
             text
+            color="#FFFFFF"
             @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
           <DialogSettings 
             :gameName="gameName"
@@ -21,11 +22,13 @@
             @updateSettings="updateSettings" />
           <v-btn
             text
+            color="#FFFFFF"
             @click="signOutOfGoogle">Logout</v-btn>
         </div>
         <v-btn 
-          text
           v-else
+          text
+          color="#FFFFFF"
           @click="signInWithGoogle">Login</v-btn>
       </div>
     </v-app-bar>

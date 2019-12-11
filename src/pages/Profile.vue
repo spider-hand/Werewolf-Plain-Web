@@ -1,10 +1,11 @@
 <template>
-  <div>
+  <div id="profile-page">
     <v-container v-if="user != null">
       <v-card
         class="mx-auto"
         flat 
-        max-width="800">
+        max-width="800"
+        color="#36393F">
         <v-container>
           <v-card-title>
             <v-text-field
@@ -14,14 +15,17 @@
               :error-messages="isUsernameEditable == false ? 'You can change username once 30 days' : ''"
               label="Username"
               :value="newUsername"
-              outlined></v-text-field>
+              outlined
+              color="#8E9297"
+              background-color="#2F3136"
+              dark></v-text-field>
             <span v-else>{{ user.username }}</span>
             <div class="flex-grow-1"></div>
             <v-btn 
               icon
               v-if="getMyUserId == $route.params.uid && isEditing == false"
               @click="editProfile">
-              <v-icon>mdi-account-edit</v-icon>
+              <v-icon color="#8E9297">mdi-account-edit</v-icon>
             </v-btn>
           </v-card-title>
           <v-card-text>
@@ -31,10 +35,15 @@
                 v-model="newBio"
                 label="Bio"
                 :value="newBio"
-                outlined></v-textarea>
+                outlined
+                color="#8E9297"
+                background-color="#2F3136"
+                dark></v-textarea>
               <div 
                 class="user-bio"
-                v-else>{{ user.bio }}</div>
+                v-else>
+                <span>{{ user.bio }}</span>
+              </div>
             </v-container>
             <v-container
               class="pt-0" 
@@ -43,68 +52,88 @@
                 <div class="flex-grow-1"></div>
                 <v-btn 
                   text
-                  @click="updateProfile">SAVE</v-btn>
+                  color="#2F3136"
+                  @click="updateProfile">
+                  <span>SAVE</span>
+                </v-btn>
                 <v-btn 
                   text
-                  @click="cancel">CANCEL</v-btn>
+                  color="#2F3136"
+                  @click="cancel">
+                  <span>CANCEL</span>
+                </v-btn>
               </v-row>
             </v-container>
             <v-divider></v-divider>
             <v-container>
               <v-row>
                 <v-col cols="4">
-                  <strong>Win: {{ getWin }}</strong>
+                  <span>
+                    <strong>Win: {{ getWin }}</strong>
+                  </span>
                 </v-col>
                 <v-col cols="4">
-                  <strong>Lose: {{ getLose }}</strong>
+                  <span>
+                    <strong>Lose: {{ getLose }}</strong>
+                  </span>
                 </v-col>
                 <v-col cols="4">
-                  <strong>Win Rate: {{ getWinRate(getWin, getLose) }} %</strong>
+                  <span>
+                    <strong>Win Rate: {{ getWinRate(getWin, getLose) }} %</strong>
+                  </span>
                 </v-col>
               </v-row>
               <v-divider></v-divider>
-              <v-simple-table>
+              <v-simple-table dark>
                 <template v-slot:default>
                   <thead>
                     <tr>
-                      <th class="text-left">Role</th>
-                      <th class="text-left">Win</th>
-                      <th class="text-left">Lose</th>
-                      <th class="text-left">Win Rate</th>
+                      <th class="text-left">
+                        <span>Role</span>
+                      </th>
+                      <th class="text-left">
+                        <span>Win</span>
+                      </th>
+                      <th class="text-left">
+                        <span>Lose</span>
+                      </th>
+                      <th class="text-left">
+                        <span>Win Rate</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Villager</td>
                       <td>{{ user.villagerWin }}</td>
                       <td>{{ user.villagerLose }}</td>
                       <td>0 %</td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Wolf</td>
                       <td>{{ user.wolfWin }}</td>
                       <td>{{ user.wolfLose }}</td>
                       <td>0 %</td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Seer</td>
                       <td>{{ user.seerWin }}</td>
                       <td>{{ user.seerLose }}</td>
                       <td>0 %</td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Medium</td>
                       <td>{{ user.mediumWin }}</td>
                       <td>{{ user.mediumLose }}</td>
                       <td>0 %</td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Doctor</td>
                       <td>{{ user.knightWin }}</td>
                       <td>{{ user.knightLose }}</td>
                       <td>0 %</td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #2F3136;">
                       <td>Minion</td>
                       <td>{{ user.minionWin }}</td>
                       <td>{{ user.minionLose }}</td>
@@ -210,6 +239,32 @@
 </script>
 
 <style scoped>
+  tr {
+    background-color: #2F3136;
+  }
+
+  th span {
+    color: #8E9297;
+  }
+
+  td span {
+    color: #FFFFFF;
+  }
+
+  span {
+    color: #FFFFFF;
+  }
+
+  strong {
+    color: #FFFFFF;
+  }
+
+  #profile-page {
+    position: relative;
+    height: 100%;
+    background-color: #36393F;
+  }
+
   .user-bio {
     white-space: pre-wrap;
   }

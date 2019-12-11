@@ -7,9 +7,10 @@
     <template v-slot:activator="{ on }">
       <v-btn
         text
+        color="#FFFFFF"
         v-on="on">Settings</v-btn>
     </template>
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <span>Settings</span>
         <div class="flex-grow-1"></div>
@@ -17,7 +18,7 @@
           icon
           v-if="isEditing == false"
           @click="editSettings">
-            <v-icon>mdi-account-edit</v-icon>
+            <v-icon color="#8E9297">mdi-account-edit</v-icon>
           </v-btn>
       </v-card-title>
       <v-card-text>
@@ -27,13 +28,19 @@
               v-model="newGameName"
               label="Game Name"
               :value="newGameName"
-              outlined></v-text-field>
+              outlined
+              color="#8E9297"
+              background-color="#2F3136"
+              dark></v-text-field>
           </v-row>
           <v-row>
             <v-col cols="8">
               <v-btn 
                 depressed
-                @click="onClickAvatarInput">UPLOAD AVATAR</v-btn>
+                color="#2F3136"
+                @click="onClickAvatarInput">
+                <span>UPLOAD AVATAR</span>
+              </v-btn>
               <input 
                 type="file"
                 accept="image/*"
@@ -68,19 +75,25 @@
             <v-col 
               class="pt-0 pb-0" 
               cols="12">
-              <small>Game Name</small>
+              <span>
+                <small>Game Name</small>
+              </span>
             </v-col>
             <v-col 
               class="pt-0" 
               cols="12">
-              <h2>{{ gameName }}</h2>
+              <span>
+                <h2>{{ gameName }}</h2>
+              </span>
             </v-col>
           </v-row>
           <v-row>
             <v-col 
               cols="12"
               class="pb-0">
-              <small>Avatar</small>
+              <span>
+                <small>Avatar</small>
+              </span>
             </v-col>
             <v-col 
               cols="12"
@@ -97,15 +110,23 @@
         <v-btn
           text
           v-if="isEditing == true"
-          @click="updateSettings">SAVE</v-btn>
+          color="#2F3136"
+          @click="updateSettings">
+          <span>SAVE</span>
+        </v-btn>
         <v-btn
           text
           v-if="isEditing == true"
-          @click="cancel">CANCEL</v-btn>
+          color="#2F3136"
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
         <v-btn
           text
           v-else
-          @click="close">CLOSE</v-btn>
+          @click="close">
+          <span>CLOSE</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -203,6 +224,14 @@
 </script>
 
 <style scoped>
+  span {
+    color: #FFFFFF;
+  }
+
+  small {
+    color: #8E9297;
+  }
+
   .avatar {
     width: 100px;
     height: 100px;

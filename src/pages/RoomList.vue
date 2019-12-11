@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="room-list-page">
     <v-container>
       <v-container fill-height>
         <v-layout>
@@ -13,8 +13,9 @@
           <div class="flex-grow-1"></div>
           <v-btn 
             depressed
+            color="#2F3136"
             @click="updateRoomList">
-            <v-icon>mdi-refresh</v-icon>
+            <v-icon color="#FFFFFF">mdi-refresh</v-icon>
           </v-btn>
         </v-layout>
       </v-container>
@@ -25,14 +26,18 @@
             <thead>
               <tr>
                 <th class="text-left"></th>
-                <th class="text-left">Name</th>
-                <th class="text-left">Participants</th>
+                <th class="text-left">
+                  <span>Name</span>
+                </th>
+                <th class="text-left">
+                  <span>Participants</span>
+                </th>
                 <th class="text-left"></th>
               </tr>
             </thead>
             <tbody>
               <tr 
-                :style="{ backgroundColor: isCurrentRoomClicked == true ? '#BBDEFB' : '#FFFFFF' }"
+                :style="{ backgroundColor: isCurrentRoomClicked == true ? '#393C43' : '#2F3136' }"
                 @click="onClickCurrentRoom">
                 <td width="3%">
                   <v-icon 
@@ -41,27 +46,31 @@
                     >mdi-lock
                   </v-icon>
                 </td>
-                <td width="60%">{{ currentRoom.name }}</td>
-                <td>{{ currentRoom.numberOfParticipants }} / {{ currentRoom.capacity }}</td>
+                <td width="60%">
+                  <span>{{ currentRoom.name }}</span>
+                </td>
+                <td>
+                  <span>{{ currentRoom.numberOfParticipants }} / {{ currentRoom.capacity }}</span>
+                </td>
                 <td>
                   <v-btn 
                     text
                     :small="$viewport.width < 450">
-                    Details
+                    <span>Details</span>
                   </v-btn>
                 </td>
               </tr>
               <tr 
                 v-if="isCurrentRoomClicked"
-                style="background-color: #FFFFFF;">
+                style="background-color: #2F3136;">
                 <td></td>
                 <td></td>
                 <td></td>
                 <td>
                   <v-btn 
-                    depressed
+                    text
                     @click="reenterRoom">
-                    Enter
+                    <span>Enter</span>
                   </v-btn>
                 </td>
               </tr>
@@ -71,7 +80,11 @@
       </v-container>
 
       <v-container>
-        <v-tabs v-model="tabs">
+        <v-tabs
+          dark
+          background-color="#2F3136"
+          color="#F44336"
+          v-model="tabs">
           <v-tab>New</v-tab>
           <v-tab>Ongoing</v-tab>
           <v-tab>Closed</v-tab>
@@ -84,14 +97,18 @@
                 <thead>
                   <tr>
                     <th class="text-left"></th>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Participants</th>
+                    <th class="text-left">
+                      <span>Name</span>
+                    </th>
+                    <th class="text-left">
+                      <span>Participants</span>
+                    </th>
                     <th class="text-left"></th>
                   </tr>
                 </thead>
                 <tbody v-for="(room, index) in newRooms">
                   <tr
-                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
                     @click="onClickTableRow(index, room.accessCode)">
                     <td width="3%">
                       <v-icon 
@@ -100,27 +117,31 @@
                         >mdi-lock
                       </v-icon>
                     </td>
-                    <td width="60%">{{ room.name }}</td>
-                    <td>{{ room.numberOfParticipants }} / {{ room.capacity }}</td>
+                    <td width="60%">
+                      <span>{{ room.name }}</span>
+                    </td>
+                    <td>
+                      <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
+                    </td>
                     <td>
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        Details
+                        <span>Details</span>
                       </v-btn>
                     </td>
                   </tr>
                   <tr 
                     v-if="tabs == 0 && clickedTableRow == index"
-                    style="background-color: #FFFFFF;">
+                    style="background-color: #2F3136;">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td>
                       <v-btn 
-                        depressed
+                        text
                         @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom()">
-                        Enter
+                        <span>Enter</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -136,14 +157,18 @@
                 <thead>
                   <tr>
                     <th class="text-left"></th>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Participants</th>
+                    <th class="text-left">
+                      <span>Name</span>
+                    </th>
+                    <th class="text-left">
+                      <span>Participants</span>
+                    </th>
                     <th class="text-left"></th>
                   </tr>
                 </thead>
                 <tbody v-for="(room, index) in ongoingRooms">
                   <tr 
-                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
                     @click="onClickTableRow(index, room.accessCode)">
                     <td width="3%">
                       <v-icon 
@@ -152,27 +177,31 @@
                         >mdi-lock
                       </v-icon>
                     </td>
-                    <td width="60%">{{ room.name }}</td>
-                    <td>{{ room.numberOfParticipants }}</td>
+                    <td width="60%">
+                      <span>{{ room.name }}</span>
+                    </td>
+                    <td>
+                      <span>{{ room.numberOfParticipants }}</span>
+                    </td>
                     <td>
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        Details
+                        <span>Details</span>
                       </v-btn>
                     </td>
                   </tr>
                   <tr 
                     v-if="tabs == 1 && clickedTableRow == index"
-                    style="background-color: #FFFFFF;">
+                    style="background-color: #2F3136;">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td>
                       <v-btn 
-                        depressed
+                        text
                         @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom()">
-                        Enter
+                        <span>Enter</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -188,14 +217,18 @@
                 <thead>
                   <tr>
                     <th class="text-left"></th>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Participants</th>
+                    <th class="text-left">
+                      <span>Name</span>
+                    </th>
+                    <th class="text-left">
+                      <span>Participants</span>
+                    </th>
                     <th class="text-left"></th>
                   </tr>
                 </thead>
                 <tbody v-for="(room, index) in closedRooms">
                   <tr
-                    :style="{ backgroundColor: clickedTableRow == index ? '#BBDEFB' : '#FFFFFF' }" 
+                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
                     @click="onClickTableRow(index, room.accessCode)">
                     <td width="3%">
                       <v-icon 
@@ -210,21 +243,21 @@
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        Details
+                        <span>Details</span>
                       </v-btn>
                     </td>
                   </tr>
                   <tr 
                     v-if="tabs == 2 && clickedTableRow == index"
-                    style="background-color: #FFFFFF;">
+                    style="background-color: #2F3136;">
                     <td></td>
                     <td></td>
                     <td></td>
                     <td>
                       <v-btn 
-                        depressed
+                        text
                         @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom()">
-                        Enter
+                        <span>Enter</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -413,6 +446,24 @@
 </script>
 
 <style scoped>
+  tr {
+    background-color: #2F3136;
+  }
+
+  th span {
+    color: #8E9297;
+  }
+
+  td span {
+    color: #FFFFFF;
+  }
+
+  #room-list-page {
+    position: relative;
+    height: 100%;
+    background-color: #36393F;
+  }
+
   @media (max-width: 450px) {
     td {
       font-size: 12px;

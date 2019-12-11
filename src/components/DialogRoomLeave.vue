@@ -7,6 +7,7 @@
     <template v-slot:activator="{ on }">
       <v-btn 
         text
+        color="#FFFFFF"
         v-on="on">Leave</v-btn>
     </template>
     <v-card>
