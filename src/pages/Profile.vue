@@ -247,15 +247,7 @@
     color: #8E9297;
   }
 
-  td span {
-    color: #FFFFFF;
-  }
-
-  span {
-    color: #FFFFFF;
-  }
-
-  strong {
+  span, strong {
     color: #FFFFFF;
   }
 
