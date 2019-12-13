@@ -80,7 +80,15 @@ exports.atNight = functions.https.onRequest((req, res) => {
   docRef.update({
     isNight: true,
   }).then(() => {
-    res.send("It's night.")
+    docRef.collection('messages').add({
+      from: 'host',
+      timestamp: admin.firestore.Timestamp.now(),
+      body: "It's night.",
+      gameName: '',
+      avatar: '',
+    }).then((messageRef) => {
+      res.send("It's night.")
+    })
   })
 })
 
@@ -98,6 +106,14 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   docRef.update({
     isNight: false,
   }).then(() => {
-    res.send("It's daytime.")
+    docRef.collection('messages').add({
+      from: 'host',
+      timestamp: admin.firestore.Timestamp.now(),
+      body: "It's daytime.",
+      gameName: '',
+      avatar: '',
+    }).then((messageRef) => {
+      res.send("It's daytime.")
+    })
   })
 })

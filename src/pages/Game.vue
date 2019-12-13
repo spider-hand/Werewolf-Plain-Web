@@ -205,8 +205,7 @@
         }
       },
       isFormVisible() {
-        if (this.isJoiningThisGame && this.isChatAllOpened || this.isWolfChatOpened) {
-          // TODO: Only wolves can chat during the night
+        if (this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWolfChatOpened) {
           return true
         } else {
           return false
@@ -260,33 +259,29 @@
         var db = firebase.firestore()
 
         if (this.isWolfChatOpened) {
-          var numberOfMessages = this.wolfMessages.length
-
           // Save the message
           db.collection('rooms').doc(this.$route.params.id)
-            .collection('wolfMessages').doc('message' + numberOfMessages).set({
+            .collection('wolfMessages').add({
             from: firebase.auth().currentUser.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: this.message,
             gameName: this.myself.name,
             avatar: this.myself.avatar,
           })
-          .then(() => {
+          .then((docRef) => {
             this.message = ''
           })          
         } else {
-          var numberOfMessages = this.messages.length
-
           // Save the message
           db.collection('rooms').doc(this.$route.params.id)
-            .collection('messages').doc('message' + numberOfMessages).set({
+            .collection('messages').add({
             from: firebase.auth().currentUser.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: this.message,
             gameName: this.myself.name,
             avatar: this.myself.avatar,
           })
-          .then(() => {
+          .then((docRef) => {
             this.message = ''
           })
         }
