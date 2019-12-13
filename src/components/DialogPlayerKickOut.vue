@@ -8,10 +8,10 @@
       <v-btn 
         icon
         v-on="on">
-        <v-icon>mdi-cancel</v-icon>
+        <v-icon color="#757575">mdi-cancel</v-icon>
       </v-btn>
     </template>
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <span>Kick this player out</span>
       </v-card-title>
@@ -24,10 +24,16 @@
         <div class="flex-grow-1"></div>
         <v-btn
           depressed
-          @click="kickOut">OK</v-btn>
+          color="#2F3136"
+          @click="kickOut">
+          <span>OK</span>
+        </v-btn>
         <v-btn
           depressed
-          @click="cancel">CANCEL</v-btn>
+          color="#2F3136"
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
       </v-card-actions>
     </v-card> 
   </v-dialog>
@@ -68,5 +74,7 @@
 </script>
 
 <style scoped>
-  
+  span {
+    color: #FFFFFF;
+  }
 </style>
