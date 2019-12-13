@@ -4,7 +4,7 @@
     :fullscreen="$viewport.width < 450"
     v-model="dialog"
     max-width="600">
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <span>Input Access Code</span>
       </v-card-title>
@@ -14,6 +14,9 @@
             :error-messages="errorMessage"
             v-model="accessCode"
             outlined
+            color="#8E9297"
+            background-color="#2F3136"
+            dark
             prepend-icon="mdi-lock" />
         </v-container>
       </v-card-text>
@@ -21,10 +24,16 @@
         <div class="flex-grow-1"></div>
         <v-btn
           depressed
-          @click="validate">OK</v-btn>
+          color="#2F3136"
+          @click="validate">
+          <span>OK</span>
+        </v-btn>
         <v-btn
           depressed
-          @click="close">CLOSE</v-btn>
+          color="#2F3136"
+          @click="close">
+          <span>CLOSE</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -64,5 +73,7 @@
 </script>
 
 <style scoped>
-  
+  span {
+    color: #FFFFFF;
+  }
 </style>
