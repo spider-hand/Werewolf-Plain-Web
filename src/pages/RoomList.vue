@@ -344,6 +344,11 @@
           })        
       },
     },
+    watch: {
+      tabs: function(newVal, oldVal) {
+        this.clickedTableRow = null
+      }
+    },
     mounted() {
       this.updateRoomList()
     },
