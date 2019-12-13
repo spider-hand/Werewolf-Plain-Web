@@ -4,8 +4,9 @@
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
         <v-btn 
-          text
           v-if="isOwner() && !hasGameStarted"
+          text
+          color="#FFFFFF"
           @click="startGame">Start</v-btn>
         <DialogRoomDetails :room="room" />
         <DialogRoomLeave v-if="isJoiningThisGame  && !hasGameStarted" />

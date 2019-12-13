@@ -128,7 +128,6 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
-  import { mapActions } from 'vuex'
 
   import DialogPlayerKickOut from '@/components/DialogPlayerKickOut'
 
@@ -230,9 +229,6 @@
       },
     },
     methods: {
-      ...mapActions([
-        'leaveGame',
-      ]),
       isOwner() {
         if (firebase.auth().currentUser) {
           if (firebase.auth().currentUser.uid == this.room.ownerId) {
@@ -340,7 +336,6 @@
       docRef.onSnapshot((doc) => {
         if (!doc.exists) {
           // Force the player to exit the game if the room is already deleted
-          this.leaveGame()
           this.$router.push({
             name: 'room-list',
           })

@@ -117,7 +117,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
-  import { mapGetters, mapActions } from 'vuex'
+  import { mapGetters } from 'vuex'
 
   export default {
     props: [
@@ -234,9 +234,6 @@
       }
     },
     methods: {
-      ...mapActions([
-        'joinGame',
-      ]),
       validate() {
         if (this.$refs.form.validate()) {
           this.createRoom()
@@ -267,8 +264,6 @@
             avatar: this.avatar,
           })
           .then(() => {
-            // Store the roomId into local storage
-            this.joinGame(docRef.id)
             this.$router.push({
               name: 'game',
               params:{ id: docRef.id },

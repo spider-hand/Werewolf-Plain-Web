@@ -36,7 +36,6 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
-  import { mapActions } from 'vuex'
 
   export default {
     data() {
@@ -45,9 +44,6 @@
       }
     },
     methods: {
-      ...mapActions([
-        'leaveGame',
-      ]),
       leaveRoom() {
         // Remove the player's document from the collection
         var db = firebase.firestore()
@@ -78,8 +74,6 @@
                       })
                   }
 
-                  // Remove the roomId from local storage
-                  this.leaveGame()
                   this.$router.push({
                     name: 'room-list',
                   })
