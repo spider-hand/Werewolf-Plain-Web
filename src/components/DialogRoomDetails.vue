@@ -6,9 +6,10 @@
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn 
-        text
-        color="#FFFFFF"
-        v-on="on">Details</v-btn>
+        icon
+        v-on="on">
+        <v-icon color="#757575">mdi-information</v-icon>
+      </v-btn>
     </template>
     <v-card color="#36393F">
       <v-card-title>
@@ -42,18 +43,7 @@
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
-              <span v-if="room.capacity == 5">
-                (Villager: 3 / Wolf: 1 / Seer: 1)
-              </span>
-              <span v-if="room.capacity == 9">
-               (Villager: 4 / Wolf: 2 / Seer: 1 / Knight: 1 / Minion: 1)
-              </span>
-              <span v-if="room.capacity == 11">
-                (Villager: 5 / Wolf: 2 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)
-              </span>
-              <span v-if="room.capacity == 15">
-                (Villager: 8 / Wolf: 3 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)
-              </span>
+              <span>{{ getCastDetails }}</span>
             </v-col>
           </v-row>
         </v-container>
@@ -82,6 +72,20 @@
     data() {
       return {
         dialog: false,
+      }
+    },
+    computed: {
+      getCastDetails() {
+        switch (this.room.capacity) {
+          case 5:
+            return '(Villager: 3 / Wolf: 1 / Seer: 1)'
+          case 9:
+            return '(Villager: 4 / Wolf: 2 / Seer: 1 / Knight: 1 / Minion: 1)'
+          case 11:
+            return '(Villager: 5 / Wolf: 2 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)'
+          case 15:
+            return '(Villager: 8 / Wolf: 3 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)'
+        }
       }
     },
     methods: {
