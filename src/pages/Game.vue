@@ -328,6 +328,7 @@
       var db = firebase.firestore()
       var docRef = db.collection('rooms').doc(this.$route.params.id)
 
+      // Listener for this room document
       docRef.onSnapshot((doc) => {
         if (!doc.exists) {
           // Force the player to exit the game if the room is already deleted
@@ -340,7 +341,7 @@
         }
       })
 
-      // Listener for player's status
+      // Listener for players collection
       docRef.collection('players').onSnapshot((querySnapShot) => {
         querySnapShot.docChanges().forEach((change) => {
           if (change.type === 'added') {
@@ -372,6 +373,7 @@
                 if (change.type === 'added' || change.type === 'modified') {
                     // Update my data as a player
                     this.myself = change.doc.data()
+                    this.$emit('updateMyself', change.doc.data())
                 } else {
                   // Force to exit the game when the player's doc is removed
                   this.leaveGame()

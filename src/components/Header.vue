@@ -8,6 +8,9 @@
           text
           color="#FFFFFF"
           @click="startGame">Start</v-btn>
+        <DialogRole
+          v-if="myself != null" 
+          :myself="myself" />
         <DialogRoomDetails :room="room" />
         <DialogRoomLeave v-if="isJoiningThisGame  && !hasGameStarted" />
       </div>
@@ -43,6 +46,7 @@
   import 'firebase/functions'
   import { mapGetters, mapActions } from 'vuex'
 
+  import DialogRole from '@/components/DialogRole'
   import DialogRoomDetails from '@/components/DialogRoomDetails'
   import DialogRoomLeave from '@/components/DialogRoomLeave'
   import DialogSettings from '@/components/DialogSettings'
@@ -50,9 +54,11 @@
   export default {
     props: [
       'room',
+      'myself',
       'isJoiningThisGame',
     ],
     components: {
+      DialogRole,
       DialogRoomDetails,
       DialogRoomLeave,
       DialogSettings,
