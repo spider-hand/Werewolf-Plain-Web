@@ -99,21 +99,53 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
   // TODO: Check the day's result
   // Kill the selected player if the player isn't protected
-  // Execute the selected player
   // End the game if the number of wolves are greater than the number of villagers or there's no wolves
   // Add tasks for the next day if the game still continues
 
-  docRef.update({
-    isNight: false,
-  }).then(() => {
-    docRef.collection('messages').add({
-      from: 'host',
-      timestamp: admin.firestore.Timestamp.now(),
-      body: "It's daytime.",
-      gameName: '',
-      avatar: '',
-    }).then((messageRef) => {
-      res.send("It's daytime.")
+  var counts = {}
+  var compare = 0
+  var mostVotedPlayer
+
+  docRef.collection('players').get()
+    .then((querySnapShot) => {
+      Promise.all(querySnapShot.docs.map((doc) => {
+        if (doc.data().isAlive) {
+          var votedPlayer = doc.data().votedPlayer
+
+          if (counts[votedPlayer] == undefined) {
+            counts[votedPlayer] = 1
+          } else {
+            counts[votedPlayer] = counts[votedPlayer] + 1
+          }
+
+          if (counts[votedPlayer] > compare) {
+            compare = counts[votedPlayer]
+            mostVotedPlayer = votedPlayer
+          }
+        }
+      }))
+      .then(() => {
+        // Execute the most voted player
+        docRef.collection('players').doc(mostVotedPlayer).update({
+          isAlive: false,
+        })
+        .then(() => {
+          docRef.update({
+            isNight: false,
+          })
+          .then(() => {
+            docRef.collection('messages').add({
+              from: 'host',
+              timestamp: admin.firestore.Timestamp.now(),
+              body: "It's daytime.",
+              gameName: '',
+              avatar: '',
+            })
+            .then((messageRef) => {
+              res.send("It's daytime.")
+            })
+          })
+        })
+      })
     })
-  })
 })

@@ -7,7 +7,7 @@
       color="#2F3136">
       <v-list>
         <v-list-item-group v-model="player">
-          <v-list-item color="red">
+          <v-list-item color="#F44336">
             <v-list-item-avatar>
               <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
             </v-list-item-avatar>
@@ -34,27 +34,32 @@
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id)"
+                v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="vote(player.id)">
-                <v-icon color="#757575">mdi-vote</v-icon>
+                <v-icon :color="player.id == myself.votedPlayer ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
+              </v-btn>
+             <v-btn
+                v-if="hasGameStarted && !player.isAlive"
+                icon>
+                <v-icon color="#757575">mdi-emoticon-dead</v-icon>
               </v-btn>
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id)"
+                v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="bite(player.id)">
                 <v-icon color="#757575">mdi-skull</v-icon>
               </v-btn>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id)"
+                v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="checkRole(player.id)">
                 <v-icon color="#757575">mdi-eye</v-icon>
               </v-btn>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id)"
+                v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="protect(player.id)">
                 <v-icon color="#757575">mdi-shield-half-full</v-icon>
@@ -287,9 +292,12 @@
         }
       },
       vote(uid) {
-        console.log(`You will vote ${uid}`)
+        var db = firebase.firestore()
+        var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
-        // TODO: Save the result in firestore
+        docRef.update({
+          votedPlayer: uid,
+        })
       },
       bite(uid) {
         console.log(`You will bite ${uid}`)
@@ -376,7 +384,6 @@
                     this.$emit('updateMyself', change.doc.data())
                 } else {
                   // Force to exit the game when the player's doc is removed
-                  this.leaveGame()
                   this.$router.push({
                     name: 'room-list',
                   })
