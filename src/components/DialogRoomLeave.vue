@@ -7,10 +7,12 @@
     <template v-slot:activator="{ on }">
       <v-btn 
         text
-        color="#FFFFFF"
-        v-on="on">Leave</v-btn>
+        color="#2F3136"
+        v-on="on">
+      <span>Leave</span>
+    </v-btn>
     </template>
-    <v-card>
+    <v-card color="#36393F">
       <v-card-title>
         <span>Leave Room</span>
       </v-card-title>
@@ -23,10 +25,16 @@
         <div class="flex-grow-1"></div>
         <v-btn
           depressed
-          @click="leaveRoom">OK</v-btn>
+          color="#2F3136"
+          @click="leaveRoom">
+          <span>OK</span>
+        </v-btn>
         <v-btn
           depressed
-          @click="cancel">CANCEL</v-btn>
+          color="#2F3136"
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
       </v-card-actions>
     </v-card> 
   </v-dialog>
@@ -89,5 +97,7 @@
 </script>
 
 <style scoped>
-  
+  span {
+    color: #FFFFFF;
+  }
 </style>
