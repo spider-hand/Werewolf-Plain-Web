@@ -285,9 +285,11 @@
 
                     room.collection('players').doc(firebase.auth().currentUser.uid).set({
                       id: firebase.auth().currentUser.uid,
-                      role: '',
+                      role: null,
                       name: this.gameName,
                       avatar: this.avatar,
+                      isAlive: true,
+                      votedPlayer: null,
                     })
                     .then(() => {
                       this.$router.push({
