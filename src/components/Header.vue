@@ -8,11 +8,11 @@
           text
           color="#FFFFFF"
           @click="startGame">Start</v-btn>
+        <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
         <DialogRole
-          v-if="myself != null" 
+          v-if="myself != null && myself.role != null" 
           :myself="myself" />
         <DialogRoomDetails :room="room" />
-        <DialogRoomLeave v-if="isJoiningThisGame  && !hasGameStarted" />
       </div>
       <div v-else>
         <div v-if="isSignedIn">
