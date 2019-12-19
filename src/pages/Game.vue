@@ -66,16 +66,16 @@
               </v-btn>
             </v-list-item-action>
           </v-list-item>
-          <v-divider v-if="isWolf" />
+          <v-divider v-if="isWolf || isSeer" />
           <v-list-item 
-            v-if="isWolf"
-            color="red">
+            v-if="isWolf || isSeer || isMedium"
+            color="#F44336">
             <v-list-item-avatar>
               <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span>Wolf Chat</span>
+                <span>{{ getExtraChatTitle }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -148,13 +148,17 @@
         players: [],
         messages: [],
         wolfMessages: [],
+        resultsSeer: [],
         isJoiningThisGame: false,
         isInitialTriggerDone: false,
         isInitialWolfTriggerDone: false,
+        isInitialSeerTriggerDone: false,
+        isInitialMediumTriggerDone: false,
         message: '',
         valid: true,
         isChatAllOpened: true,
         isWolfChatOpened: false,
+        isResultsSeerOpened: false,
       }
     },
     computed: {
@@ -221,6 +225,8 @@
           return this.messages
         } else if (this.isWolfChatOpened) {
           return this.wolfMessages
+        } else if (this.isResultsSeerOpened) {
+          return this.resultsSeer
         } else {
           var individualMessages = []
           for (var i = 0; i < this.messages.length; i++) {
@@ -231,6 +237,15 @@
           return individualMessages
         }
       },
+      getExtraChatTitle() {
+        if (this.isWolf) {
+          return 'Wolf Chat'
+        } else if (this.isSeer) {
+          return 'Results (Seer)'
+        } else {
+          return 'Results (Medium)'
+        }
+      }
     },
     methods: {
       isOwner() {
@@ -331,9 +346,19 @@
           that.isChatAllOpened = true
           that.isWolfChatOpened = false
         } else if (newVal == that.players.length + 1) {
-          that.isWolfChatOpened = true
-          that.isChatAllOpened = false
+          // When the extra chat is opened
+          if (that.myself.role == 'wolf') {
+            that.isWolfChatOpened = true
+            that.isChatAllOpened = false
+          } else if (that.myself.role == 'seer') {
+            that.isResultsSeerOpened = true
+            that.isChatAllOpened = false
+          } else if (that.myself.role == 'medium') {
+            that.isResultsMediumOpened = true
+            that.isChatAllOpened = false
+          }
         } else {
+          // When an individual log is opened
           that.isChatAllOpened = false
           that.isWolfChatOpened = false
         }
@@ -400,21 +425,63 @@
 
                 // Get wolf's messages if the player's role is wolf
                 if (this.isWolf) {
-                  docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get().then((querySnapShot) => {
-                    querySnapShot.forEach((doc) => {
-                      this.wolfMessages.push(doc.data())
-                    })
-                  })
-
-                  docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapShot) => {
-                    querySnapShot.forEach((doc) => {
-                      if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
+                  docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get()
+                    .then((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
                         this.wolfMessages.push(doc.data())
-                      }
-                      this.isInitialWolfTriggerDone = true
+                      })
                     })
+
+                  docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
+                          this.wolfMessages.push(doc.data())
+                        }
+                        this.isInitialWolfTriggerDone = true
+                      })
                   })
-                }              
+                }
+
+                // Get results if the player's role is seer
+                if (this.isSeer) {
+                  docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
+                    .then((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        this.resultsSeer.push(doc.data())
+                      })
+                    })
+
+                  docRef.collection('resultsSeer').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                          this.resultsSeer.push(doc.data())
+                        }
+                        this.isInitialSeerTriggerDone = true
+                      })
+                    })
+                }
+
+                // Get results if the player's role is medium
+                if (this.isMedium) {
+                  docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
+                    .then((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        this.resultsMedium.push((doc.data()))
+                      })
+                    })
+
+                  docRef.collection('resultsMedium').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                          this.resultsMedium.push(doc.data())
+                        }
+                        this.isInitialMediumTriggerDone = true                        
+                      })
+                    })
+                }   
               }
             }
           })
