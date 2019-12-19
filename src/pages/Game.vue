@@ -50,19 +50,19 @@
                 v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="bite(player.id)">
-                <v-icon color="#757575">mdi-skull</v-icon>
+                <v-icon :color="player.id == myself.bittenPlayer ? '#FFFFFF' : '#757575'">mdi-skull</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="checkRole(player.id)">
-                <v-icon color="#757575">mdi-eye</v-icon>
+                <v-icon :color="player.id == myself.divinedPlayer ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id) && player.isAlive"
                 icon
                 @click="protect(player.id)">
-                <v-icon color="#757575">mdi-shield-half-full</v-icon>
+                <v-icon :color="player.id == myself.protectedPlayer ? '#FFFFFF' : '#757575'">mdi-shield-half-full</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -300,19 +300,28 @@
         })
       },
       bite(uid) {
-        console.log(`You will bite ${uid}`)
+        var db = firebase.firestore()
+        var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
-        // TODO: Save the result in firestore
+        docRef.update({
+          bittenPlayer: uid,
+        })
       },
       checkRole(uid) {
-        console.log(`You will check ${uid}'s role`)
+        var db = firebase.firestore()
+        var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
-        // TODO: Save the selected player in firestore
+        docRef.update({
+          divinedPlayer: uid,
+        })
       },
       protect(uid) {
-        console.log(`You will protect ${uid}`)
+        var db = firebase.firestore()
+        var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
-        // TODO: Save the selected player in firestore
+        docRef.update({
+          protectedPlayer: uid,
+        })
       },
     },
     watch: {

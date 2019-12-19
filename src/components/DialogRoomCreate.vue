@@ -264,6 +264,9 @@
             avatar: this.avatar,
             isAlive: true,
             votedPlayer: null,
+            bittenPlayer: null,
+            protectedPlayer: null,
+            divinedPlayer: null,
           })
           .then(() => {
             this.$router.push({
