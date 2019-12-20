@@ -36,8 +36,8 @@
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id) && player.isAlive"
                 icon
-                @click="vote(player.id)">
-                <v-icon :color="player.id == myself.votedPlayer ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
+                @click="vote(player)">
+                <v-icon :color="myself.votedPlayer != null && player.id == myself.votedPlayer.id ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
               </v-btn>
              <v-btn
                 v-if="hasGameStarted && !player.isAlive"
@@ -49,20 +49,20 @@
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id) && player.isAlive"
                 icon
-                @click="bite(player.id)">
-                <v-icon :color="player.id == myself.bittenPlayer ? '#FFFFFF' : '#757575'">mdi-skull</v-icon>
+                @click="bite(player)">
+                <v-icon :color="myself.bittenPlayer != null && player.id == myself.bittenPlayer.id ? '#FFFFFF' : '#757575'">mdi-skull</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id) && player.isAlive"
                 icon
-                @click="checkRole(player.id)">
-                <v-icon :color="player.id == myself.divinedPlayer ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
+                @click="checkRole(player)">
+                <v-icon :color="myself.divinedPlayer != null && player.id == myself.divinedPlayer.id ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
               </v-btn>
               <v-btn
                 v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id) && player.isAlive"
                 icon
-                @click="protect(player.id)">
-                <v-icon :color="player.id == myself.protectedPlayer ? '#FFFFFF' : '#757575'">mdi-shield-half-full</v-icon>
+                @click="protect(player)">
+                <v-icon :color="myself.protectedPlayer != null && player.id == myself.protectedPlayer.id ? '#FFFFFF' : '#757575'">mdi-shield-half-full</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -306,36 +306,36 @@
           })
         }
       },
-      vote(uid) {
+      vote(player) {
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
         docRef.update({
-          votedPlayer: uid,
+          votedPlayer: player,
         })
       },
-      bite(uid) {
+      bite(player) {
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
         docRef.update({
-          bittenPlayer: uid,
+          bittenPlayer: player,
         })
       },
-      checkRole(uid) {
+      checkRole(player) {
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
         docRef.update({
-          divinedPlayer: uid,
+          divinedPlayer: player,
         })
       },
-      protect(uid) {
+      protect(player) {
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id).collection('players').doc(firebase.auth().currentUser.uid)
 
         docRef.update({
-          protectedPlayer: uid,
+          protectedPlayer: player,
         })
       },
     },
