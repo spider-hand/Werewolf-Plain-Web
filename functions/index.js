@@ -219,11 +219,18 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 promises2.push(sendDaytimeMessage)
 
                 if (divinedPlayer.id != 'divinedPlayer') {
+                  var divinedPlayerRole
+                  if (divinedPlayer.role != 'wolf') {
+                    divinedPlayerRole = 'human'
+                  } else {
+                    divinedPlayerRole = 'wolf'
+                  }
+
                   var sendSeerResult = 
                     docRef.collection('resultsSeer').add({
                       from: 'host',
                       timestamp: admin.firestore.Timestamp.now(),
-                      body: `${divinedPlayer.name} is ${divinedPlayer.role}.`,
+                      body: `${divinedPlayer.name} is ${divinedPlayerRole}.`,
                       gameName: '',
                       avatar: '',
                     })
@@ -231,11 +238,18 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 }
 
                 if (mostVotedPlayer.id != 'mostVotedPlayer') {
+                  var mostVotedPlayerRole
+                  if (mostVotedPlayer.role != 'wolf') {
+                    mostVotedPlayerRole = 'human'
+                  } else {
+                    mostVotedPlayerRole = 'wolf'
+                  }
+
                   var sendMediumResult = 
                     docRef.collection('resultsMedium').add({
                       from: 'host',
                       timestamp: admin.firestore.Timestamp.now(),
-                      body: `${mostVotedPlayer.name} is ${mostVotedPlayer.role}.`,
+                      body: `${mostVotedPlayer.name} is ${mostVotedPlayerRole}.`,
                       gameName: '',
                       avatar: '',
                     })
