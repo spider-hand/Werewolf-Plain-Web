@@ -5,71 +5,60 @@ admin.initializeApp()
 
 const tasks = require('@google-cloud/tasks')
 
-exports.addNightTask = functions.https.onCall((data, context) => {
+exports.addTasks = functions.https.onCall((data, context) => {
   const client = new tasks.CloudTasksClient()
 
   const projectId = functions.config().werewolf.id
-  const queue = 'night'
+  const queueNight = 'night'
+  const queueDaytime = 'daytime'
   const location = functions.config().werewolf.location
 
-  const parent = client.queuePath(projectId, location, queue)
-
-  const roomId = data.roomId
-  const dayLength = data.dayLength
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId
-  
-  const task = {
-    httpRequest: {
-      httpMethod: 'POST',
-      url: url,
-    },
-    scheduleTime: {
-      seconds: dayLength * 60 + Date.now() / 1000,
-    }, 
-  }
-
-  const request = {
-    parent: parent,
-    task: task,
-  }
-
-  return client.createTask(request).then((response) => {
-    return response
-  })
-})
-
-exports.addDaytimeTask = functions.https.onCall((data, context) => {
-  const client = new tasks.CloudTasksClient()
-
-  const projectId = functions.config().werewolf.id
-  const queue = 'daytime'
-  const location = functions.config().werewolf.location
-
-  const parent = client.queuePath(projectId, location, queue)
+  const parentNight = client.queuePath(projectId, location, queueNight)
+  const parentDaytime = client.queuePath(projectId, location, queueDaytime)
 
   const roomId = data.roomId
   const dayLength = data.dayLength
   const nightLength = data.nightLength
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId
-  
-  const task = {
+  const urlNight = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId
+  const urlDaytime = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId
+
+  const taskAtNight = {
     httpRequest: {
       httpMethod: 'POST',
-      url: url,
+      url: urlNight,
+    },
+    scheduleTime: {
+      seconds: dayLength * 60 + Date.now() / 1000,
+    },    
+  }
+
+  const taskInDaytime = {
+    httpRequest: {
+      httpMethod: 'POST',
+      url: urlDaytime,
     },
     scheduleTime: {
       seconds: (dayLength + nightLength) * 60 + Date.now() / 1000,
-    }, 
+    },     
   }
 
-  const request = {
-    parent: parent,
-    task: task,
+  const requestAtNight = {
+    parent: parentNight,
+    task: taskAtNight,
   }
 
-  return client.createTask(request).then((response) => {
-    return response
-  })
+  const requestInDaytime = {
+    parent: parentDaytime,
+    task: taskInDaytime,
+  }
+
+  const promises = []
+  const createNightTask = client.createTask(requestAtNight)
+  const createDaytimeTask = client.createTask(requestInDaytime)
+  promises.push(createNightTask)
+  promises.push(createDaytimeTask)
+
+  return Promise.all(promises)
 })
 
 exports.atNight = functions.https.onRequest((req, res) => {
