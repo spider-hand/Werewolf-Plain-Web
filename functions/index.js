@@ -92,10 +92,11 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var countsBite = {}
   var compareVote = 0
   var compareBite = 0
-  var mostVotedPlayer
-  var mostBittenPlayer
-  var protectedPlayer
-  var divinedPlayer
+  var mostVotedPlayer = { id: 'mostVotedPlayer' }
+  var mostBittenPlayer = { id: 'mostBittenPlayer' }
+  var protectedPlayer = { id: 'protectedPlayer' }
+  var divinedPlayer = { id: 'divinedPlayer' }
+  var promise0 = []
   var promises1 = []
   var promises2 = []
   var hasGameEnded = false
@@ -110,11 +111,11 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           if (playerRole != 'wolf') {
             countsVillager += 1
 
-            if (playerRole == 'knight') {
+            if (playerRole == 'knight' && doc.data().protectedPlayer != null) {
               protectedPlayer = doc.data().protectedPlayer
             }
 
-            if (playerRole == 'seer') {
+            if (playerRole == 'seer' && doc.data().divinedPlayer != null) {
               divinedPlayer = doc.data().divinedPlayer
             }
           } else {
@@ -151,10 +152,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
       }))
       .then(() => {
         // Execute the most voted player
-        docRef.collection('players').doc(mostVotedPlayer.id).update({
-          isAlive: false,
-        })
-        .then(() => {
+        if (mostVotedPlayer.id != 'mostVotedPlayer') {
+          var executeMostVotedPlayer = docRef.collection('players').doc(mostVotedPlayer.id).update({ isAlive: false, })
+          promise0.push(executeMostVotedPlayer)
+        } else {
+          // End the game when nobody voted
+          hasGameEnded = true
+        }
+
+        Promise.all(promise0).then(() => {
           if (mostVotedPlayer.role != 'wolf') {
             countsVillager -= 1
           } else {
@@ -163,7 +169,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
           if (countsWerewolf > 0) {
             // Kill the most bitten player if the player isn't protected by knight
-            if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer != null) {
+            if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
               var killMostBittenPlayer = docRef.collection('players').doc(mostBittenPlayer.id).update({ isAlive: false, })
               promises1.push(killMostBittenPlayer)
 
@@ -189,8 +195,8 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                 var daytimeMessage
 
-                if (mostVotedPlayer != null) {
-                  if (mostBittenPlayer != null) {
+                if (mostVotedPlayer.id != 'mostVotedPlayer') {
+                  if (mostBittenPlayer.id != 'mostBittenPlayer') {
                     daytimeMessage = `It's daytime. ${mostVotedPlayer.name} was executed. ${mostBittenPlayer.name} was killed.`
                   } else {
                     daytimeMessage = `It's daytime. ${mostVotedPlayer.name} was executed. There wasn't a victim last night.`
@@ -212,7 +218,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 promises2.push(daytimeComes)
                 promises2.push(sendDaytimeMessage)
 
-                if (divinedPlayer != null) {
+                if (divinedPlayer.id != 'divinedPlayer') {
                   var sendSeerResult = 
                     docRef.collection('resultsSeer').add({
                       from: 'host',
@@ -224,7 +230,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                   promises2.push(sendSeerResult)
                 }
 
-                if (mostVotedPlayer != null) {
+                if (mostVotedPlayer.id != 'mostVotedPlayer') {
                   var sendMediumResult = 
                     docRef.collection('resultsMedium').add({
                       from: 'host',
