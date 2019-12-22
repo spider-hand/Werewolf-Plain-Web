@@ -96,10 +96,11 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var mostBittenPlayer = { id: 'mostBittenPlayer' }
   var protectedPlayer = { id: 'protectedPlayer' }
   var divinedPlayer = { id: 'divinedPlayer' }
-  var promise0 = []
+  var promises0 = []
   var promises1 = []
   var promises2 = []
   var hasGameEnded = false
+  var daytimeMessage = ''
 
   docRef.collection('players').get()
     .then((querySnapShot) => {
@@ -147,44 +148,64 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               compareVote = countsVote[votedPlayer.id]
               mostVotedPlayer = votedPlayer
             }
+          } else {
+            // Kill players who didn't vote
+            docRef.collection('players').doc(doc.id).update({
+              isAlive: false,
+            })
+            daytimeMessage += `${doc.data().name} committed suicide.. `
+
+            if (playerRole != 'wolf') {
+              countsVillager -= 1
+            } else {
+              countsWerewolf -= 1
+            }
           }
         }
       }))
       .then(() => {
         // Execute the most voted player
-        if (mostVotedPlayer.id != 'mostVotedPlayer') {
+        if (mostVotedPlayer.id != 'mostVotedPlayer' && countsWerewolf > 0 && countsVillager > countsWerewolf) {
           var executeMostVotedPlayer = docRef.collection('players').doc(mostVotedPlayer.id).update({ isAlive: false, })
-          promise0.push(executeMostVotedPlayer)
+          promises0.push(executeMostVotedPlayer)
         } else {
-          // End the game when nobody voted
           hasGameEnded = true
+
+          var endGame = 
+            docRef.update({
+              status: 'closed',
+              isNight: false,
+            })
+          promises0.push(endGame)
         }
 
-        Promise.all(promise0).then(() => {
-          if (mostVotedPlayer.role != 'wolf') {
-            countsVillager -= 1
-          } else {
-            countsWerewolf -= 1
-          }
-
-          if (countsWerewolf > 0) {
-            // Kill the most bitten player if the player isn't protected by knight
-            if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
-              var killMostBittenPlayer = docRef.collection('players').doc(mostBittenPlayer.id).update({ isAlive: false, })
-              promises1.push(killMostBittenPlayer)
-
+        Promise.all(promises0).then(() => {
+          if (!hasGameEnded) {
+            if (mostVotedPlayer.role != 'wolf') {
               countsVillager -= 1
+            } else {
+              countsWerewolf -= 1
             }
-          } else {
-            // End this game
-            hasGameEnded = true
 
-            var endGame = 
-              docRef.update({ 
-                status: 'closed',
-                isNight: false, 
-              })
-            promises1.push(endGame)
+            if (countsWerewolf > 0 && countsVillager > countsWerewolf) {
+              // Kill the most bitten player if the player isn't protected by knight
+              if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
+                var killMostBittenPlayer = docRef.collection('players').doc(mostBittenPlayer.id).update({ isAlive: false, })
+                promises1.push(killMostBittenPlayer)
+
+                countsVillager -= 1
+              }
+            } else {
+              // End this game
+              hasGameEnded = true
+
+              var endGame = 
+                docRef.update({ 
+                  status: 'closed',
+                  isNight: false, 
+                })
+              promises1.push(endGame)
+            }
           }
 
           Promise.all(promises1).then(() => {
@@ -193,16 +214,14 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               // TODO: Add the next day's tasks if the game continues
               if (countsVillager > countsWerewolf) {
 
-                var daytimeMessage
-
                 if (mostVotedPlayer.id != 'mostVotedPlayer') {
                   if (mostBittenPlayer.id != 'mostBittenPlayer') {
-                    daytimeMessage = `It's daytime. ${mostVotedPlayer.name} was executed. ${mostBittenPlayer.name} was killed.`
+                    daytimeMessage += `It's daytime. ${mostVotedPlayer.name} was executed. ${mostBittenPlayer.name} was killed. `
                   } else {
-                    daytimeMessage = `It's daytime. ${mostVotedPlayer.name} was executed. There wasn't a victim last night.`
+                    daytimeMessage += `It's daytime. ${mostVotedPlayer.name} was executed. There wasn't a victim last night. `
                   }
                 } else {
-                  daytimeMessage = `It's daytime. There wasn't a victim last night.`
+                  daytimeMessage += `It's daytime. There wasn't a victim last night. `
                 }
 
                 var daytimeComes = docRef.update({ isNight: false, })
@@ -258,6 +277,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               } else {
                 // End this game
                 hasGameEnded = true
+
+                var endGame = 
+                  docRef.update({ 
+                    status: 'closed',
+                    isNight: false, 
+                  })
                 promises2.push(endGame)
               }              
             }
