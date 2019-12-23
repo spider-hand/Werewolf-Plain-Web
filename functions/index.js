@@ -161,6 +161,14 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               countsWerewolf -= 1
             }
           }
+
+          // Reset the selected player every night
+          docRef.collection('players').doc(doc.id).update({
+            votedPlayer: null,
+            bittenPlayer: null,
+            protectedPlayer: null,
+            divinedPlayer: null,
+          })
         }
       }))
       .then(() => {
@@ -276,6 +284,8 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 }
               } else {
                 // End this game
+                // TODO: Update the player's record when ending the game
+                // TODO: Reveal all player's roles when ending the game
                 hasGameEnded = true
 
                 var endGame = 
