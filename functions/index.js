@@ -6,57 +6,13 @@ admin.initializeApp()
 const tasks = require('@google-cloud/tasks')
 
 exports.addTasks = functions.https.onCall((data, context) => {
-  const client = new tasks.CloudTasksClient()
-
-  const projectId = functions.config().werewolf.id
-  const queueNight = 'night'
-  const queueDaytime = 'daytime'
-  const location = functions.config().werewolf.location
-
-  const parentNight = client.queuePath(projectId, location, queueNight)
-  const parentDaytime = client.queuePath(projectId, location, queueDaytime)
-
-  const roomId = data.roomId
-  const dayLength = data.dayLength
-  const nightLength = data.nightLength
-  const urlNight = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId
-  const urlDaytime = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId
-
-  const taskAtNight = {
-    httpRequest: {
-      httpMethod: 'POST',
-      url: urlNight,
-    },
-    scheduleTime: {
-      seconds: dayLength * 60 + Date.now() / 1000,
-    },    
-  }
-
-  const taskInDaytime = {
-    httpRequest: {
-      httpMethod: 'POST',
-      url: urlDaytime,
-    },
-    scheduleTime: {
-      seconds: (dayLength + nightLength) * 60 + Date.now() / 1000,
-    },     
-  }
-
-  const requestAtNight = {
-    parent: parentNight,
-    task: taskAtNight,
-  }
-
-  const requestInDaytime = {
-    parent: parentDaytime,
-    task: taskInDaytime,
-  }
-
   const promises = []
-  const createNightTask = client.createTask(requestAtNight)
-  const createDaytimeTask = client.createTask(requestInDaytime)
-  promises.push(createNightTask)
-  promises.push(createDaytimeTask)
+  const roomId = data.roomId
+  const nightLength = data.nightLength
+  const dayLength = data.dayLength
+
+  promises.push(addNightTask(roomId, dayLength))
+  promises.push(addDaytimeTask(roomId, dayLength, nightLength))
 
   return Promise.all(promises)
 })
@@ -84,6 +40,8 @@ exports.atNight = functions.https.onRequest((req, res) => {
 exports.inDaytime = functions.https.onRequest((req, res) => {
   var db = admin.firestore()
   var roomId = req.query.roomId
+  var dayLength = req.query.dayLength
+  var nightLength = req.query.nightLength
   var docRef = db.collection('rooms').doc(roomId)
 
   var countsVillager = 0
@@ -214,12 +172,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           Promise.all(promises1).then(() => {
             if (!hasGameEnded) {
               // Check if the number of villagers are greater than the number of wolves after werewolves bite a villager
-              // TODO: Add the next day's tasks if the game continues
               if (countsVillager > countsWerewolf) {
                 var daytimeComes = docRef.update({ isNight: false, })
 
                 promises2.push(daytimeComes)
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
+
+                // Add the tasks for the next day
+                promises2.push(addNightTask(roomId, dayLength))
+                promises2.push(addDaytimeTask(roomId, dayLength, nightLength))
 
                 if (divinedPlayer.id != 'divinedPlayer') {
                   var divinedPlayerRole
@@ -278,6 +239,64 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
       })
     })
 })
+
+function addNightTask(roomId, dayLength) {
+  const client = new tasks.CloudTasksClient()
+
+  const projectId = functions.config().werewolf.id
+  const queue = 'night'
+  const location = functions.config().werewolf.location
+
+  const parent = client.queuePath(projectId, location, queue)
+
+  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId
+  
+  const task = {
+    httpRequest: {
+      httpMethod: 'POST',
+      url: url,
+    },
+    scheduleTime: {
+      seconds: dayLength * 60 + Date.now() / 1000,
+    }, 
+  }
+
+  const request = {
+    parent: parent,
+    task: task,
+  }
+
+  return client.createTask(request)
+}
+
+function addDaytimeTask(roomId, dayLength, nightLength) {
+  const client = new tasks.CloudTasksClient()
+
+  const projectId = functions.config().werewolf.id
+  const queue = 'daytime'
+  const location = functions.config().werewolf.location
+
+  const parent = client.queuePath(projectId, location, queue)
+
+  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId + '&dayLength=' + dayLength + '&nightLength=' + nightLength
+  
+  const task = {
+    httpRequest: {
+      httpMethod: 'POST',
+      url: url,
+    },
+    scheduleTime: {
+      seconds: (dayLength + nightLength) * 60 + Date.now() / 1000,
+    }, 
+  }
+
+  const request = {
+    parent: parent,
+    task: task,
+  }
+
+  return client.createTask(request)
+}
 
 function killPlayer(docRef, uid) {
   var promise = 
