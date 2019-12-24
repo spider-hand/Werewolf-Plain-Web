@@ -150,9 +150,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
             }
           } else {
             // Kill players who didn't vote
-            docRef.collection('players').doc(doc.id).update({
-              isAlive: false,
-            })
+            killPlayer(docRef, doc.id)
             daytimeMessage += `${doc.data().name} committed suicide.. `
 
             if (playerRole != 'wolf') {
@@ -174,17 +172,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
       .then(() => {
         // Execute the most voted player
         if (mostVotedPlayer.id != 'mostVotedPlayer' && countsWerewolf > 0 && countsVillager > countsWerewolf) {
-          var executeMostVotedPlayer = docRef.collection('players').doc(mostVotedPlayer.id).update({ isAlive: false, })
-          promises0.push(executeMostVotedPlayer)
+          promises0.push(killPlayer(docRef ,mostVotedPlayer.id))
+
+          daytimeMessage += `${mostVotedPlayer.name} was executed. `
         } else {
           hasGameEnded = true
+          daytimeMessage += checkWhichSideWin(countsWerewolf)
 
-          var endGame = 
-            docRef.update({
-              status: 'closed',
-              isNight: false,
-            })
-          promises0.push(endGame)
+          promises0.push(endGame(docRef))
+          promises0.push(sendDaytimeMessage(docRef, daytimeMessage))
         }
 
         Promise.all(promises0).then(() => {
@@ -198,52 +194,32 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
             if (countsWerewolf > 0 && countsVillager > countsWerewolf) {
               // Kill the most bitten player if the player isn't protected by knight
               if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
-                var killMostBittenPlayer = docRef.collection('players').doc(mostBittenPlayer.id).update({ isAlive: false, })
-                promises1.push(killMostBittenPlayer)
+                promises1.push(killPlayer(docRef, mostBittenPlayer.id))
 
+                daytimeMessage += `${mostBittenPlayer.name} was killed. `
                 countsVillager -= 1
+              } else {
+                daytimeMessage += 'No one was killed last night.'
               }
             } else {
               // End this game
               hasGameEnded = true
+              daytimeMessage += checkWhichSideWin(countsWerewolf)
 
-              var endGame = 
-                docRef.update({ 
-                  status: 'closed',
-                  isNight: false, 
-                })
-              promises1.push(endGame)
+              promises1.push(endGame(docRef))
+              promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
             }
           }
 
           Promise.all(promises1).then(() => {
             if (!hasGameEnded) {
-              // Check if the number of villagers are greater than the number of wolves
+              // Check if the number of villagers are greater than the number of wolves after werewolves bite a villager
               // TODO: Add the next day's tasks if the game continues
               if (countsVillager > countsWerewolf) {
-
-                if (mostVotedPlayer.id != 'mostVotedPlayer') {
-                  if (mostBittenPlayer.id != 'mostBittenPlayer') {
-                    daytimeMessage += `It's daytime. ${mostVotedPlayer.name} was executed. ${mostBittenPlayer.name} was killed. `
-                  } else {
-                    daytimeMessage += `It's daytime. ${mostVotedPlayer.name} was executed. There wasn't a victim last night. `
-                  }
-                } else {
-                  daytimeMessage += `It's daytime. There wasn't a victim last night. `
-                }
-
                 var daytimeComes = docRef.update({ isNight: false, })
-                var sendDaytimeMessage = 
-                  docRef.collection('messages').add({
-                    from: 'host',
-                    timestamp: admin.firestore.Timestamp.now(),
-                    body: daytimeMessage,
-                    gameName: '',
-                    avatar: '',
-                  })
 
                 promises2.push(daytimeComes)
-                promises2.push(sendDaytimeMessage)
+                promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
 
                 if (divinedPlayer.id != 'divinedPlayer') {
                   var divinedPlayerRole
@@ -287,13 +263,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 // TODO: Update the player's record when ending the game
                 // TODO: Reveal all player's roles when ending the game
                 hasGameEnded = true
+                daytimeMessage += checkWhichSideWin(countsWerewolf)
 
-                var endGame = 
-                  docRef.update({ 
-                    status: 'closed',
-                    isNight: false, 
-                  })
-                promises2.push(endGame)
+                promises2.push(endGame(docRef))
+                promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
               }              
             }
 
@@ -305,3 +278,40 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
       })
     })
 })
+
+function killPlayer(docRef, uid) {
+  var promise = 
+    docRef.collection('players').doc(uid).update({
+      isAlive: false,
+    })
+  return promise
+}
+
+function sendDaytimeMessage(docRef, daytimeMessage) {
+  var promise = 
+    docRef.collection('messages').add({
+      from: 'host',
+      timestamp: admin.firestore.Timestamp.now(),
+      body: daytimeMessage,
+      gameName: '',
+      avatar: '',                    
+    })
+  return promise
+}
+
+function endGame(docRef) {
+  var promise = 
+    docRef.update({
+      status: 'closed',
+      isNight: false,
+    })
+  return promise
+}
+
+function checkWhichSideWin(countsWerewolf) {
+  if (countsWerewolf == 0) {
+    return 'All werewolves were executed! Village wins! '
+  } else {
+    return 'Werewolves killed all villagers.. '
+  }  
+}
