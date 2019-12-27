@@ -254,9 +254,6 @@
           return individualMessages
         }
       },
-      getTimestamp() {
-
-      },
       getExtraChatTitle() {
         if (this.isWolf) {
           return 'Wolf Chat'

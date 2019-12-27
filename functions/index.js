@@ -54,6 +54,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var mostBittenPlayer = { id: 'mostBittenPlayer' }
   var protectedPlayer = { id: 'protectedPlayer' }
   var divinedPlayer = { id: 'divinedPlayer' }
+  var playerRoles = []
   var promises0 = []
   var promises1 = []
   var promises2 = []
@@ -63,6 +64,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   docRef.collection('players').get()
     .then((querySnapShot) => {
       Promise.all(querySnapShot.docs.map((doc) => {
+        // Save the name and the player's role so it can be revealed when the game ends
+        playerRoles.push({
+          name: doc.data().name,
+          role: doc.data().role,
+        })
+
         if (doc.data().isAlive) {
           var votedPlayer = doc.data().votedPlayer
           var playerRole = doc.data().role
@@ -136,6 +143,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
         } else {
           hasGameEnded = true
           daytimeMessage += checkWhichSideWin(countsWerewolf)
+          daytimeMessage += revealRoles(playerRoles)
 
           promises0.push(endGame(docRef))
           promises0.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -157,12 +165,13 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 daytimeMessage += `${mostBittenPlayer.name} was killed. `
                 countsVillager -= 1
               } else {
-                daytimeMessage += 'No one was killed last night.'
+                daytimeMessage += 'No one was killed last night. '
               }
             } else {
               // End this game
               hasGameEnded = true
               daytimeMessage += checkWhichSideWin(countsWerewolf)
+              daytimeMessage += revealRoles(playerRoles)
 
               promises1.push(endGame(docRef))
               promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -225,6 +234,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 // TODO: Reveal all player's roles when ending the game
                 hasGameEnded = true
                 daytimeMessage += checkWhichSideWin(countsWerewolf)
+                daytimeMessage += revealRoles(playerRoles)
 
                 promises2.push(endGame(docRef))
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -279,7 +289,7 @@ function addDaytimeTask(roomId, dayLength, nightLength) {
   const parent = client.queuePath(projectId, location, queue)
 
   const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId + '&dayLength=' + dayLength + '&nightLength=' + nightLength
-  
+
   const task = {
     httpRequest: {
       httpMethod: 'POST',
@@ -329,8 +339,16 @@ function endGame(docRef) {
 
 function checkWhichSideWin(countsWerewolf) {
   if (countsWerewolf == 0) {
-    return 'All werewolves were executed! Village wins! '
+    return 'All werewolves were executed! Village wins!\n'
   } else {
-    return 'Werewolves killed all villagers.. '
+    return 'Werewolves killed all villagers..\n'
   }  
+}
+
+function revealRoles(playerRoles) {
+  var text = ''
+  for (var i = 0; i < playerRoles.length; i++) {
+    text += `${playerRoles[i].name} is ${playerRoles[i].role}.\n`
+  }
+  return text
 }
