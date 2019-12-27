@@ -18,7 +18,9 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider />
-          <v-list-item v-for="player in players">
+          <v-list-item 
+            v-for="player in players"
+            color="#4F545C">
             <v-list-item-avatar>
               <v-img :src="player.avatar"></v-img>
             </v-list-item-avatar>
@@ -94,9 +96,17 @@
                 class="message-avatar"
                 :src="message.avatar"></v-img>
               <small class="message-from">{{ message.gameName }}</small>
+              <div
+                class="message-timestamp"
+                :style="{ paddingLeft: message.gameName != '' ? '6px' : '0' }"
+                >{{ message.timestamp.toDate().toLocaleString() }}
+              </div>
+              <div></div>
               <div class="message-body">{{ message.body }}</div>
             </div>
-            <v-divider class="message-divider" />
+            <v-divider 
+              class="message-divider"
+              color="#FFFFFF" />
           </li>
         </ul>
     </div>
@@ -243,6 +253,9 @@
           }
           return individualMessages
         }
+      },
+      getTimestamp() {
+
       },
       getExtraChatTitle() {
         if (this.isWolf) {
@@ -544,7 +557,6 @@
 
   .message {
     padding: 0 3px;
-    white-space: pre-wrap;
     color: #FFFFFF;
   }
 
@@ -557,21 +569,30 @@
   }
 
   .message-from {
-    display: block;
-    padding: 0 15px 2px 0;
+    display: inline-block;
+    padding-left: 8px;
     font-weight: 500;
+  }
+
+  .message-timestamp {
+    display: inline-block;
+    color: #72767D;
+    font-size: 12px;
   }
 
   .message-body {
     display: inline-block;
     max-width: calc(100% - 100px);
-    padding: 4px 15px;
-    font-size: 16px;
+    padding: 4px 0 0 8px;
+    font-size: 15px;
     word-break: break-all;
+    white-space: pre-wrap;
+    color: #DCDDDE;
   }
 
   .message-divider {
     margin: 10px 30px 0 0;
+    opacity: 0.06;
   }
 
   .message-input {
