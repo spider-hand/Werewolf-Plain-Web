@@ -34,32 +34,32 @@
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && !isMyself(player.id) && myself.isAlive && player.isAlive"
+                v-if="isGameOngoing && isJoiningThisGame && !isMyself(player.id) && myself.isAlive && player.isAlive"
                 icon
                 @click="vote(player)">
                 <v-icon :color="myself.votedPlayer != null && player.id == myself.votedPlayer.id ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
               </v-btn>
              <v-btn
-                v-if="hasGameStarted && !player.isAlive"
+                v-if="!player.isAlive"
                 icon>
                 <v-icon color="#757575">mdi-emoticon-dead</v-icon>
               </v-btn>
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isWolf && !isMyself(player.id) && myself.isAlive && player.isAlive"
+                v-if="isGameOngoing && isJoiningThisGame && isWolf && !isMyself(player.id) && myself.isAlive && player.isAlive"
                 icon
                 @click="bite(player)">
                 <v-icon :color="myself.bittenPlayer != null && player.id == myself.bittenPlayer.id ? '#FFFFFF' : '#757575'">mdi-skull</v-icon>
               </v-btn>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isSeer && !isMyself(player.id) && myself.isAlive && player.isAlive"
+                v-if="isGameOngoing && isJoiningThisGame && isSeer && !isMyself(player.id) && myself.isAlive && player.isAlive"
                 icon
                 @click="checkRole(player)">
                 <v-icon :color="myself.divinedPlayer != null && player.id == myself.divinedPlayer.id ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
               </v-btn>
               <v-btn
-                v-if="hasGameStarted && isJoiningThisGame && isKnight && !isMyself(player.id) && myself.isAlive && player.isAlive"
+                v-if="isGameOngoing && isJoiningThisGame && isKnight && !isMyself(player.id) && myself.isAlive && player.isAlive"
                 icon
                 @click="protect(player)">
                 <v-icon :color="myself.protectedPlayer != null && player.id == myself.protectedPlayer.id ? '#FFFFFF' : '#757575'">mdi-shield-half-full</v-icon>
@@ -164,6 +164,13 @@
     computed: {
       hasGameStarted() {
         if (this.room.status != 'new') {
+          return true
+        } else {
+          return false
+        }
+      },
+      isGameOngoing() {
+        if (this.room.status == 'ongoing') {
           return true
         } else {
           return false
