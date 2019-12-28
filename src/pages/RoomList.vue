@@ -179,8 +179,12 @@
                         mdi-lock
                       </v-icon>
                     </td>
-                    <td width="60%">{{ room.name }}</td>
-                    <td>{{ room.numberOfParticipants }}</td>
+                    <td width="60%">
+                      <span>{{ room.name }}</span>
+                    </td>
+                    <td>
+                      <span>{{ room.numberOfParticipants }}</span>
+                    </td>
                     <td>
                       <v-btn 
                         text

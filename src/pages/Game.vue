@@ -244,6 +244,8 @@
           return this.wolfMessages
         } else if (this.isResultsSeerOpened) {
           return this.resultsSeer
+        } else if (this.isResultsMediumOpened) {
+          return this.resultsMedium
         } else {
           var individualMessages = []
           for (var i = 0; i < this.messages.length; i++) {
@@ -378,6 +380,8 @@
           // When an individual log is opened
           that.isChatAllOpened = false
           that.isWolfChatOpened = false
+          that.isResultsSeerOpened = false
+          that.isResultsMediumOpened = false
         }
       }
     },
