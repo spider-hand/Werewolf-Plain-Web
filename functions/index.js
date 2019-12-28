@@ -40,8 +40,8 @@ exports.atNight = functions.https.onRequest((req, res) => {
 exports.inDaytime = functions.https.onRequest((req, res) => {
   var db = admin.firestore()
   var roomId = req.query.roomId
-  var dayLength = req.query.dayLength
-  var nightLength = req.query.nightLength
+  var dayLength = parseInt(req.query.dayLength)
+  var nightLength = parseInt(req.query.nightLength)
   var docRef = db.collection('rooms').doc(roomId)
 
   var countsVillager = 0
