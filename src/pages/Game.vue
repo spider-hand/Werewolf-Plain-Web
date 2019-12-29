@@ -383,6 +383,73 @@
           that.isResultsSeerOpened = false
           that.isResultsMediumOpened = false
         }
+      },
+      myself: function(newVal, oldVal) {
+        // Get messages depending on the player's role
+        if (oldVal == null || oldVal.role == null && newVal.role != null) {
+          var db = firebase.firestore()
+          var docRef = db.collection('rooms').doc(this.$route.params.id)
+
+          // Get wolf's messages if the player's role is wolf
+          if (this.isWolf) {
+            docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get()
+              .then((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  this.wolfMessages.push(doc.data())
+                })
+              })
+
+            docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
+              .onSnapshot((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
+                    this.wolfMessages.push(doc.data())
+                  }
+                  this.isInitialWolfTriggerDone = true
+                })
+            })
+          }
+
+          // Get results if the player's role is seer
+          if (this.isSeer) {
+            docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
+              .then((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  this.resultsSeer.push(doc.data())
+                })
+              })
+
+            docRef.collection('resultsSeer').orderBy('timestamp', 'desc').limit(1)
+              .onSnapshot((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                    this.resultsSeer.push(doc.data())
+                  }
+                  this.isInitialSeerTriggerDone = true
+                })
+              })
+          }
+
+          // Get results if the player's role is medium
+          if (this.isMedium) {
+            docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
+              .then((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  this.resultsMedium.push((doc.data()))
+                })
+              })
+
+            docRef.collection('resultsMedium').orderBy('timestamp', 'desc').limit(1)
+              .onSnapshot((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                    this.resultsMedium.push(doc.data())
+                  }
+                  this.isInitialMediumTriggerDone = true                        
+                })
+              })
+          }   
+        }
       }
     },
     mounted() {
@@ -443,66 +510,6 @@
                     name: 'room-list',
                   })
                 }
-
-                // Get wolf's messages if the player's role is wolf
-                if (this.isWolf) {
-                  docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get()
-                    .then((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        this.wolfMessages.push(doc.data())
-                      })
-                    })
-
-                  docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
-                    .onSnapshot((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
-                          this.wolfMessages.push(doc.data())
-                        }
-                        this.isInitialWolfTriggerDone = true
-                      })
-                  })
-                }
-
-                // Get results if the player's role is seer
-                if (this.isSeer) {
-                  docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
-                    .then((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        this.resultsSeer.push(doc.data())
-                      })
-                    })
-
-                  docRef.collection('resultsSeer').orderBy('timestamp', 'desc').limit(1)
-                    .onSnapshot((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
-                          this.resultsSeer.push(doc.data())
-                        }
-                        this.isInitialSeerTriggerDone = true
-                      })
-                    })
-                }
-
-                // Get results if the player's role is medium
-                if (this.isMedium) {
-                  docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
-                    .then((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        this.resultsMedium.push((doc.data()))
-                      })
-                    })
-
-                  docRef.collection('resultsMedium').orderBy('timestamp', 'desc').limit(1)
-                    .onSnapshot((querySnapShot) => {
-                      querySnapShot.forEach((doc) => {
-                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
-                          this.resultsMedium.push(doc.data())
-                        }
-                        this.isInitialMediumTriggerDone = true                        
-                      })
-                    })
-                }   
               }
             }
           })
