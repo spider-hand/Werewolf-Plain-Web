@@ -6,7 +6,7 @@
         <v-btn 
           v-if="isOwner() && !hasGameStarted"
           text
-          color="#FFFFFF"
+          :color="isGameReady ? '#F44336' : '#757575'"
           @click="startGame">Start</v-btn>
         <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
         <DialogRole
@@ -17,17 +17,21 @@
       <div v-else>
         <div v-if="isSignedIn">
           <v-btn 
-            text
-            color="#FFFFFF"
-            @click="$router.push({ name:'profile', params:{ uid: getUserId }})">Profile</v-btn>
+            icon
+            color="#757575"
+            @click="$router.push({ name:'profile', params:{ uid: getUserId }})">
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
           <DialogSettings 
             :gameName="gameName"
             :avatar="avatar"
             @updateSettings="updateSettings" />
           <v-btn
-            text
-            color="#FFFFFF"
-            @click="signOutOfGoogle">Logout</v-btn>
+            icon
+            color="#757575"
+            @click="signOutOfGoogle">
+            <v-icon>mdi-logout</v-icon>  
+          </v-btn>
         </div>
         <v-btn 
           v-else
@@ -73,6 +77,13 @@
       ...mapGetters(['isSignedIn']),
       getUserId() {
         return firebase.auth().currentUser.uid
+      },
+      isGameReady() {
+        if (this.room.numberOfParticipants == this.room.capacity) {
+          return true
+        } else {
+          return false
+        }
       },
       hasGameStarted() {
         if (this.room.status != 'new') {

@@ -6,9 +6,11 @@
     max-width="600">
     <template v-slot:activator="{ on }">
       <v-btn
-        text
-        color="#FFFFFF"
-        v-on="on">Settings</v-btn>
+        icon
+        color="#757575"
+        v-on="on">
+        <v-icon>mdi-settings</v-icon>
+      </v-btn>
     </template>
     <v-card color="#36393F">
       <v-card-title>

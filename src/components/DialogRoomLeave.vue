@@ -7,10 +7,9 @@
     <template v-slot:activator="{ on }">
       <v-btn 
         text
-        color="#2F3136"
         v-on="on">
-      <span>Leave</span>
-    </v-btn>
+        <span class="header-text">Leave</span>
+      </v-btn>
     </template>
     <v-card color="#36393F">
       <v-card-title>
@@ -97,6 +96,10 @@
 <style scoped>
   span {
     color: #FFFFFF;
+  }
+
+  .header-text {
+    color: #757575;
   }
 
   .v-card__text span {

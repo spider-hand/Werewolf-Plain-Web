@@ -11,12 +11,6 @@
             :validAccessCode="validAccessCode"
             @validateAccessCode="enterRoom" />
           <div class="flex-grow-1"></div>
-          <v-btn 
-            depressed
-            color="#2F3136"
-            @click="updateRoomList">
-            <v-icon color="#FFFFFF">mdi-refresh</v-icon>
-          </v-btn>
         </v-layout>
       </v-container>
 
