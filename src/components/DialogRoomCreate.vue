@@ -180,6 +180,10 @@
           {
             text: '10',
             value: 10,
+          },
+          {
+            text: '1440',
+            value: 1440,
           }
         ],
         nightLength: 5,
