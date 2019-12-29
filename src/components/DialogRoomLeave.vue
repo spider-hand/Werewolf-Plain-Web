@@ -24,14 +24,12 @@
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn
-          depressed
-          color="#2F3136"
+          text
           @click="leaveRoom">
           <span>OK</span>
         </v-btn>
         <v-btn
-          depressed
-          color="#2F3136"
+          text
           @click="cancel">
           <span>CANCEL</span>
         </v-btn>
@@ -99,5 +97,9 @@
 <style scoped>
   span {
     color: #FFFFFF;
+  }
+
+  .v-card__text span {
+    color: #DCDDDE;
   }
 </style>

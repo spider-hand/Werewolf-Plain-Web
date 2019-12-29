@@ -96,15 +96,13 @@
       </v-card-text>
       <v-card-actions>
         <div class="flex-grow-1"></div>
-        <v-btn 
-          depressed
-          color="#2F3136"
+        <v-btn
+          text
           @click="validate">
           <span>OK</span>
         </v-btn>
         <v-btn 
-          depressed
-          color="#2F3136"
+          text
           @click="cancel">
           <span>CANCEL</span>
         </v-btn>

@@ -110,14 +110,12 @@
         <v-btn
           text
           v-if="isEditing == true"
-          color="#2F3136"
           @click="updateSettings">
           <span>SAVE</span>
         </v-btn>
         <v-btn
           text
           v-if="isEditing == true"
-          color="#2F3136"
           @click="cancel">
           <span>CANCEL</span>
         </v-btn>

@@ -21,7 +21,6 @@
           <div class="room-description">
             <span>{{ room.description }}</span>
           </div>
-          <v-divider></v-divider>
           <v-row>
             <v-col cols="3">
               <span>
@@ -51,8 +50,7 @@
       <v-card-actions>
         <div class="flex-grow-1"></div>
         <v-btn
-          depressed
-          color="#2F3136"
+          text
           @click="close">
           <span>CLOSE</span>
         </v-btn>
@@ -99,6 +97,10 @@
 <style scoped>
   span {
     color: #FFFFFF;
+  }
+
+  .v-card__text span {
+    color: #DCDDDE;
   }
 
   .room-description {

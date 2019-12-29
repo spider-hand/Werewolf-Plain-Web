@@ -64,7 +64,7 @@
                 </v-btn>
               </v-row>
             </v-container>
-            <v-divider></v-divider>
+            <v-divider color="#FFFFFF"></v-divider>
             <v-container>
               <v-row>
                 <v-col cols="4">
@@ -259,5 +259,13 @@
 
   .user-bio {
     white-space: pre-wrap;
+  }
+
+  .user-bio span {
+    color: #DCDDDE;
+  }
+
+  .v-divider {
+    opacity: 0.06;
   }
 </style>
