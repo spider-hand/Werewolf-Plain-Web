@@ -271,9 +271,18 @@
             divinedPlayer: null,
           })
           .then(() => {
-            this.$router.push({
-              name: 'game',
-              params:{ id: docRef.id },
+            db.collection('rooms').doc(docRef.id).collection('messages').add({
+              from: 'host',
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              body: `${this.gameName} joined.`,
+              gameName: '',
+              avatar: '',
+            })
+            .then(() => {
+              this.$router.push({
+                name: 'game',
+                params:{ id: docRef.id },
+              })
             })
           })
         })

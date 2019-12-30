@@ -394,18 +394,19 @@
           if (this.isWolf) {
             docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get()
               .then((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
+                Promise.all(querySnapShot.docs.map((doc) => {
                   this.wolfMessages.push(doc.data())
-                })
-              })
-
-            docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
-              .onSnapshot((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
-                  if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
-                    this.wolfMessages.push(doc.data())
-                  }
-                  this.isInitialWolfTriggerDone = true
+                }))
+                .then(() => {
+                  docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
+                          this.wolfMessages.push(doc.data())
+                        }
+                        this.isInitialWolfTriggerDone = true
+                      })
+                  })
                 })
             })
           }
@@ -414,40 +415,42 @@
           if (this.isSeer) {
             docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
               .then((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
+                Promise.all(querySnapShot.docs.map((doc) => {
                   this.resultsSeer.push(doc.data())
+                }))
+                .then(() => {
+                  docRef.collection('resultsSeer').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                          this.resultsSeer.push(doc.data())
+                        }
+                        this.isInitialSeerTriggerDone = true
+                      })
+                  })
                 })
-              })
-
-            docRef.collection('resultsSeer').orderBy('timestamp', 'desc').limit(1)
-              .onSnapshot((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
-                  if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
-                    this.resultsSeer.push(doc.data())
-                  }
-                  this.isInitialSeerTriggerDone = true
-                })
-              })
+            })
           }
 
           // Get results if the player's role is medium
           if (this.isMedium) {
             docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
               .then((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
+                Promise.all(querySnapShot.docs.map((doc) => {
                   this.resultsMedium.push((doc.data()))
+                }))
+                .then(() => {
+                  docRef.collection('resultsMedium').orderBy('timestamp', 'desc').limit(1)
+                    .onSnapshot((querySnapShot) => {
+                      querySnapShot.forEach((doc) => {
+                        if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
+                          this.resultsMedium.push(doc.data())
+                        }
+                        this.isInitialMediumTriggerDone = true                        
+                      })
+                  })
                 })
-              })
-
-            docRef.collection('resultsMedium').orderBy('timestamp', 'desc').limit(1)
-              .onSnapshot((querySnapShot) => {
-                querySnapShot.forEach((doc) => {
-                  if (!doc.metadata.hasPendingWrites && this.isInitialSeerTriggerDone) {
-                    this.resultsMedium.push(doc.data())
-                  }
-                  this.isInitialMediumTriggerDone = true                        
-                })
-              })
+            })
           }   
         }
       }
@@ -517,19 +520,21 @@
       })
 
       // Get all current messages
-      docRef.collection('messages').orderBy('timestamp', 'asc').get().then((querySnapShot) => {
-        querySnapShot.forEach((doc) => {
-          this.messages.push(doc.data())
-        })
-      })
-
-      // Set listener and retrieve the latest message every time when a message is added
-      docRef.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapShot) => {
-          querySnapShot.forEach((doc) => {
-            if (!doc.metadata.hasPendingWrites && this.isInitialTriggerDone) {
-              this.messages.push(doc.data())
-            }
-            this.isInitialTriggerDone = true
+      docRef.collection('messages').orderBy('timestamp', 'asc').get()
+        .then((querySnapShot) => {
+          Promise.all(querySnapShot.docs.map((doc) => {
+            this.messages.push(doc.data())
+          })).then(() => {
+            // After reading all the current messages
+            // Set listener and retrieve the latest message every time when a message is added
+            docRef.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapShot) => {
+                querySnapShot.forEach((doc) => {
+                  if (!doc.metadata.hasPendingWrites && this.isInitialTriggerDone) {
+                    this.messages.push(doc.data())
+                  }
+                  this.isInitialTriggerDone = true
+                })
+            })
           })
       })
     }

@@ -293,11 +293,20 @@
                       divinedPlayer: null,
                     })
                     .then(() => {
-                      this.$router.push({
-                        name: 'game',
-                        params:{ id: roomId },
+                      room.collection('messages').add({
+                        from: 'host',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        body: `${this.gameName} joined.`,
+                        gameName: '',
+                        avatar: '',
                       })
-                    }) 
+                      .then(() => {
+                        this.$router.push({
+                          name: 'game',
+                          params:{ id: roomId },
+                        })
+                      }) 
+                    })
                   } else {
                     this.$router.push({
                       name: 'game',

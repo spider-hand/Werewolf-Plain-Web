@@ -35,9 +35,11 @@
         </div>
         <v-btn 
           v-else
-          text
-          color="#FFFFFF"
-          @click="signInWithGoogle">Login</v-btn>
+          icon
+          color="#757575"
+          @click="signInWithGoogle">
+          <v-icon>mdi-login</v-icon>
+        </v-btn>
       </div>
     </v-app-bar>
   </div>
