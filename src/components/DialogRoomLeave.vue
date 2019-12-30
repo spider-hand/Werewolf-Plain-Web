@@ -43,6 +43,9 @@
   import 'firebase/firestore'
 
   export default {
+    props: [
+      'myself',
+    ],
     data() {
       return {
         dialog: false,
@@ -53,38 +56,56 @@
         // Remove the player's document from the collection
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id)
+        var promises = []
 
-        docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
-            .then(() => {
-              docRef.update({
-                numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-              }).then(() => {
-                docRef.get().then((doc) => {
-                  // Remove the room document and its subcollection when the owner left
-                  if (doc.data().ownerId == firebase.auth().currentUser.uid) {
-                    docRef.delete()
+        docRef.collection('messages').add({
+          from: 'host',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          body: `${this.myself.name} left.`,
+          gameName: '',
+          avatar: '',
+        })
+        .then(() => {
+          docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
+              .then(() => {
+                docRef.update({
+                  numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+                }).then(() => {
+                  docRef.get().then((doc) => {
+                    // Remove the room document and its subcollection when the owner left
+                    if (doc.data().ownerId == firebase.auth().currentUser.uid) {
+                      var deleteRoom = docRef.delete()
 
-                    docRef.collection('players').get()
-                      .then((querySnapShot) => {
-                        querySnapShot.forEach((doc) => {
-                          doc.ref.delete()
-                        })
+                      var deletePlayers = 
+                        docRef.collection('players').get()
+                          .then((querySnapShot) => {
+                            Promise.all(querySnapShot.docs.map((doc) => {
+                              doc.ref.delete()
+                            }))
+                          })
+
+                      var deleteMessages = 
+                        docRef.collection('messages').get()
+                          .then((querySnapShot) => {
+                            Promise.all(querySnapShot.docs.map((doc) => {
+                              doc.ref.delete()
+                            }))
+                          })
+
+                      promises.push(deleteRoom)
+                      promises.push(deletePlayers)
+                      promises.push(deleteMessages)
+                    }
+
+                    Promise.all(promises).then(() => {
+                      this.$router.push({
+                        name: 'room-list',
                       })
-
-                    docRef.collection('messages').get()
-                      .then((querySnapShot) => {
-                        querySnapShot.forEach((doc) => {
-                          doc.ref.delete()
-                        })
-                      })
-                  }
-
-                  this.$router.push({
-                    name: 'room-list',
+                    })
                   })
                 })
               })
-            })
+        })
       },
       cancel() {
         this.dialog = false

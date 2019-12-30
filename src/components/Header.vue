@@ -8,7 +8,9 @@
           text
           :color="isGameReady ? '#F44336' : '#757575'"
           @click="startGame">Start</v-btn>
-        <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
+        <DialogRoomLeave 
+          v-if="isJoiningThisGame && !hasGameStarted"
+          :myself="myself" />
         <DialogRole
           v-if="myself != null && myself.role != null" 
           :myself="myself" />

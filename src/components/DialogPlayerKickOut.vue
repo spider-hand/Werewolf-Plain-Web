@@ -43,7 +43,7 @@
 
   export default {
     props: [
-      'uid',
+      'player',
     ],
     data() {
       return {
@@ -56,13 +56,22 @@
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id)
 
-        docRef.collection('players').doc(this.uid).delete()
-          .then(() => {
-            docRef.update({
-              numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-              banList: firebase.firestore.FieldValue.arrayUnion(this.uid),
+        docRef.collection('messages').add({
+          from: 'host',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          body: ` ${this.player.name} was kicked out.`,
+          gameName: '',
+          avatar: '',
+        })
+        .then(() => {
+          docRef.collection('players').doc(this.player.id).delete()
+            .then(() => {
+              docRef.update({
+                numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+                banList: firebase.firestore.FieldValue.arrayUnion(this.player.id),
+              })
             })
-          })
+        })
       },
       cancel() {
         this.dialog = false
