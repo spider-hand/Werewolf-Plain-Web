@@ -20,7 +20,7 @@
           <v-divider />
           <v-list-item 
             v-for="player in players"
-            color="#4F545C">
+            color="#F44336">
             <v-list-item-avatar>
               <v-img :src="player.avatar"></v-img>
             </v-list-item-avatar>
@@ -173,16 +173,24 @@
     },
     computed: {
       hasGameStarted() {
-        if (this.room.status != 'new') {
+        try {
+          if (this.room.status != 'new') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
           return true
-        } else {
-          return false
         }
       },
       isGameOngoing() {
-        if (this.room.status == 'ongoing') {
-          return true
-        } else {
+        try {
+          if (this.room.status == 'ongoing') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
           return false
         }
       },
@@ -230,6 +238,17 @@
           return false
         }
       },
+      isAlive() {
+        try {
+          if (this.myself.isAlive) {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return true
+        }
+      },
       isFormVisible() {
         if (this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWolfChatOpened) {
           return true
@@ -239,8 +258,21 @@
       },
       getMessages() {
         if (this.isChatAllOpened) {
-          return this.messages
+          if (this.isAlive && this.isGameOngoing) {
+            return this.messages.filter(function(message) {
+              return !message.isFromGrave
+            })
+          } else {
+            return this.messages
+          }
         } else if (this.isWolfChatOpened) {
+          if (this.isAlive) {
+            return this.wolfMessages.filter(function(wolfMessage) {
+              return !wolfMessage.isFromGrave
+            })
+          } else {
+            return this.wolfMessages
+          }
           return this.wolfMessages
         } else if (this.isResultsSeerOpened) {
           return this.resultsSeer
@@ -306,6 +338,7 @@
             body: this.message,
             gameName: this.myself.name,
             avatar: this.myself.avatar,
+            isFromGrave: !this.isAlive,
           })
           .then((docRef) => {
             this.message = ''
@@ -319,6 +352,7 @@
             body: this.message,
             gameName: this.myself.name,
             avatar: this.myself.avatar,
+            isFromGrave: !this.isAlive,
           })
           .then((docRef) => {
             this.message = ''

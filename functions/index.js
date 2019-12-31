@@ -323,7 +323,8 @@ function sendDaytimeMessage(docRef, daytimeMessage) {
       timestamp: admin.firestore.Timestamp.now(),
       body: daytimeMessage,
       gameName: '',
-      avatar: '',                    
+      avatar: '', 
+      isFromGrave: false,                   
     })
   return promise
 }

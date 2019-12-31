@@ -64,6 +64,7 @@
           body: `${this.myself.name} left.`,
           gameName: '',
           avatar: '',
+          isFromGrave: false,
         })
         .then(() => {
           docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()

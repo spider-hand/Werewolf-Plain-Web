@@ -176,6 +176,7 @@
               body: "Game starts now. Please check your role. It's first day's daytime.",
               gameName: '',
               avatar: '',
+              isFromGrave: false,
             })
           })
 

@@ -277,6 +277,7 @@
               body: `${this.gameName} joined.`,
               gameName: '',
               avatar: '',
+              isFromGrave: false,
             })
             .then(() => {
               this.$router.push({

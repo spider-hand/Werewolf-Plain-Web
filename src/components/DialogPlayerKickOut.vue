@@ -62,6 +62,7 @@
           body: ` ${this.player.name} was kicked out.`,
           gameName: '',
           avatar: '',
+          isFromGrave: false,
         })
         .then(() => {
           docRef.collection('players').doc(this.player.id).delete()
