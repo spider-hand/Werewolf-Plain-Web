@@ -9,10 +9,10 @@
         <v-container>
           <v-card-title>
             <v-text-field
-              v-if="isEditing == true"
+              v-if="isEditing"
               v-model="newUsername"
-              :disabled="isUsernameEditable == false"
-              :error-messages="isUsernameEditable == false ? 'You can change username once 30 days' : ''"
+              :disabled="!isUsernameEditable"
+              :error-messages="!isUsernameEditable ? 'You can change username once 30 days' : ''"
               label="Username"
               :value="newUsername"
               outlined
@@ -23,7 +23,7 @@
             <div class="flex-grow-1"></div>
             <v-btn 
               icon
-              v-if="getMyUserId == $route.params.uid && isEditing == false"
+              v-if="isMyProfile && !isEditing"
               @click="editProfile">
               <v-icon color="#8E9297">mdi-account-edit</v-icon>
             </v-btn>
@@ -31,7 +31,7 @@
           <v-card-text>
             <v-container>
               <v-textarea
-                v-if="isEditing == true"
+                v-if="isEditing"
                 v-model="newBio"
                 label="Bio"
                 :value="newBio"
@@ -47,7 +47,7 @@
             </v-container>
             <v-container
               class="pt-0" 
-              v-if="isEditing == true">
+              v-if="isEditing">
               <v-row>
                 <div class="flex-grow-1"></div>
                 <v-btn 
@@ -107,37 +107,37 @@
                       <td>Villager</td>
                       <td>{{ user.villagerWin }}</td>
                       <td>{{ user.villagerLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getVillagerWinRate(user.villagerWin, user.villagerLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>Wolf</td>
                       <td>{{ user.wolfWin }}</td>
                       <td>{{ user.wolfLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getWolfWinRate(user.wolfWin, user.wolfLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>Seer</td>
                       <td>{{ user.seerWin }}</td>
                       <td>{{ user.seerLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getSeerWinRate(user.seerWin, user.seerLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>Medium</td>
                       <td>{{ user.mediumWin }}</td>
                       <td>{{ user.mediumLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getMediumWinRate(user.mediumWin, user.mediumLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>Doctor</td>
                       <td>{{ user.knightWin }}</td>
                       <td>{{ user.knightLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getKnightWinRate(user.knightWin, user.knightLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>Minion</td>
                       <td>{{ user.minionWin }}</td>
                       <td>{{ user.minionLose }}</td>
-                      <td>0 %</td>
+                      <td>{{ getMinionWinRate(user.minionWin, user.minionLose) }} %</td>
                     </tr>
                   </tbody>
                 </template>
@@ -165,8 +165,16 @@
       }
     },
     computed: {
-      getMyUserId() {
-        return firebase.auth().currentUser.uid
+      isMyProfile() {
+        try {
+          if (firebase.auth().currentUser.uid == this.$route.params.uid) {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
       },
       getWin() {
         var win = this.user.villagerWin + this.user.wolfWin + this.user.seerWin + this.user.mediumWin + this.user.knightWin + this.user.minionWin
@@ -191,6 +199,24 @@
     },
     methods: {
       getWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getVillagerWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getWolfWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getSeerWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getMediumWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getKnightWinRate(win, lose) {
+        return Math.floor(win / (win + lose) * 100)
+      },
+      getMinionWinRate(win, lose) {
         return Math.floor(win / (win + lose) * 100)
       },
       editProfile() {

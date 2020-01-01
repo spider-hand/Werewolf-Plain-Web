@@ -59,6 +59,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var promises1 = []
   var promises2 = []
   var hasGameEnded = false
+  var doesVillageWin = true
   var daytimeMessage = ''
 
   docRef.collection('players').get()
@@ -66,6 +67,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
       Promise.all(querySnapShot.docs.map((doc) => {
         // Save the name and the player's role so it can be revealed when the game ends
         playerRoles.push({
+          id: doc.data().id,
           name: doc.data().name,
           role: doc.data().role,
         })
@@ -142,11 +144,19 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           daytimeMessage += `${mostVotedPlayer.name} was executed. `
         } else {
           hasGameEnded = true
-          daytimeMessage += checkWhichSideWin(countsWerewolf)
+
+          if (countsWerewolf > 0) {
+            doesVillageWin = false
+            daytimeMessage += 'Werewolves killed all villagers.. \n'
+          } else {
+            daytimeMessage += 'All werewolves were executed! Village wins! \n'
+          }
+
           daytimeMessage += revealRoles(playerRoles)
 
           promises0.push(endGame(docRef))
           promises0.push(sendDaytimeMessage(docRef, daytimeMessage))
+          promises0.push(updateRecords(doesVillageWin, playerRoles))
         }
 
         Promise.all(promises0).then(() => {
@@ -170,11 +180,19 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
             } else {
               // End this game
               hasGameEnded = true
-              daytimeMessage += checkWhichSideWin(countsWerewolf)
+
+              if (countsWerewolf > 0) {
+                doesVillageWin = false
+                daytimeMessage += 'Werewolves killed all villagers.. \n'
+              } else {
+                daytimeMessage += 'All werewolves were executed! Village wins! \n'
+              }
+
               daytimeMessage += revealRoles(playerRoles)
 
               promises1.push(endGame(docRef))
               promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
+              promises1.push(updateRecords(doesVillageWin, playerRoles))
             }
           }
 
@@ -233,11 +251,19 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 // TODO: Update the player's record when ending the game
                 // TODO: Reveal all player's roles when ending the game
                 hasGameEnded = true
-                daytimeMessage += checkWhichSideWin(countsWerewolf)
+
+                if (countsWerewolf > 0) {
+                  doesVillageWin = false
+                  daytimeMessage += 'Werewolves killed all villagers.. \n'
+                } else {
+                  daytimeMessage += 'All werewolves were executed! Village wins! \n'
+                }
+
                 daytimeMessage += revealRoles(playerRoles)
 
                 promises2.push(endGame(docRef))
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
+                promises2.push(updateRecords(doesVillageWin, playerRoles))
               }              
             }
 
@@ -338,18 +364,90 @@ function endGame(docRef) {
   return promise
 }
 
-function checkWhichSideWin(countsWerewolf) {
-  if (countsWerewolf == 0) {
-    return 'All werewolves were executed! Village wins!\n'
-  } else {
-    return 'Werewolves killed all villagers..\n'
-  }  
-}
-
 function revealRoles(playerRoles) {
   var text = ''
   for (var i = 0; i < playerRoles.length; i++) {
     text += `${playerRoles[i].name} is ${playerRoles[i].role}.\n`
   }
   return text
+}
+
+function updateRecords(doesVillageWin, playerRoles) {
+  var db = admin.firestore()
+  var docRef = db.collection('users')
+  var promises = []
+
+  for (var i = 0; i < playerRoles.length; i++) {
+    var role = playerRoles[i].role
+    var userRef = docRef.doc(playerRoles[i].id)
+
+    if (doesVillageWin) {
+      if (role == 'villager') {
+        var promise = 
+          userRef.update({
+            villagerWin: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'seer') {
+        var promise = 
+          userRef.update({
+            seerWin: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'medium') {
+        var promise = 
+          userRef.update({
+            mediumWin: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'knight') {
+        var promise = 
+          userRef.update({
+            knightWin: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'wolf') {
+        var promise = 
+          userRef.update({
+            wolfLose: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'minion') {
+        var promise = 
+          userRef.update({
+            minionLose: admin.firestore.FieldValue.increment(1),
+          })
+      }
+    } else {
+      if (role == 'villager') {
+        var promise = 
+          userRef.update({
+            villagerLose: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'seer') {
+        var promise = 
+          userRef.update({
+            seerLose: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'medium') {
+        var promise = 
+          userRef.update({
+            mediumLose: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'knight') {
+        var promise = 
+          userRef.update({
+            knightLose: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'wolf') {
+        var promise = 
+          userRef.update({
+            wolfWin: admin.firestore.FieldValue.increment(1),
+          })
+      } else if (role == 'minion') {
+        var promise = 
+          userRef.update({
+            minionWin: admin.firestore.FieldValue.increment(1),
+          })
+      }   
+    }
+    promises.push(promise)
+  }
+
+  return Promise.all(promises)
 }
