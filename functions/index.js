@@ -276,6 +276,39 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
     })
 })
 
+exports.deleteExpiredRooms = function.pubsub.schedule('every wednesday 00:00').onRun((context) => {
+  var db = admin.firestore()
+
+  db.collection('rooms').get()
+    .then((querySnapShot) => {
+      return Promise.all(querySnapShot.docs.map((doc) => {
+        // Delete rooms either 1 week passed since it was either created or finished
+        var status = doc.data().status
+        var createdAt = doc.data().timestamp.toDate()
+        var currentDate = Date.now()
+        var difference = currentDate - createdAt
+
+        if (difference > 604800000 && status != 'ongoing') {
+          doc.ref.delete()
+
+          doc.ref.collection('players').get()
+            .then((querySnapShot) => {
+              Promise.all(querySnapShot.docs.map((playerDoc) => {
+                playerDoc.ref.delete()
+              }))
+            })
+
+          doc.ref.collection('messages').get()
+            .then((querySnapShot) => {
+              Promise.all(querySnapShot.docs.map((messageDoc) => {
+                messageDoc.ref.delete()
+              }))
+            })
+        }
+      }))
+    })
+})
+
 function addNightTask(roomId, dayLength) {
   const client = new tasks.CloudTasksClient()
 
