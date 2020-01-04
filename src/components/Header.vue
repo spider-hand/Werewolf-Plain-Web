@@ -1,6 +1,20 @@
 <template>
   <div>
     <v-app-bar color="#2C2F33">
+      <div v-if="$route.name != 'game'">
+        <v-btn
+          text
+          color="#757575"
+          @click="$router.push('room-list')">
+          <span>Room List</span>
+        </v-btn>
+        <v-btn 
+          text
+          color="#757575"
+          @click="$router.push('rules')">
+          <span>Rules</span>
+        </v-btn>
+      </div>
       <div class="flex-grow-1"></div>
       <div v-if="$route.name == 'game'">
         <v-btn 
