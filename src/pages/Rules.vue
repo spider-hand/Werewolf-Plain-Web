@@ -9,7 +9,7 @@
 	  		<v-card-text class="text-left white--text">
 	  			<h1>Rules</h1>
 	  		</v-card-text>
-	  		<v-card-text class="text-left white--text">
+	  		<v-card-text class="text-left white--text pb-0">
 	  			<h2>How to win</h2>
 	  		</v-card-text>
 	  		<v-card-text>
@@ -20,7 +20,7 @@
 	  			</span>
 	  		</v-card-text>
 	  		<v-divider color="#FFFFFF" />
-	  		<v-card-text class="text-left white--text">
+	  		<v-card-text class="text-left white--text pb-0">
 	  			<h2>Game flow</h2>
 	  		</v-card-text>
 	  		<v-card-text>
@@ -29,56 +29,42 @@
 	  			</span>
 	  		</v-card-text>
 	  		<v-divider color="#FFFFFF" />
-		  	<v-card-text class="text-left white--text">
+		  	<v-card-text class="text-left white--text pb-0">
 		  		<h2>Roles</h2>
 		  	</v-card-text>
 		  	<v-card-text>
 		  		<span>A role will be decided randomly when the game starts.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Villager</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Villager</h3>
 		  		<span>Normal villager. They don't have any abilities.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Seer</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Seer</h3>
 		  		<span>Seer can choose one player each day to uncover whether the player is wereolf or not. The result will be sent every time daytime comes.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Medium</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Medium</h3>
 		  		<span>Medium can see which team the player executed last night belongs to when daytime comes.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Knight</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Knight</h3>
 		  		<span>Knight can choose one player to protect each day. The player will not be killed by werewolf at the night.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Werewolf</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Werewolf</h3>
 		  		<span>Werewolf can choose a player each day and the most selected player will be killed at night. Werewolves can chat even during night on wolf chat. If no werewolves didn't select a player, a random villager will be killed.</span>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Minion</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Minion</h3>
 		  		<span>Minion belongs to werewolf team but seen as a human. Minion wins when werewolves win. Minion doesn't have any abilities and can't see which players are werewolves.</span>
 		  	</v-card-text>
 		  	<v-divider color="#FFFFFF" />
 		  	<v-card-text class="text-left white--text">
 		  		<h2>Others</h2>
 		  	</v-card-text>
-		  	<v-card-text class="text-left white--text pb-0">
-		  		<h3>Voting</h3>
-		  	</v-card-text>
-		  	<v-card-text class="pt-0">
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">Voting</h3>
 		  		<span>Every players need to vote a player by the time next day's daytime comes. Players who didn't vote will commit suicide. Players can change the selected player anytime in the day. If there are multiple players who are voted the most, the executed player will be decided randomly in the players. A player will be executed first, then, if a werewolf is still alive, a villager will be killed. If werewolves select the same player as the one who are executed, no one will be killed. If nobody voted and all players commit suicide, the village will win.</span>
 		  	</v-card-text>
 		  </v-card>

@@ -7,6 +7,7 @@ import RoomList from '@/pages/RoomList'
 import Game from '@/pages/Game'
 import Profile from '@/pages/Profile'
 import Rules from '@/pages/Rules'
+import About from '@/pages/About'
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router ({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About,
     },
     {
       path: '/rules',

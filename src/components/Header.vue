@@ -5,13 +5,19 @@
         <v-btn
           text
           color="#757575"
-          @click="$router.push('room-list')">
+          @click="$router.push({ name: 'room-list' })">
           <span>Room List</span>
+        </v-btn>
+        <v-btn
+          text
+          color="#757575"
+          @click="$router.push({ name: 'about' })">
+          <span>About</span>
         </v-btn>
         <v-btn 
           text
           color="#757575"
-          @click="$router.push('rules')">
+          @click="$router.push({ name: 'rules' })">
           <span>Rules</span>
         </v-btn>
       </div>
