@@ -1,10 +1,13 @@
 <template>
   <v-app>
     <Header 
+      v-if="$route.name != 'game'"
+      @updateSettings="updateSettings" />
+    <HeaderGame
+      v-else
       :room="room"
       :myself="myself"
-      :isJoiningThisGame="isJoining"
-      @updateSettings="updateSettings" />
+      :isJoiningThisGame="isJoining" />
     <router-view 
       :gameName="gameName"
       :avatar="avatar"
@@ -16,10 +19,12 @@
 
 <script>
   import Header from '@/components/Header'
+  import HeaderGame from '@/components/HeaderGame'
 
   export default {
     components: {
       Header,
+      HeaderGame,
     },
     data() {
       return {
