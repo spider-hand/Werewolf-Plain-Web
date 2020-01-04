@@ -384,7 +384,7 @@
   #room-list-page {
     position: relative;
     height: 100%;
-    background-color: #36393F;
+    background-color: #23272A;
   }
 
   @media (max-width: 450px) {

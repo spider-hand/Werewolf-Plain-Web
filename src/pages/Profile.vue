@@ -5,7 +5,7 @@
         class="mx-auto"
         flat 
         max-width="800"
-        color="#36393F">
+        color="#23272A">
         <v-container>
           <v-card-title>
             <v-text-field
@@ -280,7 +280,7 @@
   #profile-page {
     position: relative;
     height: 100%;
-    background-color: #36393F;
+    background-color: #23272A;
   }
 
   .user-bio {

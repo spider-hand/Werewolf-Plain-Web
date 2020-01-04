@@ -86,7 +86,7 @@
   #rules-page {
     position: relative;
     height: 100%;
-    background-color: #36393F;
+    background-color: #23272A;
   }
 
   .v-divider {

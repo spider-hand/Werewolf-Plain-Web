@@ -8,7 +8,7 @@
       <v-btn 
         :disabled="!isSignedIn"
         depressed
-        color="#2F3136"
+        color="#43B581"
         v-on="on">
         <span>Host Game</span>
       </v-btn>

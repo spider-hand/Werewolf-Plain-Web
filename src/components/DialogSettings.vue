@@ -39,7 +39,7 @@
             <v-col cols="8">
               <v-btn 
                 depressed
-                color="#2F3136"
+                color="#43B581"
                 @click="onClickAvatarInput">
                 <span>UPLOAD AVATAR</span>
               </v-btn>
