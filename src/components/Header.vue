@@ -1,68 +1,138 @@
 <template>
   <div>
-    <v-app-bar color="#2C2F33">
-      <div v-if="$route.name != 'game'">
-        <v-btn
-          text
-          color="#757575"
-          @click="$router.push({ name: 'room-list' })">
-          <span>Room List</span>
-        </v-btn>
-        <v-btn
-          text
-          color="#757575"
-          @click="$router.push({ name: 'about' })">
-          <span>About</span>
-        </v-btn>
-        <v-btn 
-          text
-          color="#757575"
-          @click="$router.push({ name: 'rules' })">
-          <span>Rules</span>
-        </v-btn>
-      </div>
+    <v-app-bar 
+      v-if="$route.name != 'game' && $viewport.width > 450"
+      color="#2C2F33">
+      <v-btn
+        text
+        color="#757575"
+        @click="$router.push({ name: 'room-list' })">
+        <span>Room List</span>
+      </v-btn>
+      <v-btn
+        text
+        color="#757575"
+        @click="$router.push({ name: 'about' })">
+        <span>About</span>
+      </v-btn>
+      <v-btn 
+        text
+        color="#757575"
+        @click="$router.push({ name: 'rules' })">
+        <span>Rules</span>
+      </v-btn>
       <div class="flex-grow-1"></div>
-      <div v-if="$route.name == 'game'">
+      <div v-if="isSignedIn">
         <v-btn 
-          v-if="isOwner() && !hasGameStarted"
-          text
-          :color="isGameReady ? '#F44336' : '#757575'"
-          @click="startGame">Start</v-btn>
-        <DialogRoomLeave 
-          v-if="isJoiningThisGame && !hasGameStarted"
-          :myself="myself" />
-        <DialogRole
-          v-if="myself != null && myself.role != null" 
-          :myself="myself" />
-        <DialogRoomDetails :room="room" />
-      </div>
-      <div v-else>
-        <div v-if="isSignedIn">
-          <v-btn 
-            icon
-            color="#757575"
-            @click="$router.push({ name:'profile', params:{ uid: getUserId }})">
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
-          <DialogSettings 
-            :gameName="gameName"
-            :avatar="avatar"
-            @updateSettings="updateSettings" />
-          <v-btn
-            icon
-            color="#757575"
-            @click="signOutOfGoogle">
-            <v-icon>mdi-logout</v-icon>  
-          </v-btn>
-        </div>
-        <v-btn 
-          v-else
           icon
           color="#757575"
-          @click="signInWithGoogle">
-          <v-icon>mdi-login</v-icon>
+          @click="$router.push({ name:'profile', params:{ uid: getUserId }})">
+          <v-icon>mdi-account</v-icon>
+        </v-btn>
+        <DialogSettings 
+          :gameName="gameName"
+          :avatar="avatar"
+          @updateSettings="updateSettings" />
+        <v-btn
+          icon
+          color="#757575"
+          @click="signOutOfGoogle">
+          <v-icon>mdi-logout</v-icon>  
         </v-btn>
       </div>
+      <v-btn 
+        v-else
+        icon
+        color="#757575"
+        @click="signInWithGoogle">
+        <v-icon>mdi-login</v-icon>
+      </v-btn>
+    </v-app-bar>
+    <v-app-bar
+      v-if="$route.name != 'game' && $viewport.width < 450"
+      color="#2C2F33">
+      <div class="flex-grow-1"></div>
+      <v-menu>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon 
+            color="#757575"
+            v-on="on"
+            >
+            <v-icon>mdi-menu</v-icon>    
+          </v-btn>
+        </template>
+        <v-list color="#23272A">
+          <v-list-item @click="$router.push({ name: 'room-list' })">
+            <v-list-item-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Room list</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="$router.push({ name: 'about' })">
+            <v-list-item-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>About</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="$router.push({ name: 'rules' })">
+            <v-list-item-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Rules</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item 
+            v-if="isSignedIn"
+            @click="$router.push({ name:'profile', params:{ uid: getUserId }})">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Profile</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item 
+            v-if="isSignedIn"
+            @click="signOutOfGoogle">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Log out</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item 
+            v-if="!isSignedIn"
+            @click="signInWithGoogle">
+            <v-list-item-icon>
+              <v-icon>mdi-login</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Log in</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>          
+      </v-menu>
+    </v-app-bar>
+    <v-app-bar
+      v-if="$route.name == 'game'"
+      color="#2C2F33">
+      <div class="flex-grow-1"></div>
+      <v-btn 
+        v-if="isOwner() && !hasGameStarted"
+        text
+        :color="isGameReady ? '#F44336' : '#757575'"
+        @click="startGame">Start</v-btn>
+      <DialogRoomLeave 
+        v-if="isJoiningThisGame && !hasGameStarted"
+        :myself="myself" />
+      <DialogRole
+        v-if="myself != null && myself.role != null" 
+        :myself="myself" />
+      <DialogRoomDetails :room="room" />
     </v-app-bar>
   </div>
 </template>
@@ -306,5 +376,11 @@
 </script>
 
 <style scoped>
+  .v-list-item__title {
+    color: #DCDDDE;
+  }
 
+  .v-list-item__icon .v-icon {
+    color: #DCDDDE;
+  }
 </style>
