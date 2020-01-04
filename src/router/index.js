@@ -9,6 +9,11 @@ import Profile from '@/pages/Profile'
 import Rules from '@/pages/Rules'
 import About from '@/pages/About'
 
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 Vue.use(Router)
 
 export default new Router ({
