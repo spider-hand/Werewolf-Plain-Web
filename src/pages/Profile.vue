@@ -12,8 +12,8 @@
               v-if="isEditing"
               v-model="newUsername"
               :disabled="!isUsernameEditable"
-              :error-messages="!isUsernameEditable ? 'You can change username once 30 days' : ''"
-              label="Username"
+              :error-messages="!isUsernameEditable ? $t('Profile.usernameIsNotEditable') : ''"
+              :label="$t('Profile.username')"
               :value="newUsername"
               outlined
               color="#8E9297"
@@ -33,7 +33,7 @@
               <v-textarea
                 v-if="isEditing"
                 v-model="newBio"
-                label="Bio"
+                :label="$t('Profile.bio')"
                 :value="newBio"
                 outlined
                 color="#8E9297"

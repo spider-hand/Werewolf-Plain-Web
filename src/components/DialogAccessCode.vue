@@ -53,7 +53,7 @@
     methods: {
       validate() {
         if (this.accessCode != this.validAccessCode) {
-          this.errorMessage = 'Invalid access code'
+          this.errorMessage = this.$t('DialogAccessCode.invalidAccessCode')
         } else {
           this.$emit('validateAccessCode')
         }

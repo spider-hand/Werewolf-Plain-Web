@@ -25,8 +25,8 @@
             lazy-validation>
             <v-text-field
               v-model="name"
-              :rules="[v => !!v || 'Required']"
-              label="Village Name"
+              :rules="[v => !!v || $t('DialogRoomCreate.required')]"
+              :label="$t('DialogRoomCreate.villageName')"
               outlined
               color="#8E9297"
               background-color="#2F3136"
@@ -34,14 +34,14 @@
             <v-textarea
               v-model="description"
               name="input-7-4"
-              label="Description (Opitonal)"
+              :label="$t('DialogRoomCreate.description')"
               outlined
               color="#8E9297"
               background-color="#2F3136"
               dark></v-textarea>
             <v-select 
               v-model="capacity"
-              label="Capacity"
+              :label="$t('DialogRoomCreate.capacity')"
               outlined
               color="#8E9297"
               background-color="#2F3136"
@@ -51,7 +51,7 @@
               <v-col cols="6">
                 <v-select
                   v-model="dayLength"
-                  label="Day (minutes)"
+                  :label="$t('DialogRoomCreate.dayLength')"
                   outlined
                   color="#8E9297"
                   background-color="#2F3136"
@@ -61,7 +61,7 @@
               <v-col cols="6">
                 <v-select
                   v-model="nightLength"
-                  label="Night (minutes)"
+                  :label="$t('DialogRoomCreate.nightLength')"
                   outlined
                   color="#8E9297"
                   background-color="#2F3136"
@@ -73,7 +73,7 @@
               <v-col cols="3">
                 <v-checkbox
                   v-model="isPrivate"
-                  label="Private"
+                  :label="$t('DialogRoomCreate.private')"
                   color="#8E9297"
                   dark></v-checkbox>
               </v-col>
@@ -84,7 +84,7 @@
                   ref="accessCodeInput"
                   v-model="accessCode"
                   outlined
-                  label="Access Code"
+                  :label="$t('DialogRoomCreate.accessCode')"
                   color="#8E9297"
                   background-color="#2F3136"
                   dark
@@ -214,9 +214,9 @@
         accessCodeRules: [
           v => {
             if (!v && this.isPrivate == true) {
-              return 'Required'
+              return this.$t('DialogRoomCreate.required')
             } else if (/\s/.test(v) && this.isPrivate == true) {
-              return "Whitespace isn't allowed"
+              return this.$t('DialogRoomCreate.whitespaceIsNotAllowed')
             } else {
               return true
             }

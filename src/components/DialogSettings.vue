@@ -28,7 +28,7 @@
           <v-row>
             <v-text-field
               v-model="newGameName"
-              label="Game Name"
+              :label="$t('DialogSettings.gameName')"
               :value="newGameName"
               outlined
               color="#8E9297"
@@ -202,7 +202,7 @@
         const files = event.target.files
         const fileReader = new FileReader()
         if (files[0].size > 200000) {
-          this.avatarErrorMessage = 'Avatar size should be less than 2MB'          
+          this.avatarErrorMessage = this.$t('avatarErrorMessage')      
         } else {
           fileReader.addEventListener('load', () => {
             this.newAvatarUrl = fileReader.result
