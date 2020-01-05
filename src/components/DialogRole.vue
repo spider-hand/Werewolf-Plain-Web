@@ -12,11 +12,21 @@
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <span>You are {{ myself.role }}</span>
+        <span v-if="myself.role == 'villager'">{{ $t('DialogRole.villager') }}</span>
+        <span v-if="myself.role == 'seer'">{{ $t('DialogRole.seer') }}</span>
+        <span v-if="myself.role == 'medium'">{{ $t('DialogRole.medium') }}</span>
+        <span v-if="myself.role == 'knight'">{{ $t('DialogRole.knight') }}</span>
+        <span v-if="myself.role == 'wolf'">{{ $t('DialogRole.werewolf') }}</span>
+        <span v-if="myself.role == 'minion'">{{ $t('DialogRole.minion') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <span>{{ getDescription }}</span>
+          <span v-if="myself.role == 'villager'">{{ $t('DialogRole.villagerDescription') }}</span>
+          <span v-if="myself.role == 'seer'">{{ $t('DialogRole.seerDescription') }}</span>
+          <span v-if="myself.role == 'medium'">{{ $t('DialogRole.mediumDescription') }}</span>
+          <span v-if="myself.role == 'knight'">{{ $t('DialogRole.knightDescription') }}</span>
+          <span v-if="myself.role == 'wolf'">{{ $t('DialogRole.werewolfDescription') }}</span>
+          <span v-if="myself.role == 'minion'">{{ $t('DialogRole.minionDescription') }}</span>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -24,7 +34,7 @@
         <v-btn
           text
           @click="close">
-          <span>CLOSE</span>
+          <span>{{ $t('DialogRole.close') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -39,24 +49,6 @@
     data() {
       return {
         dialog: false,
-      }
-    },
-    computed: {
-      getDescription() {
-        switch (this.myself.role) {
-          case 'villager':
-            return "You are a normal villager and don't have any abilities. Discuss and select one player to execute each day."
-          case 'wolf':
-            return 'You can choose one player to kill every night. You can chat with other werewolves on wolf chat.'
-          case 'seer':
-            return "You can choose one player and uncover the player's role each night."
-          case 'medium':
-            return "You can see which team the player executed last day's night is each night."
-          case 'knight':
-            return 'You can choose one player to protect every night. The player cannot be killed the night.'
-          case 'minion':
-            return "You belongs to werewolf team but you don't have any abilities and seen as a villager. You can't see which players are werewolves but will help werewolf team to win."
-        }
       }
     },
     methods: {

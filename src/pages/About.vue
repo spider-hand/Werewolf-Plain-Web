@@ -7,52 +7,52 @@
 				width="100%"
 				color="transparent">
 				<v-card-text class="text-left white--text">
-					<h1>About</h1>
+					<h1>{{ $t('About.about.title') }}</h1>
 				</v-card-text>
 				<v-card-text>
 					<span>
-						Werewolf Plain is a simple and easy to use werewolf game server.
+						{{ $t('About.about.para1') }}
 					</span>
 				</v-card-text>
 				<v-divider color="#FFFFFF" />
 				<v-card-text class="text-left white--text">
-					<h2>Setting up</h2>
+					<h2>{{ $t('About.settingUp.title') }}</h2>
 				</v-card-text>
 				<v-card-text>
 					<span>
-						1. Press "Host Game" to create a new village.
+						{{ $t('About.settingUp.para1') }}
 						<br>
-						2. Press "Start" to start the game after the village gets full.
+						{{ $t('About.settingUp.para2') }}
 						<br>
-						The host can kick out players before starting the game. Players can leave the villager before the game starts. If the host leaves the village, the village will be deleted. If one week passed since the village created and the game haven't started, it will also be deleted automatically.
+						{{ $t('About.settingUp.para3') }}
 					</span>
 				</v-card-text>
 				<v-divider color="#FFFFFF" />
 				<v-card-text class="text-left white--text">
-					<h2>Village and Roles</h2>
+					<h2>{{ $t('About.villageAndRoles.title') }}</h2>
 				</v-card-text>
 				<v-card-text>
-					<h3 class="text-left white--text">5 player game</h3>
+					<h3 class="text-left white--text">{{ $t('About.villageAndRoles.para1') }}</h3>
 					<span>
-						3 villagers, 1 seer and 1 werewolf
+						{{ $t('About.villageAndRoles.para2') }}
 					</span>
 				</v-card-text>
 				<v-card-text>
-					<h3 class="text-left white--text">9 player game</h3>
+					<h3 class="text-left white--text">{{ $t('About.villageAndRoles.para3') }}</h3>
 					<span>
-						4 villagers, 1 seer, 1 knight, 2 werewolves and 1 minion
+						{{ $t('About.villageAndRoles.para4') }}
 					</span>
 				</v-card-text>
 				<v-card-text>
-					<h3 class="text-left white--text">11 player game</h3>
+					<h3 class="text-left white--text">{{ $t('About.villageAndRoles.para5') }}</h3>
 					<span>
-						5 villagers, 1 seer, 1 medium, 1 knight, 2 werewolves and 1 minion
+						{{ $t('About.villageAndRoles.para6') }}
 					</span>
 				</v-card-text>
 				<v-card-text>
-					<h3 class="text-left white--text">15 player game</h3>
+					<h3 class="text-left white--text">{{ $t('About.villageAndRoles.para7') }}</h3>
 					<span>
-						8 villagers, 1 seer, 1 medium, 1 knight, 3 werewolves and 1 minion
+						{{ $t('About.villageAndRoles.para8') }}
 					</span>
 				</v-card-text>
 			</v-card>

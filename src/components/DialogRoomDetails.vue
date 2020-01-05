@@ -13,7 +13,9 @@
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <v-icon v-if="room.isPrivate == true">mdi-lock</v-icon>
+        <v-icon 
+          v-if="room.isPrivate == true"
+          color="#757575">mdi-lock</v-icon>
         <span>{{ room.name }}</span>
       </v-card-title>
       <v-card-text>
@@ -22,27 +24,30 @@
             <span>{{ room.description }}</span>
           </div>
           <v-row>
-            <v-col cols="3">
+            <v-col cols="4">
               <span>
-                <strong>Day: {{ room.dayLength }} minutes</strong>
+                <strong>{{ $t('DialogDetails.daytime') }}: {{ room.dayLength }} {{ $t('DialogDetails.minutes') }}</strong>
               </span>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="4">
               <span>
-                <strong>Night: {{ room.nightLength }} minutes</strong>
-              </span>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col class="pt-0 pb-0">
-              <span>
-                <strong>Capacity: {{ room.capacity }}</strong>
+                <strong>{{ $t('DialogDetails.night') }}: {{ room.nightLength }} {{ $t('DialogDetails.minutes')}}</strong>
               </span>
             </v-col>
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
-              <span>{{ getCastDetails }}</span>
+              <span>
+                <strong>{{ $t('DialogDetails.capacity') }}: {{ room.capacity }}</strong>
+              </span>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="pt-0 pb-0">
+              <span v-if="room.capacity == 5">{{ $t('DialogDetails.fivePlayerVillage') }}</span>
+              <span v-if="room.capacity == 9">{{ $t('DialogDetails.ninePlayerVillage') }}</span>
+              <span v-if="room.capacity == 11">{{ $t('DialogDetails.elevenPlayerVillage') }}</span>
+              <span v-if="room.capacity == 15">{{ $t('DialogDetails.fifteenPlayerVillage') }}</span>
             </v-col>
           </v-row>
         </v-container>
@@ -52,7 +57,7 @@
         <v-btn
           text
           @click="close">
-          <span>CLOSE</span>
+          <span>{{ $t('DialogDetails.close') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card> 
@@ -70,20 +75,6 @@
     data() {
       return {
         dialog: false,
-      }
-    },
-    computed: {
-      getCastDetails() {
-        switch (this.room.capacity) {
-          case 5:
-            return '(Villager: 3 / Wolf: 1 / Seer: 1)'
-          case 9:
-            return '(Villager: 4 / Wolf: 2 / Seer: 1 / Knight: 1 / Minion: 1)'
-          case 11:
-            return '(Villager: 5 / Wolf: 2 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)'
-          case 15:
-            return '(Villager: 8 / Wolf: 3 / Seer: 1 / Medium: 1 / Knight: 1 / Minion: 1)'
-        }
       }
     },
     methods: {

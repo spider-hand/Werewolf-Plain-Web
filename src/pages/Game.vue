@@ -13,7 +13,7 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span>All</span>
+                <span>{{ $t('Game.all') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -77,7 +77,9 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span>{{ getExtraChatTitle }}</span>
+                <span v-if="isWolf">{{ $t('Game.wolfChat') }}</span>
+                <span v-if="isSeer">{{ $t('Game.resultsSeer') }}</span>
+                <span v-if="isMedium">{{ $t('Game.resultsMedium') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -288,15 +290,6 @@
           return individualMessages
         }
       },
-      getExtraChatTitle() {
-        if (this.isWolf) {
-          return 'Wolf Chat'
-        } else if (this.isSeer) {
-          return 'Results (Seer)'
-        } else {
-          return 'Results (Medium)'
-        }
-      }
     },
     methods: {
       isOwner() {

@@ -13,11 +13,11 @@
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <span>Kick this player out</span>
+        <span>{{ $t('DialogPlayerKickOut.title') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <span>Are you sure you want to kick this player out?</span>
+          <span>{{ $t('DialogPlayerKickOut.para1') }}</span>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -30,7 +30,7 @@
         <v-btn
           text
           @click="cancel">
-          <span>CANCEL</span>
+          <span>{{ $t('DialogPlayerKickOut.cancel') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card> 

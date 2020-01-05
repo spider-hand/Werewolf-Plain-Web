@@ -20,9 +20,9 @@
           color="#F44336"
           dark
           v-model="tabs">
-          <v-tab>New</v-tab>
-          <v-tab>Ongoing</v-tab>
-          <v-tab>Closed</v-tab>
+          <v-tab>{{ $t('RoomList.new') }}</v-tab>
+          <v-tab>{{ $t('RoomList.ongoing') }}</v-tab>
+          <v-tab>{{ $t('RoomList.closed') }}</v-tab>
 
           <v-tab-item 
             transition="false"
@@ -33,10 +33,10 @@
                   <tr>
                     <th class="text-left"></th>
                     <th class="text-left">
-                      <span>Name</span>
+                      <span>{{ $t('RoomList.name') }}</span>
                     </th>
                     <th class="text-left">
-                      <span>Participants</span>
+                      <span>{{ $t('RoomList.participants') }}</span>
                     </th>
                     <th class="text-left"></th>
                   </tr>
@@ -63,7 +63,7 @@
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        <span>Details</span>
+                        <span>{{ $t('RoomList.details') }}</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -77,7 +77,7 @@
                       <v-btn 
                         text
                         @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom()">
-                        <span>Enter</span>
+                        <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -94,10 +94,10 @@
                   <tr>
                     <th class="text-left"></th>
                     <th class="text-left">
-                      <span>Name</span>
+                      <span>{{ $t('RoomList.name') }}</span>
                     </th>
                     <th class="text-left">
-                      <span>Participants</span>
+                      <span>{{ $t('RoomList.participants') }}</span>
                     </th>
                     <th class="text-left"></th>
                   </tr>
@@ -123,7 +123,7 @@
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        <span>Details</span>
+                        <span>{{ $t('RoomList.details') }}</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -137,7 +137,7 @@
                       <v-btn 
                         text
                         @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom()">
-                        <span>Enter</span>
+                        <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -154,10 +154,10 @@
                   <tr>
                     <th class="text-left"></th>
                     <th class="text-left">
-                      <span>Name</span>
+                      <span>{{ $t('RoomList.name') }}</span>
                     </th>
                     <th class="text-left">
-                      <span>Participants</span>
+                      <span>{{ $t('RoomList.participants') }}</span>
                     </th>
                     <th class="text-left"></th>
                   </tr>
@@ -183,7 +183,7 @@
                       <v-btn 
                         text
                         :small="$viewport.width < 450">
-                        <span>Details</span>
+                        <span>{{ $t('RoomList.details') }}</span>
                       </v-btn>
                     </td>
                   </tr>
@@ -197,7 +197,7 @@
                       <v-btn 
                         text
                         @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom()">
-                        <span>Enter</span>
+                        <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
                   </tr>

@@ -7,19 +7,19 @@
         text
         color="#757575"
         @click="$router.push({ name: 'room-list' })">
-        <span>Room List</span>
+        <span>{{ $t('Header.roomList') }}</span>
       </v-btn>
       <v-btn
         text
         color="#757575"
         @click="$router.push({ name: 'about' })">
-        <span>About</span>
+        <span>{{ $t('Header.about') }}</span>
       </v-btn>
       <v-btn 
         text
         color="#757575"
         @click="$router.push({ name: 'rules' })">
-        <span>Rules</span>
+        <span>{{ $t('Header.rules') }}</span>
       </v-btn>
       <div class="flex-grow-1"></div>
       <div v-if="isSignedIn">
@@ -67,21 +67,21 @@
             <v-list-item-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Room list</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.roomList') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item @click="$router.push({ name: 'about' })">
             <v-list-item-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>About</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.about') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item @click="$router.push({ name: 'rules' })">
             <v-list-item-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Rules</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.rules') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item 
@@ -91,7 +91,7 @@
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Profile</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.profile') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item 
@@ -101,7 +101,7 @@
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Log out</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.logout') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item 
@@ -111,7 +111,7 @@
               <v-icon>mdi-login</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>Log in</v-list-item-title>
+              <v-list-item-title>{{ $t('Header.login') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>          

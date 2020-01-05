@@ -6,7 +6,7 @@
     max-width="600">
     <v-card color="#36393F">
       <v-card-title>
-        <span>Input Access Code</span>
+        <span>{{ $t('DialogAccessCode.title') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -30,7 +30,7 @@
         <v-btn
           text
           @click="close">
-          <span>CLOSE</span>
+          <span>{{ $t('DialogAccessCode.close') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -53,7 +53,7 @@
     methods: {
       validate() {
         if (this.accessCode != this.validAccessCode) {
-          this.errorMessage = 'Access code is invalid'
+          this.errorMessage = 'Invalid access code'
         } else {
           this.$emit('validateAccessCode')
         }

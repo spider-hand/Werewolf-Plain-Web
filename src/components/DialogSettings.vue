@@ -14,7 +14,7 @@
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <span>Settings</span>
+        <span>{{ $t('DialogSettings.title') }}</span>
         <div class="flex-grow-1"></div>
         <v-btn
           icon
@@ -39,9 +39,9 @@
             <v-col cols="8">
               <v-btn 
                 depressed
-                color="#43B581"
+                color="#7289DA"
                 @click="onClickAvatarInput">
-                <span>UPLOAD AVATAR</span>
+                <span>{{ $t('DialogSettings.uploadAvatar') }}</span>
               </v-btn>
               <input 
                 type="file"
@@ -61,7 +61,7 @@
             <v-col 
               cols="12"
               class="pb-0">
-              <small>Preview</small>
+              <small>{{ $t('DialogSettings.preview') }}</small>
             </v-col>
             <v-col cols="8">
               <v-img 
@@ -78,7 +78,7 @@
               class="pt-0 pb-0" 
               cols="12">
               <span>
-                <small>Game Name</small>
+                <small>{{ $t('DialogSettings.gameName') }}</small>
               </span>
             </v-col>
             <v-col 
@@ -94,7 +94,7 @@
               cols="12"
               class="pb-0">
               <span>
-                <small>Avatar</small>
+                <small>{{ $t('DialogSettings.avatar') }}</small>
               </span>
             </v-col>
             <v-col 
@@ -113,19 +113,19 @@
           text
           v-if="isEditing == true"
           @click="updateSettings">
-          <span>SAVE</span>
+          <span>{{ $t('DialogSettings.save') }}</span>
         </v-btn>
         <v-btn
           text
           v-if="isEditing == true"
           @click="cancel">
-          <span>CANCEL</span>
+          <span>{{ $t('DialogSettings.cancel') }}</span>
         </v-btn>
         <v-btn
           text
           v-else
           @click="close">
-          <span>CLOSE</span>
+          <span>{{ $t('DialogSettings.close') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -54,13 +54,13 @@
                   text
                   color="#2F3136"
                   @click="updateProfile">
-                  <span>SAVE</span>
+                  <span>{{ $t('Profile.save') }}</span>
                 </v-btn>
                 <v-btn 
                   text
                   color="#2F3136"
                   @click="cancel">
-                  <span>CANCEL</span>
+                  <span>{{ $t('Profile.cancel') }}</span>
                 </v-btn>
               </v-row>
             </v-container>
@@ -69,17 +69,17 @@
               <v-row>
                 <v-col cols="4">
                   <span>
-                    <strong>Win: {{ getWin }}</strong>
+                    <strong>{{ $t('Profile.win') }}: {{ getWin }}</strong>
                   </span>
                 </v-col>
                 <v-col cols="4">
                   <span>
-                    <strong>Lose: {{ getLose }}</strong>
+                    <strong>{{ $t('Profile.lose') }}: {{ getLose }}</strong>
                   </span>
                 </v-col>
                 <v-col cols="4">
                   <span>
-                    <strong>Win Rate: {{ getWinRate(getWin, getLose) }} %</strong>
+                    <strong>{{ $t('Profile.winRate') }}: {{ getWinRate(getWin, getLose) }} %</strong>
                   </span>
                 </v-col>
               </v-row>
@@ -89,52 +89,52 @@
                   <thead>
                     <tr>
                       <th class="text-left">
-                        <span>Role</span>
+                        <span>{{ $t('Profile.role') }}</span>
                       </th>
                       <th class="text-left">
-                        <span>Win</span>
+                        <span>{{ $t('Profile.win') }}</span>
                       </th>
                       <th class="text-left">
-                        <span>Lose</span>
+                        <span>{{ $t('Profile.lose') }}</span>
                       </th>
                       <th class="text-left">
-                        <span>Win Rate</span>
+                        <span>{{ $t('Profile.winRate') }}</span>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr style="background-color: #2F3136;">
-                      <td>Villager</td>
+                      <td>{{ $t('Profile.villager') }}</td>
                       <td>{{ user.villagerWin }}</td>
                       <td>{{ user.villagerLose }}</td>
                       <td>{{ getVillagerWinRate(user.villagerWin, user.villagerLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
-                      <td>Wolf</td>
+                      <td>{{ $t('Profile.werewolf') }}</td>
                       <td>{{ user.wolfWin }}</td>
                       <td>{{ user.wolfLose }}</td>
                       <td>{{ getWolfWinRate(user.wolfWin, user.wolfLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
-                      <td>Seer</td>
+                      <td>{{ $t('Profile.seer') }}</td>
                       <td>{{ user.seerWin }}</td>
                       <td>{{ user.seerLose }}</td>
                       <td>{{ getSeerWinRate(user.seerWin, user.seerLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
-                      <td>Medium</td>
+                      <td>{{ $t('Profile.medium') }}</td>
                       <td>{{ user.mediumWin }}</td>
                       <td>{{ user.mediumLose }}</td>
                       <td>{{ getMediumWinRate(user.mediumWin, user.mediumLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
-                      <td>Doctor</td>
+                      <td>{{ $t('Profile.knight') }}</td>
                       <td>{{ user.knightWin }}</td>
                       <td>{{ user.knightLose }}</td>
                       <td>{{ getKnightWinRate(user.knightWin, user.knightLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
-                      <td>Minion</td>
+                      <td>{{ $t('Profile.minion') }}</td>
                       <td>{{ user.minionWin }}</td>
                       <td>{{ user.minionLose }}</td>
                       <td>{{ getMinionWinRate(user.minionWin, user.minionLose) }} %</td>

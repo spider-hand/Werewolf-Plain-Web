@@ -6,7 +6,7 @@
         v-if="isOwner() && !hasGameStarted"
         text
         :color="isGameReady ? '#F44336' : '#757575'"
-        @click="startGame">Start</v-btn>
+        @click="startGame">{{ $t('HeaderGame.start') }}</v-btn>
       <DialogRoomLeave 
         v-if="isJoiningThisGame && !hasGameStarted"
         :myself="myself" />

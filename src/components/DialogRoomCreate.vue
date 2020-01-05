@@ -8,14 +8,14 @@
       <v-btn 
         :disabled="!isSignedIn"
         depressed
-        color="#43B581"
+        color="#7289DA"
         v-on="on">
-        <span>Host Game</span>
+        <span>{{ $t('DialogRoomCreate.hostGame') }}</span>
       </v-btn>
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <span>Host Game</span>
+        <span>{{ $t('DialogRoomCreate.hostGame') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -99,12 +99,12 @@
         <v-btn
           text
           @click="validate">
-          <span>OK</span>
+          <span>{{ $t('DialogRoomCreate.ok') }}</span>
         </v-btn>
         <v-btn 
           text
           @click="cancel">
-          <span>CANCEL</span>
+          <span>{{ $t('DialogRoomCreate.cancel') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>

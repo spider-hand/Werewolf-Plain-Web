@@ -3,6 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import store from './store'
 import router from './router'
+import i18n from './lang'
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
@@ -38,6 +39,7 @@ firebase.initializeApp(firebaseConfig)
 
 new Vue({
   vuetify,
+  i18n,
   store,
   router,
   render: h => h(App)

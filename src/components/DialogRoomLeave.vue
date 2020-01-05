@@ -8,16 +8,16 @@
       <v-btn 
         text
         v-on="on">
-        <span class="header-text">Leave</span>
+        <span class="header-text">{{ $t('DialogRoomLeave.leave') }}</span>
       </v-btn>
     </template>
     <v-card color="#36393F">
       <v-card-title>
-        <span>Leave Room</span>
+        <span>{{ $t('DialogRoomLeave.title') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
-          <span>Are you sure you want to leave this room?</span>
+          <span>{{ $t('DialogRoomLeave.para1') }}</span>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -30,7 +30,7 @@
         <v-btn
           text
           @click="cancel">
-          <span>CANCEL</span>
+          <span>{{ $t('DialogRoomLeave.cancel') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card> 
