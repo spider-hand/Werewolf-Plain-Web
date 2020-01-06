@@ -135,8 +135,8 @@
     },
     data() {
       return {
-        gameName: '',
-        avatar: '',
+        gameName: null,
+        avatar: null,
       }
     },
     computed: {

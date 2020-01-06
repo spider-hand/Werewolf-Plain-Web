@@ -220,6 +220,14 @@
         this.dialog = false
       },
     },
+    watch: {
+      gameName: function(newVal, oldVal) {
+        const that = this
+        if (newVal != null) {
+          that.newGameName = newVal
+        }
+      }
+    },
   }
 </script>
 
