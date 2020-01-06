@@ -49,7 +49,7 @@
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="isGameOngoing && isJoiningThisGame && isWolf && !isMyself(player.id) && myself.isAlive && player.isAlive"
+                v-if="isGameOngoing && isJoiningThisGame && isWerewolf && !isMyself(player.id) && myself.isAlive && player.isAlive"
                 icon
                 @click="bite(player)">
                 <v-icon :color="myself.bittenPlayer != null && player.id == myself.bittenPlayer.id ? '#FFFFFF' : '#757575'">mdi-skull</v-icon>
@@ -68,16 +68,16 @@
               </v-btn>
             </v-list-item-action>
           </v-list-item>
-          <v-divider v-if="isWolf || isSeer" />
+          <v-divider v-if="isWerewolf || isSeer" />
           <v-list-item 
-            v-if="isWolf || isSeer || isMedium"
+            v-if="isWerewolf || isSeer || isMedium"
             color="#F44336">
             <v-list-item-avatar>
               <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span v-if="isWolf">{{ $t('Game.wolfChat') }}</span>
+                <span v-if="isWerewolf">{{ $t('Game.werewolfChat') }}</span>
                 <span v-if="isSeer">{{ $t('Game.resultsSeer') }}</span>
                 <span v-if="isMedium">{{ $t('Game.resultsMedium') }}</span>
               </v-list-item-title>
@@ -159,17 +159,17 @@
         player: 0,
         players: [],
         messages: [],
-        wolfMessages: [],
+        werewolfMessages: [],
         resultsSeer: [],
         isJoiningThisGame: false,
         isInitialTriggerDone: false,
-        isInitialWolfTriggerDone: false,
+        isInitialWerewolfTriggerDone: false,
         isInitialSeerTriggerDone: false,
         isInitialMediumTriggerDone: false,
         message: '',
         valid: true,
         isChatAllOpened: true,
-        isWolfChatOpened: false,
+        isWerewolfChatOpened: false,
         isResultsSeerOpened: false,
       }
     },
@@ -196,9 +196,9 @@
           return false
         }
       },
-      isWolf() {
+      isWerewolf() {
         try {
-          if (this.myself.role == 'wolf') {
+          if (this.myself.role == 'werewolf') {
             return true
           } else {
             return false
@@ -252,7 +252,7 @@
         }
       },
       isFormVisible() {
-        if (this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWolfChatOpened) {
+        if (this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWerewolfChatOpened) {
           return true
         } else {
           return false
@@ -267,15 +267,15 @@
           } else {
             return this.messages
           }
-        } else if (this.isWolfChatOpened) {
+        } else if (this.isWerewolfChatOpened) {
           if (this.isAlive) {
-            return this.wolfMessages.filter(function(wolfMessage) {
-              return !wolfMessage.isFromGrave
+            return this.werewolfMessages.filter(function(werewolfMessage) {
+              return !werewolfMessage.isFromGrave
             })
           } else {
-            return this.wolfMessages
+            return this.werewolfMessages
           }
-          return this.wolfMessages
+          return this.werewolfMessages
         } else if (this.isResultsSeerOpened) {
           return this.resultsSeer
         } else if (this.isResultsMediumOpened) {
@@ -322,10 +322,10 @@
       sendMessage() {
         var db = firebase.firestore()
 
-        if (this.isWolfChatOpened) {
+        if (this.isWerewolfChatOpened) {
           // Save the message
           db.collection('rooms').doc(this.$route.params.id)
-            .collection('wolfMessages').add({
+            .collection('werewolfMessages').add({
             from: firebase.auth().currentUser.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: this.message,
@@ -390,11 +390,11 @@
         const that = this
         if (newVal == 0 || newVal === undefined) {
           that.isChatAllOpened = true
-          that.isWolfChatOpened = false
+          that.isWerewolfChatOpened = false
         } else if (newVal == that.players.length + 1) {
           // When the extra chat is opened
-          if (that.myself.role == 'wolf') {
-            that.isWolfChatOpened = true
+          if (that.myself.role == 'werewolf') {
+            that.isWerewolfChatOpened = true
             that.isChatAllOpened = false
           } else if (that.myself.role == 'seer') {
             that.isResultsSeerOpened = true
@@ -406,7 +406,7 @@
         } else {
           // When an individual log is opened
           that.isChatAllOpened = false
-          that.isWolfChatOpened = false
+          that.isWerewolfChatOpened = false
           that.isResultsSeerOpened = false
           that.isResultsMediumOpened = false
         }
@@ -417,21 +417,21 @@
           var db = firebase.firestore()
           var docRef = db.collection('rooms').doc(this.$route.params.id)
 
-          // Get wolf's messages if the player's role is wolf
-          if (this.isWolf) {
-            docRef.collection('wolfMessages').orderBy('timestamp', 'asc').get()
+          // Get werewolf's messages if the player's role is werewolf
+          if (this.isWerewolf) {
+            docRef.collection('werewolfMessages').orderBy('timestamp', 'asc').get()
               .then((querySnapShot) => {
                 Promise.all(querySnapShot.docs.map((doc) => {
-                  this.wolfMessages.push(doc.data())
+                  this.werewolfMessages.push(doc.data())
                 }))
                 .then(() => {
-                  docRef.collection('wolfMessages').orderBy('timestamp', 'desc').limit(1)
+                  docRef.collection('werewolfMessages').orderBy('timestamp', 'desc').limit(1)
                     .onSnapshot((querySnapShot) => {
                       querySnapShot.forEach((doc) => {
-                        if (!doc.metadata.hasPendingWrites && this.isInitialWolfTriggerDone) {
-                          this.wolfMessages.push(doc.data())
+                        if (!doc.metadata.hasPendingWrites && this.isInitialWerewolfTriggerDone) {
+                          this.werewolfMessages.push(doc.data())
                         }
-                        this.isInitialWolfTriggerDone = true
+                        this.isInitialWerewolfTriggerDone = true
                       })
                   })
                 })

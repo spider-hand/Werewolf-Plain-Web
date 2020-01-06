@@ -145,7 +145,7 @@ export default {
     },
     Game: {
       all: '全体チャット',
-      wolfChat: '人狼チャット',
+      werewolfChat: '人狼チャット',
       resultsSeer: '占い結果',
       resultsMedium: '霊能結果',
     },

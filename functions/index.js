@@ -76,7 +76,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           var votedPlayer = doc.data().votedPlayer
           var playerRole = doc.data().role
 
-          if (playerRole != 'wolf') {
+          if (playerRole != 'werewolf') {
             countsVillager += 1
 
             if (playerRole == 'knight' && doc.data().protectedPlayer != null) {
@@ -122,7 +122,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
             killPlayer(docRef, doc.id)
             daytimeMessage += `${doc.data().name} committed suicide.. `
 
-            if (playerRole != 'wolf') {
+            if (playerRole != 'werewolf') {
               countsVillager -= 1
             } else {
               countsWerewolf -= 1
@@ -172,7 +172,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
         Promise.all(promises0).then(() => {
           if (!hasGameEnded) {
-            if (mostVotedPlayer.role != 'wolf') {
+            if (mostVotedPlayer.role != 'werewolf') {
               countsVillager -= 1
             } else {
               countsWerewolf -= 1
@@ -223,10 +223,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                 if (divinedPlayer.id != 'divinedPlayer') {
                   var divinedPlayerRole
-                  if (divinedPlayer.role != 'wolf') {
+                  if (divinedPlayer.role != 'werewolf') {
                     divinedPlayerRole = 'human'
                   } else {
-                    divinedPlayerRole = 'wolf'
+                    divinedPlayerRole = 'werewolf'
                   }
 
                   var sendSeerResult = 
@@ -242,10 +242,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                 if (mostVotedPlayer.id != 'mostVotedPlayer') {
                   var mostVotedPlayerRole
-                  if (mostVotedPlayer.role != 'wolf') {
+                  if (mostVotedPlayer.role != 'werewolf') {
                     mostVotedPlayerRole = 'human'
                   } else {
-                    mostVotedPlayerRole = 'wolf'
+                    mostVotedPlayerRole = 'werewolf'
                   }
 
                   var sendMediumResult = 
@@ -445,10 +445,10 @@ function updateRecords(doesVillageWin, playerRoles) {
           userRef.update({
             knightWin: admin.firestore.FieldValue.increment(1),
           })
-      } else if (role == 'wolf') {
+      } else if (role == 'werewolf') {
         var promise = 
           userRef.update({
-            wolfLose: admin.firestore.FieldValue.increment(1),
+            werewolfLose: admin.firestore.FieldValue.increment(1),
           })
       } else if (role == 'minion') {
         var promise = 
@@ -477,10 +477,10 @@ function updateRecords(doesVillageWin, playerRoles) {
           userRef.update({
             knightLose: admin.firestore.FieldValue.increment(1),
           })
-      } else if (role == 'wolf') {
+      } else if (role == 'werewolf') {
         var promise = 
           userRef.update({
-            wolfWin: admin.firestore.FieldValue.increment(1),
+            werewolfWin: admin.firestore.FieldValue.increment(1),
           })
       } else if (role == 'minion') {
         var promise = 

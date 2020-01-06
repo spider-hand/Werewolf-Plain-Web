@@ -88,20 +88,20 @@
         var roles
         switch (capacity) {
           case 5:
-            roles = ['villager', 'villager', 'villager', 'wolf', 'seer']
+            roles = ['villager', 'villager', 'villager', 'werewolf', 'seer']
             break
           case 9:
             roles = ['villager', 'villager', 'villager', 'villager', 
-            'wolf', 'wolf', 'seer', 'knight', 'minion']
+            'werewolf', 'werewolf', 'seer', 'knight', 'minion']
             break
           case 11:
             roles = ['villager', 'villager', 'villager', 'villager', 
-            'villager', 'wolf', 'wolf', 'seer', 'medium', 'knight', 'minion']
+            'villager', 'werewolf', 'werewolf', 'seer', 'medium', 'knight', 'minion']
             break
           case 15:
             roles = ['villager', 'villager', 'villager', 'villager', 
-            'villager', 'villager', 'villager', 'villager', 'wolf', 
-            'wolf', 'wolf', 'seer', 'medium', 'knight', 'minion']
+            'villager', 'villager', 'villager', 'villager', 'werewolf', 
+            'werewolf', 'werewolf', 'seer', 'medium', 'knight', 'minion']
             break
         }
 

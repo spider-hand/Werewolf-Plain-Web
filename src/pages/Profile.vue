@@ -111,9 +111,9 @@
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>{{ $t('Profile.werewolf') }}</td>
-                      <td>{{ user.wolfWin }}</td>
-                      <td>{{ user.wolfLose }}</td>
-                      <td>{{ getWolfWinRate(user.wolfWin, user.wolfLose) }} %</td>
+                      <td>{{ user.werewolfWin }}</td>
+                      <td>{{ user.werewolfLose }}</td>
+                      <td>{{ getWolfWinRate(user.werewolfWin, user.werewolfLose) }} %</td>
                     </tr>
                     <tr style="background-color: #2F3136;">
                       <td>{{ $t('Profile.seer') }}</td>
@@ -177,11 +177,11 @@
         }
       },
       getWin() {
-        var win = this.user.villagerWin + this.user.wolfWin + this.user.seerWin + this.user.mediumWin + this.user.knightWin + this.user.minionWin
+        var win = this.user.villagerWin + this.user.werewolfWin + this.user.seerWin + this.user.mediumWin + this.user.knightWin + this.user.minionWin
         return win
       },
       getLose() {
-        var lose = this.user.villagerLose + this.user.wolfLose + this.user.seerLose + this.user.mediumLose + this.user.knightLose + this.user.minionLose
+        var lose = this.user.villagerLose + this.user.werewolfLose + this.user.seerLose + this.user.mediumLose + this.user.knightLose + this.user.minionLose
         return lose
       },
       isUsernameEditable() {

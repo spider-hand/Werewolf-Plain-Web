@@ -48,7 +48,7 @@ export default {
       knight: 'You are knight',
       knightDescription: 'You can choose one player to protect every night. The player cannot be killed the night.',
       werewolf: 'You are werewolf',
-      werewolfDescription: 'You can choose one player to kill every night. You can chat with other werewolves on wolf chat.',
+      werewolfDescription: 'You can choose one player to kill every night. You can chat with other werewolves on werewolf chat.',
       minion: 'You are minion',
       minionDescription: "You belong to werewolf team but seen as a human. Minion wins when werewolves win. Minion doesn't have any abilities and can't see which players are werewolves.",
       close: 'CLOSE',
@@ -107,7 +107,7 @@ export default {
       },
       gameFlow: {
         title: 'Game flow',
-        para1: "There are two phases each day and will repeat until the game finishes. In daytime, players discuss and villagers have to find out who are likely to be werewolves and vote a player. At night, villagers aren't allowed to discuss, but werewolves can talk on wolf chat. When daytime comes, a player that is most voted will be executed and a villager that is most selected by werewolves will be killed. Dead players can't communicate with live players but they can see the chat and talk with other dead players. The game will finish either when all werewolves are executed or the number of werewolves are equal or greater than the number of villagers.",
+        para1: "There are two phases each day and will repeat until the game finishes. In daytime, players discuss and villagers have to find out who are likely to be werewolves and vote a player. At night, villagers aren't allowed to discuss, but werewolves can talk on werewolf chat. When daytime comes, a player that is most voted will be executed and a villager that is most selected by werewolves will be killed. Dead players can't communicate with live players but they can see the chat and talk with other dead players. The game will finish either when all werewolves are executed or the number of werewolves are equal or greater than the number of villagers.",
       },
       roles: {
         title: 'Roles',
@@ -121,7 +121,7 @@ export default {
         knight: 'Knight',
         para5: 'Knight can choose one player to protect each day. The player will not be killed by werewolf at the night.',
         werewolf: 'Werewolf',
-        para6: "Werewolf can choose a player each day and the most selected player will be killed at night. Werewolves can chat even during night on wolf chat. If no werewolves didn't select a player, a random villager will be killed.",
+        para6: "Werewolf can choose a player each day and the most selected player will be killed at night. Werewolves can chat even during night on werewolf chat. If no werewolves didn't select a player, a random villager will be killed.",
         minion: 'Minion',
         para7: "Minion belongs to werewolf team but seen as a human. Minion wins when werewolves win. Minion doesn't have any abilities and can't see which players are werewolves.",
       },
@@ -141,7 +141,7 @@ export default {
     },
     Game: {
       all: 'All',
-      wolfChat: 'Werewolf Chat',
+      werewolfChat: 'Werewolf Chat',
       resultsSeer: 'Results (Seer)',
       resultsMedium: 'Results (Medium)',
     },
