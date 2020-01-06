@@ -5,10 +5,18 @@
     v-if="room != null"
     max-width="600">
     <template v-slot:activator="{ on }">
-      <v-btn 
+      <v-btn
+        v-if="$parent.$options.name == 'v-app-bar'"
         icon
         v-on="on">
         <v-icon color="#757575">mdi-information</v-icon>
+      </v-btn>
+      <v-btn 
+        v-if="$parent.$options.name == 'v-simple-table'"
+        text
+        :small="$viewport.width < 450"
+        v-on="on">
+        <span>{{ $t('DialogRoomDetails.details') }}</span>
       </v-btn>
     </template>
     <v-card color="#36393F">
@@ -26,28 +34,28 @@
           <v-row>
             <v-col cols="4">
               <span>
-                <strong>{{ $t('DialogDetails.daytime') }}: {{ room.dayLength }} {{ $t('DialogDetails.minutes') }}</strong>
+                <strong>{{ $t('DialogRoomDetails.daytime') }}: {{ room.dayLength }} {{ $t('DialogRoomDetails.minutes') }}</strong>
               </span>
             </v-col>
             <v-col cols="4">
               <span>
-                <strong>{{ $t('DialogDetails.night') }}: {{ room.nightLength }} {{ $t('DialogDetails.minutes')}}</strong>
+                <strong>{{ $t('DialogRoomDetails.night') }}: {{ room.nightLength }} {{ $t('DialogRoomDetails.minutes')}}</strong>
               </span>
             </v-col>
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
               <span>
-                <strong>{{ $t('DialogDetails.capacity') }}: {{ room.capacity }}</strong>
+                <strong>{{ $t('DialogRoomDetails.capacity') }}: {{ room.capacity }}</strong>
               </span>
             </v-col>
           </v-row>
           <v-row>
             <v-col class="pt-0 pb-0">
-              <span v-if="room.capacity == 5">{{ $t('DialogDetails.fivePlayerVillage') }}</span>
-              <span v-if="room.capacity == 9">{{ $t('DialogDetails.ninePlayerVillage') }}</span>
-              <span v-if="room.capacity == 11">{{ $t('DialogDetails.elevenPlayerVillage') }}</span>
-              <span v-if="room.capacity == 15">{{ $t('DialogDetails.fifteenPlayerVillage') }}</span>
+              <span v-if="room.capacity == 5">{{ $t('DialogRoomDetails.fivePlayerVillage') }}</span>
+              <span v-if="room.capacity == 9">{{ $t('DialogRoomDetails.ninePlayerVillage') }}</span>
+              <span v-if="room.capacity == 11">{{ $t('DialogRoomDetails.elevenPlayerVillage') }}</span>
+              <span v-if="room.capacity == 15">{{ $t('DialogRoomDetails.fifteenPlayerVillage') }}</span>
             </v-col>
           </v-row>
         </v-container>
@@ -57,7 +65,7 @@
         <v-btn
           text
           @click="close">
-          <span>{{ $t('DialogDetails.close') }}</span>
+          <span>{{ $t('DialogRoomDetails.close') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card> 

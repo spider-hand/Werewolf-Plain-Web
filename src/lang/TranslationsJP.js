@@ -41,7 +41,8 @@ export default {
       para1: '本当にこのプレーヤーを蹴りますか？',
       cancel: 'キャンセル',
     },
-    DialogDetails: {
+    DialogRoomDetails: {
+      details: '詳細',
       daytime: '昼時間',
       night: '夜時間',
       minutes: '分',
@@ -140,7 +141,6 @@ export default {
       closed: '終了済',
       name: '村名',
       participants: '参加者数',
-      details: '詳細',
       enter: '入村',
     },
     Game: {

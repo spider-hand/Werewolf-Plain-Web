@@ -60,11 +60,7 @@
                       <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
                     </td>
                     <td>
-                      <v-btn 
-                        text
-                        :small="$viewport.width < 450">
-                        <span>{{ $t('RoomList.details') }}</span>
-                      </v-btn>
+                      <DialogRoomDetails :room="room" />
                     </td>
                   </tr>
                   <tr 
@@ -120,11 +116,7 @@
                       <span>{{ room.numberOfParticipants }}</span>
                     </td>
                     <td>
-                      <v-btn 
-                        text
-                        :small="$viewport.width < 450">
-                        <span>{{ $t('RoomList.details') }}</span>
-                      </v-btn>
+                      <DialogRoomDetails :room="room" />
                     </td>
                   </tr>
                   <tr 
@@ -180,11 +172,7 @@
                       <span>{{ room.numberOfParticipants }}</span>
                     </td>
                     <td>
-                      <v-btn 
-                        text
-                        :small="$viewport.width < 450">
-                        <span>{{ $t('RoomList.details') }}</span>
-                      </v-btn>
+                      <DialogRoomDetails :room="room" />
                     </td>
                   </tr>
                   <tr 
@@ -218,6 +206,7 @@
 
   import DialogRoomCreate from '@/components/DialogRoomCreate'
   import DialogAccessCode from '@/components/DialogAccessCode'
+  import DialogRoomDetails from '@/components/DialogRoomDetails'
 
   export default {
     props: [
@@ -227,6 +216,7 @@
     components: {
       DialogRoomCreate,
       DialogAccessCode,
+      DialogRoomDetails,
     },
     data() {
       return {

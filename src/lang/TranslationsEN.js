@@ -53,7 +53,8 @@ export default {
       minionDescription: "You belong to werewolf team but seen as a human. Minion wins when werewolves win. Minion doesn't have any abilities and can't see which players are werewolves.",
       close: 'CLOSE',
     },
-    DialogDetails: {
+    DialogRoomDetails: {
+      details: 'Details',
       daytime: 'Daytime',
       night: 'Night',
       minutes: 'minutes',
@@ -136,7 +137,6 @@ export default {
       closed: 'Closed',
       name: 'Name',
       participants: 'Participants',
-      details: 'Details',
       enter: 'Enter',
     },
     Game: {
