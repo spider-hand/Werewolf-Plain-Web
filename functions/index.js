@@ -94,7 +94,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               if (countsBite[bittenPlayer.id] == undefined) {
                 countsBite[bittenPlayer.id] = 1
               } else {
-                countsBite[bittenPlayer.id] = countsBite[bittenPlayer.id] + 1
+                countsBite[bittenPlayer.id] += 1
               }
 
               if (countsBite[bittenPlayer.id] > compareBite) {
@@ -106,13 +106,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
           if (votedPlayer != null) {
             if (countsVote[votedPlayer.id] == undefined) {
-              countsVote[votedPlayer.id] = 1
+              countsVote[votedPlayer.id] = []
+              countsVote[votedPlayer.id].push(1)
+              countsVote[votedPlayer.id].push(votedPlayer.name)
             } else {
-              countsVote[votedPlayer.id] = countsVote[votedPlayer.id] + 1
+              countsVote[votedPlayer.id][0] += 1
             }
 
-            if (countsVote[votedPlayer.id] > compareVote) {
-              compareVote = countsVote[votedPlayer.id]
+            if (countsVote[votedPlayer.id][0] > compareVote) {
+              compareVote = countsVote[votedPlayer.id][0]
               mostVotedPlayer = votedPlayer
             }
           } else {
@@ -140,6 +142,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
         // Execute the most voted player
         if (mostVotedPlayer.id != 'mostVotedPlayer' && countsWerewolf > 0 && countsVillager > countsWerewolf) {
           promises0.push(killPlayer(docRef ,mostVotedPlayer.id))
+
+          // How many votes each player got?
+          for (var key in countsVote) {
+            if (countsVote[key][0] == 1) {
+              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} vote. `
+            } else {
+              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} votes. `
+            }
+          }
 
           daytimeMessage += `${mostVotedPlayer.name} was executed. `
         } else {
@@ -169,6 +180,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
             if (countsWerewolf > 0 && countsVillager > countsWerewolf) {
               // Kill the most bitten player if the player isn't protected by knight
+              // TODO: Kill a player randomly when any werewolves didn't select a player
               if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
                 promises1.push(killPlayer(docRef, mostBittenPlayer.id))
 
@@ -248,8 +260,6 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 }
               } else {
                 // End this game
-                // TODO: Update the player's record when ending the game
-                // TODO: Reveal all player's roles when ending the game
                 hasGameEnded = true
 
                 if (countsWerewolf > 0) {
@@ -276,7 +286,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
     })
 })
 
-exports.deleteExpiredRooms = function.pubsub.schedule('every wednesday 00:00').onRun((context) => {
+exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').onRun((context) => {
   var db = admin.firestore()
 
   db.collection('rooms').get()
