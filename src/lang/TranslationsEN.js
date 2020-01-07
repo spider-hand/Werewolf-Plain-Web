@@ -96,7 +96,20 @@ export default {
         para6: '5 villagers, 1 seer, 1 medium, 1 knight, 2 werewolves and 1 minion',
         para7: '15 player game',
         para8: '8 villagers, 1 seer, 1 medium, 1 knight, 3 werewolves and 1 minion',
-      }     
+      },
+      supportThisSite: {
+        title: 'Support This Site',
+        para1: 'I would really appreciate if you share this site via social media! It would be really fun if players increase!',
+      }, 
+      feedback: {
+        title: 'Contact',
+        para1: 'Join Discord or email me! Feel free to give me feedback.',
+        email: 'Email',
+      },
+      credit: {
+        title: 'Credit',
+        logo: 'Logo by ',
+      },
     },
     Rules: {
       title: 'Rules',
@@ -127,7 +140,6 @@ export default {
       },
       others: {
         title: 'Others',
-        voting: 'Voting',
         para1: "Every players need to vote a player by the time next day's daytime comes. Players who didn't vote will commit suicide. Players can change the selected player anytime in the day. If there are multiple players who are voted the most, the executed player will be decided randomly in the players. A player will be executed first, then, if a werewolf is still alive, a villager will be killed. If werewolves select the same player as the one who are executed, no one will be killed. If nobody voted and all players commit suicide, the village will win.",
       }
     },

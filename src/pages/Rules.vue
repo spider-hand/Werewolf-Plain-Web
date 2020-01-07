@@ -1,4 +1,4 @@
-<template>
+e<template>
   <div id="rules-page">
   	<v-container>
 	  	<v-card
@@ -60,11 +60,10 @@
 		  		<span>{{ $t('Rules.roles.para7') }}</span>
 		  	</v-card-text>
 		  	<v-divider color="#FFFFFF" />
-		  	<v-card-text class="text-left white--text">
+		  	<v-card-text class="text-left white--text pb-0">
 		  		<h2>{{ $t('Rules.others.title') }}</h2>
 		  	</v-card-text>
 		  	<v-card-text>
-		  		<h3 class="text-left white--text">{{ $t('Rules.others.voting') }}</h3>
 		  		<span>{{ $t('Rules.others.para1') }}</span>
 		  	</v-card-text>
 		  </v-card>

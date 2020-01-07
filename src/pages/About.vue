@@ -55,6 +55,54 @@
 						{{ $t('About.villageAndRoles.para8') }}
 					</span>
 				</v-card-text>
+				<v-divider color="#FFFFFF" />
+				<v-card-text class="text-left white--text pb-0">
+					<h2>{{ $t('About.supportThisSite.title') }}</h2>
+				</v-card-text>
+				<v-card-text class="pb-0">
+					<span>{{ $t('About.supportThisSite.para1') }}</span>
+				</v-card-text>
+				<v-card-text>
+					<v-container>
+						<v-btn 
+							icon
+							color="#FFFFFF">
+							<v-icon size="36">mdi-twitter</v-icon>
+						</v-btn>
+						<v-btn
+							class="ml-4" 
+							icon
+							color="#FFFFFF">
+							<v-icon size="36">mdi-facebook-box</v-icon>
+						</v-btn>
+					</v-container>
+				</v-card-text>
+				<v-divider color="#FFFFFF" />
+				<v-card-text class="text-left white--text pb-0">
+					<h2>{{ $t('About.feedback.title') }}</h2>
+				</v-card-text>
+				<v-card-text class="pb-0">
+					<span>{{ $t('About.feedback.para1') }}</span>
+					<br>
+					<span>{{ $t('About.feedback.email') }}: <a href="mailto:werewolf.plain@gmail.com">werewolf.plain@gmail.com</a></span>
+				</v-card-text>
+				<v-card-text>
+					<v-container>
+						<v-btn
+							icon
+							color="#FFFFFF"
+							href="https://discord.gg/Vrtx7fW">
+							<v-icon size="36">mdi-discord</v-icon>
+						</v-btn>
+					</v-container>
+				</v-card-text>
+				<v-divider color="#FFFFFF" />
+				<v-card-text class="text-left white--text pb-0">
+					<h2>{{ $t('About.credit.title') }}</h2>
+				</v-card-text>
+				<v-card-text>
+					<span>{{ $t('About.credit.logo') }} <a href="http://thenounproject.com/leemette">Lee Mette</a> from <a href="http://thenounproject.com">The Noun Project</a></span>
+				</v-card-text>
 			</v-card>
 		</v-container>
 	</div>
