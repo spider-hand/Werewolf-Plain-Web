@@ -3,6 +3,11 @@
     <v-app-bar 
       v-if="$viewport.width > 450"
       color="#23272A">
+      <div>
+        <v-img 
+          src="../assets/logo1.png"
+          width="120" />
+      </div>
       <v-btn
         text
         color="#757575"
@@ -51,6 +56,11 @@
     <v-app-bar
       v-if="$viewport.width < 450"
       color="#23272A">
+      <div>
+        <v-img
+          src="../assets/logo.png"
+          width="72" />
+      </div>
       <div class="flex-grow-1"></div>
       <v-menu>
         <template v-slot:activator="{ on }">
