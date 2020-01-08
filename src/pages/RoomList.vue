@@ -284,10 +284,10 @@
                     })
                     .then(() => {
                       room.collection('messages').add({
-                        from: 'host',
+                        from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                         body: `${this.gameName} joined.`,
-                        gameName: '',
+                        gameName: 'GM',
                         avatar: '',
                         isFromGrave: false,
                       })

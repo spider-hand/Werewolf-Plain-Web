@@ -57,10 +57,10 @@
         var docRef = db.collection('rooms').doc(this.$route.params.id)
 
         docRef.collection('messages').add({
-          from: 'host',
+          from: 'GM',
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           body: ` ${this.player.name} was kicked out.`,
-          gameName: '',
+          gameName: 'GM',
           avatar: '',
           isFromGrave: false,
         })

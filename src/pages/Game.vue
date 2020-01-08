@@ -27,11 +27,18 @@
             <v-list-item-content>
               <v-list-item-title>
                 <span>{{ player.name }}</span>
+                <v-icon 
+                  class="ml-1"
+                  v-if="isOwner(player.id)"
+                  color="#FAA61A"
+                  size="16">
+                  mdi-crown
+                </v-icon>
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <DialogPlayerKickOut 
-                v-if="!hasGameStarted && isOwner() && !isMyself(player.id)"
+                v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.id)"
                 :player="player" />
             </v-list-item-action>
             <v-list-item-action>
@@ -97,7 +104,11 @@
               <v-img 
                 class="message-avatar"
                 :src="message.avatar"></v-img>
-              <small class="message-from">{{ message.gameName }}</small>
+              <small 
+                class="message-from"
+                :style="{ color: message.from == 'GM' ? '#43B581' : (message.isFromGrave ? '#F44336': '#FFFFFF') }">
+                {{ message.gameName }}
+              </small>
               <div
                 class="message-timestamp"
                 :style="{ paddingLeft: message.gameName != '' ? '6px' : '0' }"
@@ -174,6 +185,17 @@
       }
     },
     computed: {
+      isMyselfOwner() {
+        try {
+          if (firebase.auth().currentUser.uid == this.room.ownerId) {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
+      },
       hasGameStarted() {
         try {
           if (this.room.status != 'new') {
@@ -292,13 +314,9 @@
       },
     },
     methods: {
-      isOwner() {
-        if (firebase.auth().currentUser) {
-          if (firebase.auth().currentUser.uid == this.room.ownerId) {
-            return true
-          } else {
-            return false
-          }          
+      isOwner(uid) {
+        if (uid == this.room.ownerId) {
+          return true
         } else {
           return false
         }

@@ -65,10 +65,10 @@
             status: 'ongoing',
           }).then(() => {
             docRef.collection('messages').add({
-              from: 'host',
+              from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               body: "Game starts now. Please check your role. It's first day's daytime.",
-              gameName: '',
+              gameName: 'GM',
               avatar: '',
               isFromGrave: false,
             })

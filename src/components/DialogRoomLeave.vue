@@ -59,10 +59,10 @@
         var promises = []
 
         docRef.collection('messages').add({
-          from: 'host',
+          from: 'GM',
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           body: `${this.myself.name} left.`,
-          gameName: '',
+          gameName: 'GM',
           avatar: '',
           isFromGrave: false,
         })

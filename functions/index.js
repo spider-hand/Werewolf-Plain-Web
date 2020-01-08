@@ -26,10 +26,10 @@ exports.atNight = functions.https.onRequest((req, res) => {
     isNight: true,
   }).then(() => {
     docRef.collection('messages').add({
-      from: 'host',
+      from: 'GM',
       timestamp: admin.firestore.Timestamp.now(),
       body: "It's night.",
-      gameName: '',
+      gameName: 'GM',
       avatar: '',
     }).then((messageRef) => {
       res.send("It's night.")
@@ -231,10 +231,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                   var sendSeerResult = 
                     docRef.collection('resultsSeer').add({
-                      from: 'host',
+                      from: 'GM',
                       timestamp: admin.firestore.Timestamp.now(),
                       body: `${divinedPlayer.name} is ${divinedPlayerRole}.`,
-                      gameName: '',
+                      gameName: 'GM',
                       avatar: '',
                     })
                   promises2.push(sendSeerResult)
@@ -250,10 +250,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                   var sendMediumResult = 
                     docRef.collection('resultsMedium').add({
-                      from: 'host',
+                      from: 'GM',
                       timestamp: admin.firestore.Timestamp.now(),
                       body: `${mostVotedPlayer.name} is ${mostVotedPlayerRole}.`,
-                      gameName: '',
+                      gameName: 'GM',
                       avatar: '',
                     })
                   promises2.push(sendMediumResult)
@@ -388,10 +388,10 @@ function killPlayer(docRef, uid) {
 function sendDaytimeMessage(docRef, daytimeMessage) {
   var promise = 
     docRef.collection('messages').add({
-      from: 'host',
+      from: 'GM',
       timestamp: admin.firestore.Timestamp.now(),
       body: daytimeMessage,
-      gameName: '',
+      gameName: 'GM',
       avatar: '', 
       isFromGrave: false,                   
     })
