@@ -245,6 +245,7 @@
         // Create the room's document
         var db = firebase.firestore()
         db.collection('rooms').add({
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           name: this.name,
           description: this.description,
           capacity: this.capacity,
