@@ -103,6 +103,16 @@
 				<v-card-text>
 					<span>{{ $t('About.credit.logo') }} <a href="http://thenounproject.com/leemette">Lee Mette</a> from <a href="http://thenounproject.com">The Noun Project</a></span>
 				</v-card-text>
+				<v-footer color="transparent">
+					<span>
+						<small>&copy; {{ new Date().getFullYear() }} Spider Hand</small>
+					</span>
+					<router-link
+						class="ml-3"
+						to="/privacy-policy">
+						<small>Privacy Policy</small>
+					</router-link>
+				</v-footer>
 			</v-card>
 		</v-container>
 	</div>

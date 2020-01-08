@@ -7,6 +7,7 @@ import Game from '@/pages/Game'
 import Profile from '@/pages/Profile'
 import Rules from '@/pages/Rules'
 import About from '@/pages/About'
+import PrivacyPolicy from '@/pages/PrivacyPolicy'
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
@@ -26,6 +27,11 @@ export default new Router ({
       path: '/about',
       name: 'about',
       component: About,
+    },
+    {
+      path: '/privacy-policy',
+      name: 'privacy-policy',
+      component: PrivacyPolicy,
     },
     {
       path: '/rules',
