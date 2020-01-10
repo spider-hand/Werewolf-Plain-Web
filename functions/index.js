@@ -120,7 +120,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           } else {
             // Kill players who didn't vote
             killPlayer(docRef, doc.id)
-            daytimeMessage += `${doc.data().name} committed suicide.. `
+            daytimeMessage += `${doc.data().name} committed suicide..\n`
 
             if (playerRole != 'werewolf') {
               countsVillager -= 1
@@ -146,9 +146,9 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           // How many votes each player got?
           for (var key in countsVote) {
             if (countsVote[key][0] == 1) {
-              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} vote. `
+              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} vote.\n`
             } else {
-              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} votes. `
+              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} votes.\n`
             }
           }
 
@@ -158,9 +158,9 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
           if (countsWerewolf > 0) {
             doesVillageWin = false
-            daytimeMessage += 'Werewolves killed all villagers.. \n'
+            daytimeMessage += 'Werewolves killed all villagers..\n\n'
           } else {
-            daytimeMessage += 'All werewolves were executed! Village wins! \n'
+            daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
           }
 
           daytimeMessage += revealRoles(playerRoles)
@@ -184,10 +184,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
                 promises1.push(killPlayer(docRef, mostBittenPlayer.id))
 
-                daytimeMessage += `${mostBittenPlayer.name} was killed. `
+                daytimeMessage += `${mostBittenPlayer.name} was killed.\n`
                 countsVillager -= 1
               } else {
-                daytimeMessage += 'No one was killed last night. '
+                daytimeMessage += "There was not a victim last night.\n"
               }
             } else {
               // End this game
@@ -195,9 +195,9 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
               if (countsWerewolf > 0) {
                 doesVillageWin = false
-                daytimeMessage += 'Werewolves killed all villagers.. \n'
+                daytimeMessage += 'Werewolves killed all villagers..\n\n'
               } else {
-                daytimeMessage += 'All werewolves were executed! Village wins! \n'
+                daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
               }
 
               daytimeMessage += revealRoles(playerRoles)
@@ -264,9 +264,9 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                 if (countsWerewolf > 0) {
                   doesVillageWin = false
-                  daytimeMessage += 'Werewolves killed all villagers.. \n'
+                  daytimeMessage += 'Werewolves killed all villagers..\n\n'
                 } else {
-                  daytimeMessage += 'All werewolves were executed! Village wins! \n'
+                  daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
                 }
 
                 daytimeMessage += revealRoles(playerRoles)
