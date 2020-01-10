@@ -8,6 +8,7 @@ export default {
       about: 'このサイトについて',
       rules: 'ルール説明',
       profile: 'プロフィール',
+      settings: '設定',
       login: 'ログイン',
       logout: 'ログアウト',
     },

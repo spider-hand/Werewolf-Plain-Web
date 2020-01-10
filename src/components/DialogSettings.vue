@@ -4,7 +4,9 @@
     :fullscreen="$viewport.width < 450"
     v-model="dialog"
     max-width="600">
-    <template v-slot:activator="{ on }">
+    <template
+      v-if="$viewport.width > 450" 
+      v-slot:activator="{ on }">
       <v-btn
         icon
         color="#757575"
@@ -225,6 +227,9 @@
       cancel() {
         this.isEditing = false
         this.avatarErrorMessage = ''
+      },
+      open() {
+        this.dialog = true
       },
       close() {
         this.dialog = false

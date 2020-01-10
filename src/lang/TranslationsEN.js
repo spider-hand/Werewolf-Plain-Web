@@ -8,6 +8,7 @@ export default {
       about: 'About',
       rules: 'Rules',
       profile: 'Profile',
+      settings: 'Settings',
       login: 'Log In',
       logout: 'Log Out',
     },

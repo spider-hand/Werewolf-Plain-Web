@@ -62,6 +62,11 @@
           width="72" />
       </div>
       <div class="flex-grow-1"></div>
+      <DialogSettings
+        ref="dialogSettings"
+        :gameName="gameName"
+        :avatar="avatar"
+        @updateSettings="updateSettings" />
       <v-menu>
         <template v-slot:activator="{ on }">
           <v-btn
@@ -106,6 +111,16 @@
           </v-list-item>
           <v-list-item 
             v-if="isSignedIn"
+            @click="$refs.dialogSettings.open()">
+            <v-list-item-icon>
+              <v-icon>mdi-settings</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ $t('Header.settings') }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item 
+            v-if="isSignedIn"
             @click="signOutOfGoogle">
             <v-list-item-icon>
               <v-icon>mdi-logout</v-icon>
@@ -138,7 +153,7 @@
   import { mapGetters, mapActions } from 'vuex'
 
   import DialogSettings from '@/components/DialogSettings'
-  
+
   export default {
     components: {
       DialogSettings,
