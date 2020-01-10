@@ -64,7 +64,12 @@ e<template>
 		  		<h2>{{ $t('Rules.others.title') }}</h2>
 		  	</v-card-text>
 		  	<v-card-text>
+		  		<h3 class="text-left white--text">{{ $t('Rules.others.voting') }}</h3>
 		  		<span>{{ $t('Rules.others.para1') }}</span>
+		  	</v-card-text>
+		  	<v-card-text>
+		  		<h3 class="text-left white--text">{{ $t('Rules.others.message') }}</h3>
+		  		<span>{{ $t('Rules.others.para2') }}</span>
 		  	</v-card-text>
 		  </v-card>
 	  </v-container>

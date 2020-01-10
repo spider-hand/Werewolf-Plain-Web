@@ -28,6 +28,7 @@
           <v-row>
             <v-text-field
               v-model="newGameName"
+              :rules="gameNameRules"
               :label="$t('DialogSettings.gameName')"
               :value="newGameName"
               outlined
@@ -149,6 +150,15 @@
         isEditing: false,
         avatarErrorMessage: '',
         newGameName: '',
+        gameNameRules: [
+          v => {
+            if (v.length > 16) {
+              return this.$t('DialogSettings.tooLong')
+            } else {
+              return true
+            }
+          }
+        ],
         newAvatarUrl: '',
         newAvatar: null,
       }

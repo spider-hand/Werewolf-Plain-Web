@@ -131,7 +131,7 @@
       <v-textarea
         class="message-input"
         :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
-        :rules="[v => !!v || 'Required']"
+        :rules="messageRules"
         v-model="message"
         background-color="#40444B"
         solo
@@ -178,6 +178,19 @@
         isInitialSeerTriggerDone: false,
         isInitialMediumTriggerDone: false,
         message: '',
+        messageRules: [
+          v => {
+            if (!v) {
+              return this.$t('Game.required')
+            } else if (!v.replace(/\s/g, '').length) {
+              return this.$t('Game.onlyWhitespace')
+            } else if (v.length > 500) {
+              return this.$t('Game.tooLong')
+            } else {
+              return true
+            }
+          }
+        ],
         valid: true,
         isChatAllOpened: true,
         isWerewolfChatOpened: false,
@@ -613,11 +626,6 @@
     background-color: #36393F;
   }
 
-  .message {
-    padding: 0 3px;
-    color: #FFFFFF;
-  }
-
   .message-avatar {
     width: 45px;
     height: 45px;
@@ -628,7 +636,6 @@
 
   .message-from {
     display: inline-block;
-    padding-left: 8px;
     font-weight: 500;
   }
 
@@ -641,7 +648,7 @@
   .message-body {
     display: inline-block;
     max-width: calc(100% - 100px);
-    padding: 4px 0 0 8px;
+    padding-top: 4px;
     font-size: 15px;
     word-break: break-all;
     white-space: pre-wrap;
@@ -663,5 +670,11 @@
     position: fixed;
     right: 20px;
     bottom: 0px;
+  }
+
+  @media (max-width: 450px) {
+    .message-body {
+      font-size: 14px;
+    }
   }
 </style>

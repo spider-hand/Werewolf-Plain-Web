@@ -25,7 +25,7 @@
             lazy-validation>
             <v-text-field
               v-model="name"
-              :rules="[v => !!v || $t('DialogRoomCreate.required')]"
+              :rules="villageNameRules"
               :label="$t('DialogRoomCreate.villageName')"
               outlined
               color="#8E9297"
@@ -34,6 +34,7 @@
             <v-textarea
               v-model="description"
               name="input-7-4"
+              :rules="descriptionRules"
               :label="$t('DialogRoomCreate.description')"
               outlined
               color="#8E9297"
@@ -127,7 +128,29 @@
         dialog: false,
         valid: true,
         name: '',
+        villageNameRules: [
+          v => {
+            if (!v) {
+              return this.$t('DialogRoomCreate.required')
+            } else if (!v.replace(/\s/g, '').length) {
+              return this.$t('DialogRoomCreate.onlyWhitespace')
+            } else if (v.length > 30) {
+              return this.$t('DialogRoomCreate.tooLong')
+            } else {
+              return true
+            }
+          }
+        ],
         description: '',
+        descriptionRules: [
+          v => {
+            if (v.length > 1000) {
+              return this.$t('DialogRoomCreate.tooLong')
+            } else {
+              return true
+            }
+          }
+        ],
         capacity: 15,
         capacityItems: [
           {
@@ -217,6 +240,8 @@
               return this.$t('DialogRoomCreate.required')
             } else if (/\s/.test(v) && this.isPrivate == true) {
               return this.$t('DialogRoomCreate.whitespaceIsNotAllowed')
+            } else if (v.length < 4 || v.length > 20) {
+              return this.$t('DialogRoomCreate.invalidLength')
             } else {
               return true
             }

@@ -16,7 +16,7 @@
         <span v-if="myself.role == 'seer'">{{ $t('DialogRole.seer') }}</span>
         <span v-if="myself.role == 'medium'">{{ $t('DialogRole.medium') }}</span>
         <span v-if="myself.role == 'knight'">{{ $t('DialogRole.knight') }}</span>
-        <span v-if="myself.role == 'wolf'">{{ $t('DialogRole.werewolf') }}</span>
+        <span v-if="myself.role == 'werewolf'">{{ $t('DialogRole.werewolf') }}</span>
         <span v-if="myself.role == 'minion'">{{ $t('DialogRole.minion') }}</span>
       </v-card-title>
       <v-card-text>
@@ -25,7 +25,7 @@
           <span v-if="myself.role == 'seer'">{{ $t('DialogRole.seerDescription') }}</span>
           <span v-if="myself.role == 'medium'">{{ $t('DialogRole.mediumDescription') }}</span>
           <span v-if="myself.role == 'knight'">{{ $t('DialogRole.knightDescription') }}</span>
-          <span v-if="myself.role == 'wolf'">{{ $t('DialogRole.werewolfDescription') }}</span>
+          <span v-if="myself.role == 'werewolf'">{{ $t('DialogRole.werewolfDescription') }}</span>
           <span v-if="myself.role == 'minion'">{{ $t('DialogRole.minionDescription') }}</span>
         </v-container>
       </v-card-text>

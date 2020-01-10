@@ -33,6 +33,7 @@
               <v-textarea
                 v-if="isEditing"
                 v-model="newBio"
+                :rules="bioRules"
                 :label="$t('Profile.bio')"
                 :value="newBio"
                 outlined
@@ -162,6 +163,13 @@
         user: null,
         newUsername: '',
         newBio: '',
+        bioRules: [
+          v => {
+            if (v.length > 500) {
+              return this.$t('Profile.tooLong')
+            }
+          }
+        ],
       }
     },
     computed: {
