@@ -1,6 +1,12 @@
 <template>
   <div>
     <v-app-bar color="#2C2F33">
+      <v-btn
+        icon
+        color="#757575"
+        @click="$router.push({ name: 'room-list' })">
+        <v-icon>mdi-arrow-left-bold</v-icon>
+      </v-btn>
       <div class="flex-grow-1"></div>
       <v-btn 
         v-if="isOwner() && !hasGameStarted"
