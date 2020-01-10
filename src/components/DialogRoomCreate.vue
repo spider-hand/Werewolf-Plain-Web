@@ -236,11 +236,11 @@
         accessCode: '',
         accessCodeRules: [
           v => {
-            if (!v && this.isPrivate == true) {
+            if (!v && this.isPrivate) {
               return this.$t('DialogRoomCreate.required')
-            } else if (/\s/.test(v) && this.isPrivate == true) {
+            } else if (/\s/.test(v) && this.isPrivate) {
               return this.$t('DialogRoomCreate.whitespaceIsNotAllowed')
-            } else if (v.length < 4 || v.length > 20) {
+            } else if ((v.length < 4 || v.length > 20) && this.isPrivate) {
               return this.$t('DialogRoomCreate.invalidLength')
             } else {
               return true

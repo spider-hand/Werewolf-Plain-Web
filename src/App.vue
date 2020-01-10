@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <Title :title="$t('Title.title')" />
     <Header 
       v-if="$route.name != 'game'"
       @updateSettings="updateSettings" />
@@ -18,11 +19,13 @@
 </template>
 
 <script>
+  import Title from '@/components/Title'
   import Header from '@/components/Header'
   import HeaderGame from '@/components/HeaderGame'
 
   export default {
     components: {
+      Title,
       Header,
       HeaderGame,
     },

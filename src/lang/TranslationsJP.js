@@ -1,5 +1,8 @@
 export default {
   ja: {
+    Title: {
+      title: '人狼プレーン',
+    },
     Header: {
       roomList: '村一覧',
       about: 'このサイトについて',

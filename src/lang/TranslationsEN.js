@@ -1,5 +1,8 @@
 export default {
   en: {
+    Title: {
+      title: 'Werewolf Plain',
+    },
     Header: {
       roomList: 'Room List',
       about: 'About',
