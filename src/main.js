@@ -6,6 +6,7 @@ import router from './router'
 import i18n from './lang'
 
 import firebase from 'firebase/app'
+import 'firebase//analytics'
 import 'firebase/auth'
 
 Vue.config.productionTip = false
@@ -36,6 +37,7 @@ var firebaseConfig = {
 }
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
+firebase.analytics()
 
 new Vue({
   vuetify,
