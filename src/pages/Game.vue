@@ -73,6 +73,13 @@
                 @click="protect(player)">
                 <v-icon :color="myself.protectedPlayer != null && player.id == myself.protectedPlayer.id ? '#FFFFFF' : '#757575'">mdi-shield-half-full</v-icon>
               </v-btn>
+              <v-btn
+                v-if="hasGameDone" 
+                icon
+                :href="'/profile/' + player.id"
+                target="_blank">
+                <v-icon color="#757575">mdi-account</v-icon>
+              </v-btn>
             </v-list-item-action>
           </v-list-item>
           <v-divider v-if="isWerewolf || isSeer" />
@@ -223,6 +230,17 @@
       isGameOngoing() {
         try {
           if (this.room.status == 'ongoing') {
+            return true
+          } else {
+            return false
+          }
+        } catch (err) {
+          return false
+        }
+      },
+      hasGameDone() {
+        try {
+          if (this.room.status == 'closed') {
             return true
           } else {
             return false
