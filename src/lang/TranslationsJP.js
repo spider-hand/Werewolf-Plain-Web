@@ -11,6 +11,7 @@ export default {
       settings: '設定',
       login: 'ログイン',
       logout: 'ログアウト',
+      anonymous: '名無し',
     },
     HeaderGame: {
       start: 'ゲーム開始',
@@ -121,6 +122,7 @@ export default {
       credit: {
         title: 'クレジット',
         logo: 'ロゴ: ',
+        icon: 'アイコン: ',
       },
     },
     Rules: {

@@ -11,6 +11,7 @@ export default {
       settings: 'Settings',
       login: 'Log In',
       logout: 'Log Out',
+      anonymous: 'Anonymous',
     },
     HeaderGame: {
       start: 'Start',
@@ -121,6 +122,7 @@ export default {
       credit: {
         title: 'Credit',
         logo: 'Logo by ',
+        icon: 'Icon by ',
       },
     },
     PrivacyPolicy: {

@@ -8,9 +8,9 @@
       <v-list>
         <v-list-item-group v-model="player">
           <v-list-item color="#F44336">
-            <v-list-item-avatar>
-              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
-            </v-list-item-avatar>
+            <v-list-item-icon>
+              <v-icon color="#757575">mdi-pound</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
                 <span>{{ $t('Game.all') }}</span>
@@ -22,7 +22,7 @@
             v-for="player in players"
             color="#F44336">
             <v-list-item-avatar>
-              <v-img :src="player.avatar"></v-img>
+              <v-img :src="player.avatar != null ? player.avatar : getAnonymousAvatar"></v-img>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -86,9 +86,9 @@
           <v-list-item 
             v-if="isWerewolf || isSeer || isMedium"
             color="#F44336">
-            <v-list-item-avatar>
-              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
-            </v-list-item-avatar>
+            <v-list-item-icon>
+              <v-icon color="#757575">mdi-pound</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
                 <span v-if="isWerewolf">{{ $t('Game.werewolfChat') }}</span>
@@ -110,7 +110,7 @@
             <div class="message">
               <v-img 
                 class="message-avatar"
-                :src="message.avatar"></v-img>
+                :src="message.avatar != null ? message.avatar : getAnonymousAvatar"></v-img>
               <small 
                 class="message-from"
                 :style="{ color: message.from == 'GM' ? '#43B581' : (message.isFromGrave ? '#F44336': '#FFFFFF') }">
@@ -342,6 +342,9 @@
           }
           return individualMessages
         }
+      },
+      getAnonymousAvatar() {
+        return require('../assets/anonymous.png')
       },
     },
     methods: {

@@ -188,10 +188,10 @@
           docRef.get().then((doc) => {
             if (!doc.exists) {
               docRef.set({
-                userName: '',
+                username: user.displayName,
                 lastTimeUsernameEdited: null,
-                gameName: '',
-                avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+                gameName: this.$t('Header.anonymous'),
+                avatar: null,
                 bio: '',
                 villagerWin: 0,
                 villagerLose: 0,
@@ -206,8 +206,8 @@
                 minionWin: 0,
                 minionLose: 0,
               }).then(() => {
-                this.gameName = ''
-                this.avatar = 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
+                this.gameName = this.$t('Header.anonymous')
+                this.avatar = null
 
                 this.$emit('updateSettings', this.gameName, this.avatar)
               })

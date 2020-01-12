@@ -105,7 +105,7 @@
               class="pt-0">
               <v-img 
                 class="avatar"
-                :src="avatar"></v-img>              
+                :src="avatar != null ? avatar : getAnonymousAvatar"></v-img>              
             </v-col>
           </v-row>
         </v-container>
@@ -164,6 +164,11 @@
         newAvatarUrl: '',
         newAvatar: null,
       }
+    },
+    computed: {
+      getAnonymousAvatar() {
+        return require('../assets/anonymous.png')
+      },
     },
     methods: {
       editSettings() {
