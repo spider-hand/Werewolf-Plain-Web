@@ -61,7 +61,7 @@
         docRef.collection('messages').add({
           from: 'GM',
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: `${this.myself.name} left.`,
+          body: this.$t('DialogRoomLeave.playerLeft', [this.myself.name]),
           gameName: 'GM',
           avatar: '',
           isFromGrave: false,

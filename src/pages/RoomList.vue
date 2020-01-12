@@ -286,7 +286,7 @@
                       room.collection('messages').add({
                         from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        body: `${this.gameName} joined.`,
+                        body: this.$t('RoomList.playerJoined', [this.gameName]),
                         gameName: 'GM',
                         avatar: '',
                         isFromGrave: false,

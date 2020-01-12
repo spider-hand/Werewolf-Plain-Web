@@ -73,7 +73,7 @@
             docRef.collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              body: "Game starts now. Please check your role. It's first day's daytime.",
+              body: this.$t('HeaderGame.startMessage'),
               gameName: 'GM',
               avatar: '',
               isFromGrave: false,
@@ -144,6 +144,7 @@
           roomId: this.$route.params.id,
           dayLength: this.room.dayLength,
           nightLength: this.room.nightLength,
+          language: this.room.language,
         })
       },
       isOwner() {

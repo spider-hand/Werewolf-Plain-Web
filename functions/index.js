@@ -10,9 +10,10 @@ exports.addTasks = functions.https.onCall((data, context) => {
   const roomId = data.roomId
   const nightLength = data.nightLength
   const dayLength = data.dayLength
+  const language = data.language
 
-  promises.push(addNightTask(roomId, dayLength))
-  promises.push(addDaytimeTask(roomId, dayLength, nightLength))
+  promises.push(addNightTask(roomId, dayLength, language))
+  promises.push(addDaytimeTask(roomId, dayLength, nightLength, language))
 
   return Promise.all(promises)
 })
@@ -20,6 +21,7 @@ exports.addTasks = functions.https.onCall((data, context) => {
 exports.atNight = functions.https.onRequest((req, res) => {
   var db = admin.firestore()
   var roomId = req.query.roomId
+  var language = req.query.lang
   var docRef = db.collection('rooms').doc(roomId)
 
   docRef.update({
@@ -28,7 +30,7 @@ exports.atNight = functions.https.onRequest((req, res) => {
     docRef.collection('messages').add({
       from: 'GM',
       timestamp: admin.firestore.Timestamp.now(),
-      body: "It's night.",
+      body: translateNightNotification(language),
       gameName: 'GM',
       avatar: '',
     }).then((messageRef) => {
@@ -42,6 +44,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var roomId = req.query.roomId
   var dayLength = parseInt(req.query.dayLength)
   var nightLength = parseInt(req.query.nightLength)
+  var language = req.query.lang
   var docRef = db.collection('rooms').doc(roomId)
 
   var countsVillager = 0
@@ -120,7 +123,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           } else {
             // Kill players who didn't vote
             killPlayer(docRef, doc.id)
-            daytimeMessage += `${doc.data().name} committed suicide..\n`
+            daytimeMessage += translateSuicideMessage(doc.data().name, language)
 
             if (playerRole != 'werewolf') {
               countsVillager -= 1
@@ -145,25 +148,21 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
           // How many votes each player got?
           for (var key in countsVote) {
-            if (countsVote[key][0] == 1) {
-              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} vote.\n`
-            } else {
-              daytimeMessage += `${countsVote[key][1]} got ${countsVote[key][0]} votes.\n`
-            }
+            daytimeMessage += translateVotingResult(countsVote[key][1], countsVote[key][0], language)
           }
 
-          daytimeMessage += `${mostVotedPlayer.name} was executed. `
+          daytimeMessage += translateExecutionMessage(mostVotedPlayer.name, language)
         } else {
           hasGameEnded = true
 
           if (countsWerewolf > 0) {
             doesVillageWin = false
-            daytimeMessage += 'Werewolves killed all villagers..\n\n'
+            daytimeMessage += translateWerewolvesWinMessage(language)
           } else {
-            daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
+            daytimeMessage += translateVillageWinMessage(language)
           }
 
-          daytimeMessage += revealRoles(playerRoles)
+          daytimeMessage += revealRoles(playerRoles, language)
 
           promises0.push(endGame(docRef))
           promises0.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -184,10 +183,10 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
                 promises1.push(killPlayer(docRef, mostBittenPlayer.id))
 
-                daytimeMessage += `${mostBittenPlayer.name} was killed.\n`
+                daytimeMessage += translateKilledPlayerMessage(mostBittenPlayer.name, language)
                 countsVillager -= 1
               } else {
-                daytimeMessage += "There was not a victim last night.\n"
+                daytimeMessage += translateNoVictimMessage(language)
               }
             } else {
               // End this game
@@ -195,12 +194,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
               if (countsWerewolf > 0) {
                 doesVillageWin = false
-                daytimeMessage += 'Werewolves killed all villagers..\n\n'
+                daytimeMessage += translateWerewolvesWinMessage(language)
               } else {
-                daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
+                daytimeMessage += translateVillageWinMessage(language)
               }
 
-              daytimeMessage += revealRoles(playerRoles)
+              daytimeMessage += revealRoles(playerRoles, language)
 
               promises1.push(endGame(docRef))
               promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -212,14 +211,15 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
             if (!hasGameEnded) {
               // Check if the number of villagers are greater than the number of wolves after werewolves bite a villager
               if (countsVillager > countsWerewolf) {
+                daytimeMessage += translateDaytimeNotification(language)
                 var daytimeComes = docRef.update({ isNight: false, })
 
                 promises2.push(daytimeComes)
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
 
                 // Add the tasks for the next day
-                promises2.push(addNightTask(roomId, dayLength))
-                promises2.push(addDaytimeTask(roomId, dayLength, nightLength))
+                promises2.push(addNightTask(roomId, dayLength, language))
+                promises2.push(addDaytimeTask(roomId, dayLength, nightLength, language))
 
                 if (divinedPlayer.id != 'divinedPlayer') {
                   var divinedPlayerRole
@@ -233,7 +233,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                     docRef.collection('resultsSeer').add({
                       from: 'GM',
                       timestamp: admin.firestore.Timestamp.now(),
-                      body: `${divinedPlayer.name} is ${divinedPlayerRole}.`,
+                      body: translateRevealRoleMessage(divinedPlayer.name, divinedPlayerRole, language),
                       gameName: 'GM',
                       avatar: '',
                     })
@@ -252,7 +252,7 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                     docRef.collection('resultsMedium').add({
                       from: 'GM',
                       timestamp: admin.firestore.Timestamp.now(),
-                      body: `${mostVotedPlayer.name} is ${mostVotedPlayerRole}.`,
+                      body: translateRevealRoleMessage(mostVotedPlayer.name, mostVotedPlayerRole, language),
                       gameName: 'GM',
                       avatar: '',
                     })
@@ -264,12 +264,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 
                 if (countsWerewolf > 0) {
                   doesVillageWin = false
-                  daytimeMessage += 'Werewolves killed all villagers..\n\n'
+                  daytimeMessage += translateWerewolvesWinMessage(language)
                 } else {
-                  daytimeMessage += 'All werewolves were executed! Village wins!\n\n'
+                  daytimeMessage += translateVillageWinMessage(language)
                 }
 
-                daytimeMessage += revealRoles(playerRoles)
+                daytimeMessage += revealRoles(playerRoles, language)
 
                 promises2.push(endGame(docRef))
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
@@ -319,7 +319,7 @@ exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').
     })
 })
 
-function addNightTask(roomId, dayLength) {
+function addNightTask(roomId, dayLength, language) {
   const client = new tasks.CloudTasksClient()
 
   const projectId = functions.config().werewolf.id
@@ -328,7 +328,7 @@ function addNightTask(roomId, dayLength) {
 
   const parent = client.queuePath(projectId, location, queue)
 
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId
+  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/atNight?roomId=' + roomId + '&lang=' + language
   
   const task = {
     httpRequest: {
@@ -348,7 +348,7 @@ function addNightTask(roomId, dayLength) {
   return client.createTask(request)
 }
 
-function addDaytimeTask(roomId, dayLength, nightLength) {
+function addDaytimeTask(roomId, dayLength, nightLength, language) {
   const client = new tasks.CloudTasksClient()
 
   const projectId = functions.config().werewolf.id
@@ -357,7 +357,7 @@ function addDaytimeTask(roomId, dayLength, nightLength) {
 
   const parent = client.queuePath(projectId, location, queue)
 
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId + '&dayLength=' + dayLength + '&nightLength=' + nightLength
+  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/inDaytime?roomId=' + roomId + '&dayLength=' + dayLength + '&nightLength=' + nightLength + '&lang=' + language
 
   const task = {
     httpRequest: {
@@ -407,10 +407,10 @@ function endGame(docRef) {
   return promise
 }
 
-function revealRoles(playerRoles) {
+function revealRoles(playerRoles, language) {
   var text = ''
   for (var i = 0; i < playerRoles.length; i++) {
-    text += `${playerRoles[i].name} is ${playerRoles[i].role}.\n`
+    text += translateRevealRoleMessage(playerRoles[i].name, playerRoles[i].role, language)
   }
   return text
 }
@@ -493,4 +493,158 @@ function updateRecords(doesVillageWin, playerRoles) {
   }
 
   return Promise.all(promises)
+}
+
+
+function translateNightNotification(language) {
+  if (language == 'ja') {
+    return '夜になりました。発言を禁止します。昼になる前にアクションを完了してください。'
+  } else {
+    return "It's night. Villagers are not allowed to chat. Do actions before daytime comes."
+  }
+}
+
+function translateDaytimeNotification(language) {
+  if (language == 'ja') {
+    return '昼になりました。議論を開始してください。'
+  } else {
+    return "It's daytime. Start discussion."
+  }
+}
+
+function translateSuicideMessage(player, language) {
+  if (language == 'ja') {
+    return `${player}が突然死しました...\n`
+  } else {
+    return `${player} committed suicide..\n`
+  }
+}
+
+function translateVotingResult(player, counts, language) {
+  if (language == 'ja') {
+    return `${player}は${counts}票獲得しました。\n`
+  } else {
+    return `${player} got ${counts} vote.\n`
+  }
+}
+
+function translateExecutionMessage(player, language) {
+  if (language == 'ja') {
+    return `${player}は処刑されました。 `
+  } else {
+    return `${player} was executed. `
+  }
+}
+
+function translateKilledPlayerMessage(player, language) {
+  if (language == 'ja') {
+    return `${player}が殺された。\n`
+  } else {
+    return `${player} was killed.\n`
+  }
+}
+
+function translateNoVictimMessage(language) {
+  if (language == 'ja') {
+    return '昨晩犠牲者はいませんでした。\n'
+  } else {
+    return 'There was not a victim last night.\n'
+  }
+}
+
+function translateVillageWinMessage(language) {
+  if (language == 'ja') {
+    return '全ての人狼を処刑した！村の勝利！\n\n'
+  } else {
+    return 'All werewolves are executed! Village wins!\n\n'
+  }
+}
+
+function translateWerewolvesWinMessage(language) {
+  if (language == 'ja') {
+    return '人狼の勝利...\n\n'
+  } else {
+    return 'Werewolves wins..\n\n'
+  }
+}
+
+function translateRevealRoleMessage(player, role, language) {
+  var translatedRole
+  if (role == 'villager') {
+    translatedRole = translateVillager(language)
+  } else if (role == 'werewolf') {
+    translatedRole = translateWerewolf(language)
+  } else if (role == 'seer') {
+    translatedRole = translateSeer(language)
+  } else if (role == 'medium') {
+    translatedRole = translateMedium(language)
+  } else if (role == 'knight') {
+    translatedRole = translateKnight(language)
+  } else if (role == 'minion') {
+    translatedRole = translateMinion(language)
+  } else if (role == 'human') {
+    translatedRole = translateHuman(language)
+  }
+
+  if (language == 'ja') {
+    return `${player}は${translatedRole}だった。\n`
+  } else {
+    return `${player} is ${translatedRole}.\n`
+  }
+}
+
+function translateVillager(language) {
+  if (language == 'ja') {
+    return '村人'
+  } else {
+    return 'villager'
+  }
+}
+
+function translateWerewolf(language) {
+  if (language == 'ja') {
+    return '人狼'
+  } else {
+    return 'werewolf'
+  }
+}
+
+function translateSeer(language) {
+  if (language == 'ja') {
+    return '占い師'
+  } else {
+    return 'seer'
+  }
+}
+
+function translateMedium(language) {
+  if (language == 'ja') {
+    return '霊能者'
+  } else {
+    return 'medium'
+  }
+}
+
+function translateKnight(language) {
+  if (language == 'ja') {
+    return '騎士'
+  } else {
+    return 'knight'
+  }
+}
+
+function translateMinion(language) {
+  if (language == 'ja') {
+    return '狂人'
+  } else {
+    return 'minion'
+  }
+}
+
+function translateHuman(language) {
+  if (language == 'ja') {
+    return '人間'
+  } else {
+    return 'human'
+  }
 }

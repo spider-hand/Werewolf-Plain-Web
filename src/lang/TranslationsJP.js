@@ -15,6 +15,7 @@ export default {
     },
     HeaderGame: {
       start: 'ゲーム開始',
+      startMessage: 'ゲームを開始しました。役職を確認してください。昼間です。議論を開始してください。',
     },
     DialogAccessCode: {
       title: 'アクセスコード',
@@ -31,23 +32,29 @@ export default {
       capacity: '人数',
       dayLength: '昼時間 (分)',
       nightLength: '夜時間 (分)',
+      language: '言語',
+      english: '英語',
+      japanese: '日本語',
       private: '身内村',
       accessCode: 'アクセスコード',
       whitespaceIsNotAllowed: '空白文字は使えません',
       invalidLength: 'アクセスコードは4文字以上20文字以下です',
       ok: '作成',
       cancel: 'キャンセル',
+      playerJoined: '{0}が入村しました。',
     },
     DialogRoomLeave: {
       leave: '村を去る',
       title: '村を去る',
       para1: '本当に村を去りますか？',
       cancel: 'キャンセル',
+      playerLeft: '{0}が村を去りました。',
     },
     DialogPlayerKickOut: {
       title: 'プレーヤーを蹴る',
       para1: '本当にこのプレーヤーを蹴りますか？',
       cancel: 'キャンセル',
+      kickOutPlayer: '{0}は村から追い出された。',
     },
     DialogRoomDetails: {
       details: '詳細',
@@ -167,6 +174,7 @@ export default {
       name: '村名',
       participants: '参加者数',
       enter: '入村',
+      playerJoined: '{0}が入村しました。',
     },
     Game: {
       all: '全体チャット',

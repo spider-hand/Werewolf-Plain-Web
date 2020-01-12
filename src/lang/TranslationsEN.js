@@ -15,6 +15,7 @@ export default {
     },
     HeaderGame: {
       start: 'Start',
+      startMessage: "Game has started. Please check your role. It's daytime. Start discussion.",
     },
     DialogRoomCreate: {
       hostGame: 'Host Game',
@@ -26,12 +27,16 @@ export default {
       capacity: 'Capacity',
       dayLength: 'Daytime (minutes)',
       nightLength: 'Night (minutes)',
+      language: 'Language',
+      english: 'English',
+      japanese: 'Japanese',
       private: 'Private',
       accessCode: 'Access code',
       whitespaceIsNotAllowed: 'Whitespace is not allowed',
       invalidLength: 'Must be between 4 and 20 characters',
       ok: 'OK',
       cancel: 'CANCEL',
+      playerJoined: '{0} joined.',
     },
     DialogAccessCode: {
       title: 'Input Access Code',
@@ -43,11 +48,13 @@ export default {
       title: 'Leave Room',
       para1: 'Are you sure you want to leave this room?',
       cancel: 'CANCEL',
+      playerLeft: '{0} left.',
     },
     DialogPlayerKickOut: {
       title: 'Kick this player out',
       para1: 'Are you sure you want to kick this player out?',
       cancel: 'CANCEL',
+      kickOutPlayer: '{0} was kicked out.',
     },
     DialogRole: {
       villager: 'You are villager',
@@ -200,6 +207,7 @@ export default {
       name: 'Name',
       participants: 'Participants',
       enter: 'Enter',
+      playerJoined: '{0} joined.',
     },
     Game: {
       all: 'All',

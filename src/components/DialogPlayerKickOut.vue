@@ -59,7 +59,7 @@
         docRef.collection('messages').add({
           from: 'GM',
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: ` ${this.player.name} was kicked out.`,
+          body: this.$t('DialogPlayerKickOut.kickOutPlayer', [this.player.name]),
           gameName: 'GM',
           avatar: '',
           isFromGrave: false,

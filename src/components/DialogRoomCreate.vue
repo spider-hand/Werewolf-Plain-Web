@@ -71,6 +71,19 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="6">
+                <v-select
+                  v-model="language"
+                  :label="$t('DialogRoomCreate.language')"
+                  outlined
+                  color="#8E9297"
+                  background-color="#2F3136"
+                  dark
+                  :items="languageItems"></v-select>
+                </v-select>
+              </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="3">
                 <v-checkbox
                   v-model="isPrivate"
@@ -232,6 +245,17 @@
             value: 5,
           },          
         ],
+        language: navigator.language.split('-')[0],
+        languageItems: [
+          {
+            text: this.$t('DialogRoomCreate.english'),
+            value: 'en',
+          },
+          {
+            text: this.$t('DialogRoomCreate.japanese'),
+            value: 'ja',
+          },
+        ],
         isPrivate: false,
         accessCode: '',
         accessCodeRules: [
@@ -276,6 +300,7 @@
           capacity: this.capacity,
           dayLength: this.dayLength,
           nightLength: this.nightLength,
+          language: this.language,
           isPrivate: this.isPrivate,
           accessCode: this.accessCode,
           numberOfParticipants: 1,
@@ -300,7 +325,7 @@
             db.collection('rooms').doc(docRef.id).collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              body: `${this.gameName} joined.`,
+              body: this.$t('DialogRoomCreate.playerJoined', [this.gameName]),
               gameName: 'GM',
               avatar: '',
               isFromGrave: false,
