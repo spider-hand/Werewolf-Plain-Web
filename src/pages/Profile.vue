@@ -167,6 +167,8 @@
           v => {
             if (v.length > 500) {
               return this.$t('Profile.tooLong')
+            } else {
+              return true
             }
           }
         ],
