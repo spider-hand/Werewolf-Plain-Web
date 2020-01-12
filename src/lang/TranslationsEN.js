@@ -81,6 +81,9 @@ export default {
       ninePlayerVillage: '4 villagers, 1 seer, 1 knight, 2 werewolves and 1 minion',
       elevenPlayerVillage: '5 villagers, 1 seer, 1 medium, 1 knight, 2 werewolves and 1 minion',
       fifteenPlayerVillage: '8 villagers, 1 seer, 1 medium, 1 knight, 3 werewolves and 1 minion',
+      language: 'Language',
+      japanese: 'Japanese',
+      english: 'English',
       close: 'CLOSE',
     },
     DialogSettings: {

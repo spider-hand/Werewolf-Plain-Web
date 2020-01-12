@@ -58,6 +58,13 @@
               <span v-if="room.capacity == 15">{{ $t('DialogRoomDetails.fifteenPlayerVillage') }}</span>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col>
+              <span>
+                <strong>{{ $t('DialogRoomDetails.language') }}: {{ convertLanguageCode(room.language) }}</strong>
+              </span>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -86,6 +93,13 @@
       }
     },
     methods: {
+      convertLanguageCode(code) {
+        if (code == 'ja') {
+          return this.$t('DialogRoomDetails.japanese')
+        } else {
+          return this.$t('DialogRoomDetails.english')
+        }
+      },
       close() {
         this.dialog = false
       }

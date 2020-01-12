@@ -66,6 +66,9 @@ export default {
       ninePlayerVillage: '村人4、占い師1、騎士1、人狼2、狂人1',
       elevenPlayerVillage: '村人5、占い師1、霊能者1、騎士1、人狼2、狂人1',
       fifteenPlayerVillage: '村人8、占い師1、霊能者1、騎士1、人狼3、狂人1',
+      language: '言語',
+      japanese: '日本語',
+      english: '英語',
       close: '閉じる',
     },
     DialogRole: {
