@@ -354,18 +354,16 @@
         var db = firebase.firestore()
 
         // Get rooms
-        db.collection('rooms').get()
+        db.collection('rooms').orderBy('timestamp', 'desc').get()
           .then((querySnapShot) => {
             querySnapShot.forEach((doc) => {
-              if (doc.data().status == 'new' && doc.data().numberOfParticipants > 0) {
+              if (doc.data().status == 'new') {
                 this.newRooms.push(doc.data())
                 this.newRooms[this.newRooms.length - 1].id = doc.id
-              }
-              else if (doc.data().status == 'ongoing') {
+              } else if (doc.data().status == 'ongoing') {
                 this.ongoingRooms.push(doc.data())
                 this.ongoingRooms[this.ongoingRooms.length - 1].id = doc.id
-              }
-              else {
+              } else {
                 this.closedRooms.push(doc.data())
                 this.closedRooms[this.closedRooms.length - 1].id = doc.id
               }
