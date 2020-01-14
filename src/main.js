@@ -6,8 +6,9 @@ import router from './router'
 import i18n from './lang'
 
 import firebase from 'firebase/app'
-import 'firebase//analytics'
+import 'firebase/analytics'
 import 'firebase/auth'
+import axios from 'axios'
 
 Vue.config.productionTip = false
 
@@ -38,6 +39,8 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 firebase.analytics()
+
+Vue.prototype.$axios = axios
 
 new Vue({
   vuetify,

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@google-cloud/tasks": "^1.6.1",
+    "axios": "^0.19.1",
     "core-js": "^2.6.5",
     "firebase": "^7.2.0",
     "firebase-admin": "^8.8.0",

@@ -56,56 +56,65 @@
         // Remove the player's document from the collection
         var db = firebase.firestore()
         var docRef = db.collection('rooms').doc(this.$route.params.id)
-        var promises = []
+        var promises0 = []
+        var promises1 = []
 
-        docRef.collection('messages').add({
-          from: 'GM',
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: this.$t('DialogRoomLeave.playerLeft', [this.myself.name]),
-          gameName: 'GM',
-          avatar: '',
-          isFromGrave: false,
-        })
-        .then(() => {
-          docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
-              .then(() => {
-                docRef.update({
-                  numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-                }).then(() => {
-                  docRef.get().then((doc) => {
-                    // Remove the room document and its subcollection when the owner left
-                    if (doc.data().ownerId == firebase.auth().currentUser.uid) {
-                      var deleteRoom = docRef.delete()
+        var sendMessage = 
+          docRef.collection('messages').add({
+            from: 'GM',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            body: this.$t('DialogRoomLeave.playerLeft', [this.myself.name]),
+            gameName: 'GM',
+            avatar: '',
+            isFromGrave: false,
+          })
 
-                      var deletePlayers = 
-                        docRef.collection('players').get()
-                          .then((querySnapShot) => {
-                            Promise.all(querySnapShot.docs.map((doc) => {
-                              doc.ref.delete()
-                            }))
-                          })
+        var removePlayer = docRef.collection('players').doc(firebase.auth().currentUser.uid).delete()
 
-                      var deleteMessages = 
-                        docRef.collection('messages').get()
-                          .then((querySnapShot) => {
-                            Promise.all(querySnapShot.docs.map((doc) => {
-                              doc.ref.delete()
-                            }))
-                          })
+        promises0.push(sendMessage)
+        promises0.push(removePlayer)
 
-                      promises.push(deleteRoom)
-                      promises.push(deletePlayers)
-                      promises.push(deleteMessages)
-                    }
+        Promise.all(promises0).then(() => {
+            docRef.get().then((doc) => {
+              // Remove the room document and its subcollection when the owner left
+              if (doc.data().ownerId == firebase.auth().currentUser.uid) {
+                var deleteRoom = docRef.delete()
 
-                    Promise.all(promises).then(() => {
-                      this.$router.push({
-                        name: 'room-list',
-                      })
+                var deletePlayers = 
+                  docRef.collection('players').get()
+                    .then((querySnapShot) => {
+                      Promise.all(querySnapShot.docs.map((doc) => {
+                        doc.ref.delete()
+                      }))
                     })
+
+                var deleteMessages = 
+                  docRef.collection('messages').get()
+                    .then((querySnapShot) => {
+                      Promise.all(querySnapShot.docs.map((doc) => {
+                        doc.ref.delete()
+                      }))
+                    })
+
+                promises1.push(deleteRoom)
+                promises1.push(deletePlayers)
+                promises1.push(deleteMessages)
+              } else {
+                var updateRoom = 
+                  docRef.update({
+                    numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+                    ipList: doc.data().ipList.filter(data => data.uid !== firebase.auth().currentUser.uid),
                   })
+
+                promises1.push(updateRoom)
+              }
+
+              Promise.all(promises1).then(() => {
+                this.$router.push({
+                  name: 'room-list',
                 })
-              })
+            })
+          })
         })
       },
       cancel() {

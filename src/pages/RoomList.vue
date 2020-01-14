@@ -220,6 +220,7 @@
     },
     data() {
       return {
+        ip: null,
         tabs: 0,
         clickedTableRow: null,
         validAccessCode: '',
@@ -229,6 +230,11 @@
       }
     },
     methods: {
+      getIP() {
+        this.$axios.get("https://api.ipify.org?format=json").then((resp) => {
+          this.ip = resp.data.ip
+        })
+      },
       onClickTableRow(index, accessCode) {
         this.clickedTableRow = index
         this.validAccessCode = accessCode
@@ -254,6 +260,8 @@
           var db = firebase.firestore()
           var room = db.collection('rooms').doc(roomId)
           var isBanned = false
+          var isThisIPBlocked = false
+          var promises = []
 
           room.get().then((roomDoc) => {
             if (roomDoc.exists) {
@@ -264,25 +272,38 @@
                 }
               }
 
-              if (!isBanned) {
+              for (var i = 0; i < roomDoc.data().ipList.length; i++) {
+                if (roomDoc.data().ipList[i].ip == this.ip && roomDoc.data().ipList[i].uid != firebase.auth().currentUser.uid) {
+                  isThisIPBlocked = true
+                }
+              }
+
+              if (!isBanned && !isThisIPBlocked) {
                 room.collection('players').doc(firebase.auth().currentUser.uid).get().then((playerDoc) => {
                   if (!playerDoc.exists  && roomDoc.data().status == 'new' && roomDoc.data().numberOfParticipants < roomDoc.data().capacity) {
-                    room.update({
-                      numberOfParticipants: firebase.firestore.FieldValue.increment(1),
-                    })
+                    var updateRoom = 
+                      room.update({
+                        numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+                        ipList: firebase.firestore.FieldValue.arrayUnion({
+                          ip: this.ip,
+                          uid: firebase.auth().currentUser.uid,
+                        }),
+                      })
 
-                    room.collection('players').doc(firebase.auth().currentUser.uid).set({
-                      id: firebase.auth().currentUser.uid,
-                      role: null,
-                      name: this.gameName,
-                      avatar: this.avatar,
-                      isAlive: true,
-                      votedPlayer: null,
-                      bittenPlayer: null,
-                      protectedPlayer: null,
-                      divinedPlayer: null,
-                    })
-                    .then(() => {
+                    var putPlayer = 
+                      room.collection('players').doc(firebase.auth().currentUser.uid).set({
+                        id: firebase.auth().currentUser.uid,
+                        role: null,
+                        name: this.gameName,
+                        avatar: this.avatar,
+                        isAlive: true,
+                        votedPlayer: null,
+                        bittenPlayer: null,
+                        protectedPlayer: null,
+                        divinedPlayer: null,
+                      })
+
+                    var sendMessage = 
                       room.collection('messages').add({
                         from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -291,22 +312,27 @@
                         avatar: '',
                         isFromGrave: false,
                       })
-                      .then(() => {
-                        this.$router.push({
-                          name: 'game',
-                          params:{ id: roomId },
-                        })
-                      }) 
-                    })
-                  } else {
-                    this.$router.push({
-                      name: 'game',
-                      params:{ id: roomId },
-                    })
+
+                    promises.push(updateRoom)
+                    promises.push(putPlayer)
+                    promises.push(sendMessage)
                   }
+
+                  Promise.all(promises)
+                    .then(() => {
+                      // Enter the room as a viewer if the room has already started or got full
+                      this.$router.push({
+                        name: 'game',
+                        params:{ id: roomId },
+                      })
+                  })
                 })
               } else {
-                console.log("You are banned from this room..")
+                if (isBanned) {
+                  console.log("You are banned from this room..")
+                } else if (isThisIPBlocked) {
+                  console.log("Seems like you already entered this room using another account..")
+                }
               }         
             } else {
               console.log("Can't find this room..")
@@ -354,6 +380,7 @@
     },
     mounted() {
       this.updateRoomList()
+      this.getIP()
     },
   }
 </script>

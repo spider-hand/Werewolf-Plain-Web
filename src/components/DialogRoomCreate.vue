@@ -140,6 +140,7 @@
       return {
         dialog: false,
         valid: true,
+        ip: null,
         name: '',
         villageNameRules: [
           v => {
@@ -285,6 +286,11 @@
       }
     },
     methods: {
+      getIP() {
+        this.$axios.get("https://api.ipify.org?format=json").then((resp) => {
+          this.ip = resp.data.ip
+        })
+      },
       validate() {
         if (this.$refs.form.validate()) {
           this.createRoom()
@@ -293,6 +299,8 @@
       createRoom() {
         // Create the room's document
         var db = firebase.firestore()
+        var promises = []
+        
         db.collection('rooms').add({
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           name: this.name,
@@ -308,20 +316,26 @@
           isNight: false,
           ownerId: firebase.auth().currentUser.uid,
           banList: [],
+          ipList: [{ 
+            ip: this.ip, 
+            uid: firebase.auth().currentUser.uid, 
+          }],
         })
         .then((docRef) => {
-          db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({
-            id: firebase.auth().currentUser.uid,
-            role: null,
-            name: this.gameName,
-            avatar: this.avatar,
-            isAlive: true,
-            votedPlayer: null,
-            bittenPlayer: null,
-            protectedPlayer: null,
-            divinedPlayer: null,
-          })
-          .then(() => {
+          var putPlayer = 
+            db.collection('rooms').doc(docRef.id).collection('players').doc(firebase.auth().currentUser.uid).set({
+              id: firebase.auth().currentUser.uid,
+              role: null,
+              name: this.gameName,
+              avatar: this.avatar,
+              isAlive: true,
+              votedPlayer: null,
+              bittenPlayer: null,
+              protectedPlayer: null,
+              divinedPlayer: null,
+            })
+
+          var sendNotification = 
             db.collection('rooms').doc(docRef.id).collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -330,18 +344,25 @@
               avatar: '',
               isFromGrave: false,
             })
+
+          promises.push(putPlayer)
+          promises.push(sendNotification)
+
+          Promise.all(promises)            
             .then(() => {
               this.$router.push({
                 name: 'game',
                 params:{ id: docRef.id },
               })
-            })
           })
         })
       },
       cancel() {
         this.dialog = false
       },
+    },
+    mounted() {
+      this.getIP()
     }
   }
 </script>
