@@ -221,18 +221,11 @@
             // Store the token into local storage
             this.signIn(token)
           })
-        }).catch((error) => {
-          var errorCode = error.code
-          var errorMessage = error.message
-          var email = error.email
-          var credential = error.credential
         })
       },
       signOutOfGoogle() {
         firebase.auth().signOut().then(() => {
           this.signOut()
-        }).catch((error) => {
-
         })
       },
       updateSettings(gameName, avatar) {

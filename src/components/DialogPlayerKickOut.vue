@@ -64,14 +64,12 @@
           avatar: '',
           isFromGrave: false,
         })
-        .then(() => {
-          docRef.collection('players').doc(this.player.id).delete()
-            .then(() => {
-              docRef.update({
-                numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-                banList: firebase.firestore.FieldValue.arrayUnion(this.player.id),
-              })
-            })
+
+        docRef.collection('players').doc(this.player.id).delete()
+
+        docRef.update({
+          numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+          banList: firebase.firestore.FieldValue.arrayUnion(this.player.id),
         })
       },
       cancel() {

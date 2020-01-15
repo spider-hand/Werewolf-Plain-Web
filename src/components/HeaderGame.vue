@@ -66,10 +66,14 @@
         if (this.room.numberOfParticipants == this.room.capacity) {
           var db = firebase.firestore()
           var docRef = db.collection('rooms').doc(this.$route.params.id)
+          var promises = []
 
-          docRef.update({
-            status: 'ongoing',
-          }).then(() => {
+          var updateRoom = 
+            docRef.update({
+              status: 'ongoing',
+            })
+
+          var sendMessage = 
             docRef.collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -78,14 +82,18 @@
               avatar: '',
               isFromGrave: false,
             })
-          })
 
-          // Decide the roles randomly
-          this.decideRoles(this.room.capacity)
+          promises.push(updateRoom)
+          promises.push(sendMessage)
 
-          // Add a scheduled task to trigger cloud functions
-          this.callCloudFunction()
+          Promise.all(promises)
+            .then(() => {
+              // Decide the roles randomly
+              this.decideRoles(this.room.capacity)
 
+              // Add a scheduled task to trigger cloud functions
+              this.callCloudFunction()
+            })
         } else {
           console.log('This room is not ready.')
         }
