@@ -60,7 +60,7 @@
         docRef.collection('messages').add({
           from: 'GM',
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: this.$t('DialogPlayerKickOut.kickOutPlayer', this.room, [this.player.name]),
+          body: this.$t('DialogPlayerKickOut.kickOutPlayer', this.room.language, [this.player.name]),
           gameName: 'GM',
           avatar: '',
           isFromGrave: false,
