@@ -39,7 +39,8 @@
             <v-list-item-action>
               <DialogPlayerKickOut 
                 v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.id)"
-                :player="player" />
+                :player="player"
+                :room="room" />
             </v-list-item-action>
             <v-list-item-action>
               <v-btn

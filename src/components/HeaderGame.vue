@@ -15,7 +15,8 @@
         @click="startGame">{{ $t('HeaderGame.start') }}</v-btn>
       <DialogRoomLeave 
         v-if="isJoiningThisGame && !hasGameStarted"
-        :myself="myself" />
+        :myself="myself"
+        :room="room" />
       <DialogRole
         v-if="myself != null && myself.role != null" 
         :myself="myself" />
@@ -77,7 +78,7 @@
             docRef.collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              body: this.$t('HeaderGame.startMessage'),
+              body: this.$t('HeaderGame.startMessage', this.room.language),
               gameName: 'GM',
               avatar: '',
               isFromGrave: false,

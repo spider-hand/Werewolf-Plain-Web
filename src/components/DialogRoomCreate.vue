@@ -339,7 +339,7 @@
             db.collection('rooms').doc(docRef.id).collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              body: this.$t('DialogRoomCreate.playerJoined', [this.gameName]),
+              body: this.$t('DialogRoomCreate.playerJoined', this.language, [this.gameName]),
               gameName: 'GM',
               avatar: '',
               isFromGrave: false,

@@ -45,6 +45,7 @@
   export default {
     props: [
       'myself',
+      'room',
     ],
     data() {
       return {
@@ -63,7 +64,7 @@
           docRef.collection('messages').add({
             from: 'GM',
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            body: this.$t('DialogRoomLeave.playerLeft', [this.myself.name]),
+            body: this.$t('DialogRoomLeave.playerLeft', this.room.language, [this.myself.name]),
             gameName: 'GM',
             avatar: '',
             isFromGrave: false,
