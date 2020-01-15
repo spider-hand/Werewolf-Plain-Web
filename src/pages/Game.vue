@@ -335,12 +335,18 @@
           return this.resultsMedium
         } else {
           var individualMessages = []
-          for (var i = 0; i < this.messages.length; i++) {
-            if (this.messages[i].from == this.players[this.player - 1].id) {
-              individualMessages.push(this.messages[i])
+          try {
+            for (var i = 0; i < this.messages.length; i++) {
+              if (this.messages[i].from == this.players[this.player - 1].id) {
+                individualMessages.push(this.messages[i])
+              }
             }
+            return individualMessages
+          } catch (err) {
+            // Switch to all chat when the player has been kicked out or left
+            this.player = 0
+            return individualMessages
           }
-          return individualMessages
         }
       },
       getAnonymousAvatar() {
@@ -376,8 +382,7 @@
 
         if (this.isWerewolfChatOpened) {
           // Save the message
-          db.collection('rooms').doc(this.$route.params.id)
-            .collection('werewolfMessages').add({
+          db.collection('rooms').doc(this.$route.params.id).collection('werewolfMessages').add({
             from: firebase.auth().currentUser.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: this.message,
@@ -390,8 +395,7 @@
           })          
         } else {
           // Save the message
-          db.collection('rooms').doc(this.$route.params.id)
-            .collection('messages').add({
+          db.collection('rooms').doc(this.$route.params.id).collection('messages').add({
             from: firebase.auth().currentUser.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: this.message,
