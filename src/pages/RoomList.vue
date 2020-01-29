@@ -72,7 +72,7 @@
                     <td>
                       <v-btn 
                         text
-                        @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom()">
+                        @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom('new')">
                         <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
@@ -128,7 +128,7 @@
                     <td>
                       <v-btn 
                         text
-                        @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom()">
+                        @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom('ongoing')">
                         <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
@@ -184,7 +184,7 @@
                     <td>
                       <v-btn 
                         text
-                        @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom()">
+                        @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom('closed')">
                         <span>{{ $t('RoomList.enter') }}</span>
                       </v-btn>
                     </td>
@@ -239,8 +239,8 @@
         this.clickedTableRow = index
         this.validAccessCode = accessCode
       },
-      beforeEnterRoom() {
-        this.$refs.dialogAccessCode.open()
+      beforeEnterRoom(status) {
+        this.$refs.dialogAccessCode.open(status)
       },
       enterRoom(status) {
         var roomId

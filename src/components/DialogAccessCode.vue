@@ -46,6 +46,7 @@
     data() {
       return {
         dialog: false,
+        status: null,
         accessCode: '',
         errorMessage: '',
       }
@@ -55,11 +56,12 @@
         if (this.accessCode != this.validAccessCode) {
           this.errorMessage = this.$t('DialogAccessCode.invalidAccessCode')
         } else {
-          this.$emit('validateAccessCode')
+          this.$emit('validateAccessCode', this.status)
         }
       },
-      open() {
+      open(status) {
         this.dialog = true
+        this.status = status
       },
       close() {
         this.dialog = false
