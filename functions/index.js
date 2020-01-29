@@ -289,9 +289,9 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
 exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').onRun((context) => {
   var db = admin.firestore()
 
-  db.collection('rooms').get()
+  return db.collection('rooms').get()
     .then((querySnapShot) => {
-      return Promise.all(querySnapShot.docs.map((doc) => {
+      querySnapShot.forEach((doc) => {
         // Delete rooms either 1 week passed since it was either created or finished
         var status = doc.data().status
         var createdAt = doc.data().timestamp.toDate()
@@ -303,19 +303,19 @@ exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').
 
           doc.ref.collection('players').get()
             .then((querySnapShot) => {
-              Promise.all(querySnapShot.docs.map((playerDoc) => {
+              querySnapShot.forEach((playerDoc) => {
                 playerDoc.ref.delete()
-              }))
+              })
             })
 
           doc.ref.collection('messages').get()
             .then((querySnapShot) => {
-              Promise.all(querySnapShot.docs.map((messageDoc) => {
+              querySnapShot.forEach((messageDoc) => {
                 messageDoc.ref.delete()
-              }))
+              })
             })
         }
-      }))
+      })
     })
 })
 
