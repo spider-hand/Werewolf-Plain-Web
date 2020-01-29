@@ -27,6 +27,24 @@
         <span>{{ $t('Header.rules') }}</span>
       </v-btn>
       <div class="flex-grow-1"></div>
+      <v-menu>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            color="#757575"
+            v-on="on">
+            <v-icon>mdi-translate</v-icon>
+          </v-btn>
+        </template>
+        <v-list color="#23272A">
+          <v-list-item
+            v-for="(language, index) in languages"
+            :key="index"
+            @click="changeLanguage(language.value)">
+            <v-list-item-title>{{ language.name }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <div v-if="isSignedIn">
         <v-btn 
           icon
@@ -72,8 +90,7 @@
           <v-btn
             icon 
             color="#757575"
-            v-on="on"
-            >
+            v-on="on">
             <v-icon>mdi-menu</v-icon>    
           </v-btn>
         </template>
@@ -162,6 +179,23 @@
       return {
         gameName: null,
         avatar: null,
+        languages: [
+          { 
+            name: 'English',
+            value: 'en', 
+          },
+          { name: '日本語',
+            value:'ja', 
+          },
+          { 
+            name: 'Español',
+            value: 'es',
+          },
+          { 
+            name: 'Portugues',
+            value:'pt',
+          },
+        ],
       }
     },
     computed: {
@@ -174,6 +208,7 @@
       ...mapActions([
         'signIn', 
         'signOut',
+        'saveLanguage',
       ]),
       signInWithGoogle() {
         var provider = new firebase.auth.GoogleAuthProvider()
@@ -232,6 +267,10 @@
         this.gameName = gameName
         this.avatar = avatar
         this.$emit('updateSettings', gameName, avatar)
+      },
+      changeLanguage(language) {
+        this.$i18n.locale = language
+        this.saveLanguage(language)
       },
     },
     mounted() {

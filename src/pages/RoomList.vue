@@ -354,7 +354,7 @@
         var db = firebase.firestore()
 
         // Get rooms
-        db.collection('rooms').orderBy('timestamp', 'desc').get()
+        db.collection('rooms').where('language', '==', this.$i18n.locale).orderBy('timestamp', 'desc').get()
           .then((querySnapShot) => {
             querySnapShot.forEach((doc) => {
               if (doc.data().status == 'new') {
