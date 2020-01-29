@@ -96,6 +96,10 @@
       convertLanguageCode(code) {
         if (code == 'ja') {
           return this.$t('DialogRoomDetails.japanese')
+        } else if (code == 'es') {
+          return this.$t('DialogRoomDetails.spanish')
+        } else if (code == 'pt') {
+          return this.$t('DialogRoomDetails.portuguese')
         } else {
           return this.$t('DialogRoomDetails.english')
         }

@@ -54,7 +54,7 @@
       </v-btn>
     </v-app-bar>
     <v-app-bar
-      v-if="$viewport.width < 450"
+      v-else
       color="#23272A">
       <div>
         <v-img

@@ -499,6 +499,10 @@ function updateRecords(doesVillageWin, playerRoles) {
 function translateNightNotification(language) {
   if (language == 'ja') {
     return '夜になりました。発言を禁止します。昼になる前にアクションを完了してください。'
+  } else if (language == 'es') {
+    return 'Es de noche. Los aldeanos no pueden discutir. Hacer acciones antes de que llegue el día.'
+  } else if (language == 'pt') {
+    return 'É noite. Os moradores não têm permissão para conversar. Realize ações antes do dia chegar.'
   } else {
     return "It's night. Villagers are not allowed to chat. Do actions before daytime comes."
   }
@@ -507,6 +511,10 @@ function translateNightNotification(language) {
 function translateDaytimeNotification(language) {
   if (language == 'ja') {
     return '昼になりました。議論を開始してください。'
+  } else if (language == 'es') {
+    return 'Es de día. Iniciar discusión.'
+  } else if (language == 'pt') {
+    return 'É dia. Iniciar discussão.'
   } else {
     return "It's daytime. Start discussion."
   }
@@ -515,6 +523,10 @@ function translateDaytimeNotification(language) {
 function translateSuicideMessage(player, language) {
   if (language == 'ja') {
     return `${player}が突然死しました...\n`
+  } else if (language == 'es') {
+    return `${player} se suicidó..\n`
+  } else if (language == 'pt') {
+    return `${player} cometeu suicídio..\n`
   } else {
     return `${player} committed suicide..\n`
   }
@@ -523,14 +535,22 @@ function translateSuicideMessage(player, language) {
 function translateVotingResult(player, counts, language) {
   if (language == 'ja') {
     return `${player}は${counts}票獲得しました。\n`
+  } else if (language == 'es') {
+    return `${player} obtuvo ${counts} votos.\n`
+  } else if (language == 'pt') {
+    return `${player} obteve ${counts} votos.\n`
   } else {
-    return `${player} got ${counts} vote.\n`
+    return `${player} got ${counts} votes.\n`
   }
 }
 
 function translateExecutionMessage(player, language) {
   if (language == 'ja') {
     return `${player}は処刑されました。 `
+  } else if (language == 'es') {
+    return `${player} fue ejecutado.`
+  } else if (language == 'pt') {
+    return `${player} foi executado.`
   } else {
     return `${player} was executed. `
   }
@@ -539,6 +559,10 @@ function translateExecutionMessage(player, language) {
 function translateKilledPlayerMessage(player, language) {
   if (language == 'ja') {
     return `${player}が殺された。\n`
+  } else if (language == 'es') {
+    return `${player} fue asesinado.\n`
+  } else if (language == 'pt') {
+    return `${player} foi morto.\n`
   } else {
     return `${player} was killed.\n`
   }
@@ -547,6 +571,10 @@ function translateKilledPlayerMessage(player, language) {
 function translateNoVictimMessage(language) {
   if (language == 'ja') {
     return '昨晩犠牲者はいませんでした。\n'
+  } else if (language == 'es') {
+    return 'No hubo una víctima anoche.\n'
+  } else if (language == 'pt') {
+    return 'Não houve vítima ontem à noite.\n'
   } else {
     return 'There was not a victim last night.\n'
   }
@@ -555,6 +583,10 @@ function translateNoVictimMessage(language) {
 function translateVillageWinMessage(language) {
   if (language == 'ja') {
     return '全ての人狼を処刑した！村の勝利！\n\n'
+  } else if (language == 'es') {
+    return '¡Todos los hombres lobo son ejecutados! ¡El pueblo gana!\n\n'
+  } else if (language == 'pt') {
+    return 'Todos os lobisomens são executados! A vila vence!'
   } else {
     return 'All werewolves are executed! Village wins!\n\n'
   }
@@ -563,8 +595,12 @@ function translateVillageWinMessage(language) {
 function translateWerewolvesWinMessage(language) {
   if (language == 'ja') {
     return '人狼の勝利...\n\n'
+  } else if (language == 'es') {
+    return 'Los hombres lobo ganan..\n\n'
+  } else if (language == 'pt') {
+    return 'Lobisomens vencem..\n\n'
   } else {
-    return 'Werewolves wins..\n\n'
+    return 'Werewolves win..\n\n'
   }
 }
 
@@ -588,6 +624,10 @@ function translateRevealRoleMessage(player, role, language) {
 
   if (language == 'ja') {
     return `${player}は${translatedRole}だった。\n`
+  } else if (language == 'es') {
+    return `${player} es ${translatedRole}.\n`
+  } else if (language == 'pt') {
+    return `${player} é ${translatedRole}.\n`
   } else {
     return `${player} is ${translatedRole}.\n`
   }
@@ -596,6 +636,10 @@ function translateRevealRoleMessage(player, role, language) {
 function translateVillager(language) {
   if (language == 'ja') {
     return '村人'
+  } else if (language == 'es') {
+    return 'aldeano'
+  } else if (language == 'pt') {
+    return 'camponês'
   } else {
     return 'villager'
   }
@@ -604,6 +648,10 @@ function translateVillager(language) {
 function translateWerewolf(language) {
   if (language == 'ja') {
     return '人狼'
+  } else if (language == 'es') {
+    return 'hombre lobo'
+  } else if (language == 'pt') {
+    return 'lobisomem'
   } else {
     return 'werewolf'
   }
@@ -612,6 +660,10 @@ function translateWerewolf(language) {
 function translateSeer(language) {
   if (language == 'ja') {
     return '占い師'
+  } else if (language == 'es') {
+    return 'vidente'
+  } else if (language == 'pt') {
+    return 'vidente'
   } else {
     return 'seer'
   }
@@ -620,6 +672,10 @@ function translateSeer(language) {
 function translateMedium(language) {
   if (language == 'ja') {
     return '霊能者'
+  } else if (language == 'es') {
+    return 'médium'
+  } else if (language == 'pt') {
+    return 'médium'
   } else {
     return 'medium'
   }
@@ -628,6 +684,10 @@ function translateMedium(language) {
 function translateKnight(language) {
   if (language == 'ja') {
     return '騎士'
+  } else if (language == 'es') {
+    return 'caballero'
+  } else if (language == 'pt') {
+    return 'cavaleiro'
   } else {
     return 'knight'
   }
@@ -636,6 +696,10 @@ function translateKnight(language) {
 function translateMinion(language) {
   if (language == 'ja') {
     return '狂人'
+  } else if (language == 'es') {
+    return 'secuaz'
+  } else if (language == 'pt') {
+    return 'servo'
   } else {
     return 'minion'
   }
@@ -644,6 +708,10 @@ function translateMinion(language) {
 function translateHuman(language) {
   if (language == 'ja') {
     return '人間'
+  } else if (language == 'es') {
+    return 'humano'
+  } else if (language == 'pt') {
+    return 'humano'
   } else {
     return 'human'
   }

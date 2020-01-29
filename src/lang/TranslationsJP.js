@@ -35,6 +35,8 @@ export default {
       language: '言語',
       english: '英語',
       japanese: '日本語',
+      spanish: 'スペイン語',
+      portuguese: 'ポルトガル語',
       private: '身内村',
       accessCode: 'アクセスコード',
       whitespaceIsNotAllowed: '空白文字は使えません',
@@ -69,6 +71,8 @@ export default {
       language: '言語',
       japanese: '日本語',
       english: '英語',
+      spanish: 'スペイン語',
+      portuguese: 'ポルトガル語',
       close: '閉じる',
     },
     DialogRole: {

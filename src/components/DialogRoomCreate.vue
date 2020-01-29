@@ -256,6 +256,14 @@
             text: this.$t('DialogRoomCreate.japanese'),
             value: 'ja',
           },
+          {
+            text: this.$t('DialogRoomCreate.spanish'),
+            value: 'es',
+          },
+          {
+            text: this.$t('DialogRoomCreate.portuguese'),
+            value: 'pt',
+          },
         ],
         isPrivate: false,
         accessCode: '',

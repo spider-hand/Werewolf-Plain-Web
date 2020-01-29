@@ -30,6 +30,8 @@ export default {
       language: 'Language',
       english: 'English',
       japanese: 'Japanese',
+      spanish: 'Spanish',
+      portuguese: 'Portuguese',
       private: 'Private',
       accessCode: 'Access code',
       whitespaceIsNotAllowed: 'Whitespace is not allowed',
@@ -84,6 +86,8 @@ export default {
       language: 'Language',
       japanese: 'Japanese',
       english: 'English',
+      spanish: 'Spanish',
+      portuguese: 'Portuguese',
       close: 'CLOSE',
     },
     DialogSettings: {
