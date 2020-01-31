@@ -21,6 +21,7 @@
         v-if="myself != null && myself.role != null" 
         :myself="myself" />
       <DialogRoomDetails :room="room" />
+      <DialogErrorMessage ref="dialogErrorMessage" />
     </v-app-bar>
   </div>
 </template>
@@ -31,6 +32,7 @@
   import 'firebase/firestore'
   import 'firebase/functions'
 
+  import DialogErrorMessage from '@/components/DialogErrorMessage'
   import DialogRole from '@/components/DialogRole'
   import DialogRoomDetails from '@/components/DialogRoomDetails'
   import DialogRoomLeave from '@/components/DialogRoomLeave'
@@ -42,6 +44,7 @@
       'isJoiningThisGame',
     ],
     components: {
+      DialogErrorMessage,
       DialogRole,
       DialogRoomDetails,
       DialogRoomLeave,
@@ -96,7 +99,8 @@
               this.callCloudFunction()
             })
         } else {
-          console.log('This room is not ready.')
+          var errorMessage = this.$t('DialogErrorMessage.notReady')
+          this.$refs.dialogErrorMessage.open(errorMessage)
         }
       },
       decideRoles(capacity) {

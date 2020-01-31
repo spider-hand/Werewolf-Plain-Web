@@ -45,6 +45,13 @@ export default {
       invalidAccessCode: 'Invalid access code',
       close: 'CLOSE',
     },
+    DialogErrorMessage: {
+      banned: 'You are banned from this room..',
+      alreadyEntered: 'Seems like you already entered this room using another account..',
+      cantFind: "Can't find this room.. Please try another.",
+      notReady: 'This room is not ready.',
+      close: 'CLOSE',
+    },
     DialogRoomLeave: {
       leave: 'Leave',
       title: 'Leave Room',

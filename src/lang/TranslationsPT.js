@@ -45,6 +45,13 @@ export default {
       invalidAccessCode: 'Código de acesso inválido',
       close: 'FECHAR',
     },
+    DialogErrorMessage: {
+      banned: 'Você foi banido desta sala..',
+      alreadyEntered: 'Parece que você já entrou nesta sala usando outra conta.',
+      cantFind: "Não foi possível encontrar este quarto. Por favor, tente outro.",
+      notReady: 'Este quarto não está pronto.',
+      close: 'FECHAR',
+    },
     DialogRoomLeave: {
       leave: 'Sair',
       title: 'Sair da sala',

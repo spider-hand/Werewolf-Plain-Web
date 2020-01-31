@@ -45,6 +45,13 @@ export default {
       cancel: 'キャンセル',
       playerJoined: '{0}が入村しました。',
     },
+    DialogErrorMessage: {
+      banned: 'この部屋からブロックされています。',
+      alreadyEntered: '別のアカウントを使ってこの部屋に入っているようです。',
+      cantFind: "部屋が見つかりませんでした。",
+      notReady: '人数が揃っていません。',
+      close: '閉じる',
+    },
     DialogRoomLeave: {
       leave: '村を去る',
       title: '村を去る',

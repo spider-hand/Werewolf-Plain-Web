@@ -10,6 +10,7 @@
             ref="dialogAccessCode"
             :validAccessCode="validAccessCode"
             @validateAccessCode="enterRoom" />
+          <DialogErrorMessage ref="dialogErrorMessage" />
           <div class="flex-grow-1"></div>
         </v-layout>
       </v-container>
@@ -204,6 +205,7 @@
   import 'firebase/auth'
   import 'firebase/firestore'
 
+  import DialogErrorMessage from '@/components/DialogErrorMessage'
   import DialogRoomCreate from '@/components/DialogRoomCreate'
   import DialogAccessCode from '@/components/DialogAccessCode'
   import DialogRoomDetails from '@/components/DialogRoomDetails'
@@ -214,6 +216,7 @@
       'avatar',
     ],
     components: {
+      DialogErrorMessage,
       DialogRoomCreate,
       DialogAccessCode,
       DialogRoomDetails,
@@ -329,13 +332,16 @@
                 })
               } else {
                 if (isBanned) {
-                  console.log("You are banned from this room..")
+                  var errorMessage = this.$t('DialogErrorMessage.banned')
+                  this.$refs.dialogErrorMessage.open(errorMessage)
                 } else if (isThisIPBlocked) {
-                  console.log("Seems like you already entered this room using another account..")
+                  var errorMessage = this.$t('DialogErrorMessage.alreadyEntered')
+                  this.$refs.dialogErrorMessage.open(errorMessage)
                 }
               }         
             } else {
-              console.log("Can't find this room..")
+              var errorMessage = this.$t('DialogErrorMessage.cantFind')
+              this.$refs.dialogErrorMessage.open(errorMessage)
             }
           })
         } else {

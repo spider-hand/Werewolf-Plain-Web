@@ -45,6 +45,13 @@ export default {
       invalidAccessCode: 'Código de acceso inválido',
       close: 'CERRAR',
     },
+    DialogErrorMessage: {
+      banned: 'Tienes prohibido salir de esta habitación ...',
+      alreadyEntered: 'Parece que ya ingresaste a esta sala con otra cuenta.',
+      cantFind: "No puedo encontrar esta habitación. Por favor intente con otro.",
+      notReady: 'Esta sala no está lista.',
+      close: 'CERRAR',
+    },
     DialogRoomLeave: {
       leave: 'Salir',
       title: 'Salir de la habitación',
