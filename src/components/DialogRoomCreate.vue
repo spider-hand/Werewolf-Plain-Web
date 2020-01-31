@@ -27,6 +27,7 @@
               v-model="name"
               :rules="villageNameRules"
               :label="$t('DialogRoomCreate.villageName')"
+              maxlength="30"
               outlined
               color="#8E9297"
               background-color="#2F3136"
@@ -36,6 +37,7 @@
               name="input-7-4"
               :rules="descriptionRules"
               :label="$t('DialogRoomCreate.description')"
+              maxlength="1000"
               outlined
               color="#8E9297"
               background-color="#2F3136"
@@ -93,12 +95,13 @@
               </v-col>
               <v-col cols="9">
                 <v-text-field 
-                  :disabled="!isPrivate"
-                  :rules="accessCodeRules"
                   ref="accessCodeInput"
                   v-model="accessCode"
-                  outlined
+                  :disabled="!isPrivate"
+                  :rules="accessCodeRules"
                   :label="$t('DialogRoomCreate.accessCode')"
+                  maxlength="20"
+                  outlined
                   color="#8E9297"
                   background-color="#2F3136"
                   dark

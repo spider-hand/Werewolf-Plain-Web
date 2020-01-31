@@ -17,7 +17,8 @@
             color="#8E9297"
             background-color="#2F3136"
             dark
-            prepend-icon="mdi-lock" />
+            prepend-icon="mdi-lock"
+            maxlength="20" />
         </v-container>
       </v-card-text>
       <v-card-actions>

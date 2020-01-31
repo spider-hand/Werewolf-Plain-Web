@@ -32,6 +32,7 @@
               v-model="newGameName"
               :rules="gameNameRules"
               :label="$t('DialogSettings.gameName')"
+              maxlength="16"
               :value="newGameName"
               outlined
               color="#8E9297"

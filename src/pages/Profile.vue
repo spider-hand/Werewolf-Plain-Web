@@ -14,6 +14,7 @@
               :disabled="!isUsernameEditable"
               :error-messages="!isUsernameEditable ? $t('Profile.usernameIsNotEditable') : ''"
               :label="$t('Profile.username')"
+              maxlength="120"
               :value="newUsername"
               outlined
               color="#8E9297"
@@ -35,6 +36,7 @@
                 v-model="newBio"
                 :rules="bioRules"
                 :label="$t('Profile.bio')"
+                maxlength="500"
                 :value="newBio"
                 outlined
                 color="#8E9297"

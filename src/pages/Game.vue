@@ -140,6 +140,7 @@
         class="message-input"
         :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
         :rules="messageRules"
+        maxlength="500"
         v-model="message"
         background-color="#40444B"
         solo
