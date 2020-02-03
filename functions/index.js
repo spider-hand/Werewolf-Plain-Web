@@ -58,9 +58,11 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
   var protectedPlayer = { id: 'protectedPlayer' }
   var divinedPlayer = { id: 'divinedPlayer' }
   var playerRoles = []
+  var suicides = []
   var promises0 = []
   var promises1 = []
   var promises2 = []
+  var promises3 = []
   var hasGameEnded = false
   var doesVillageWin = true
   var daytimeMessage = ''
@@ -121,15 +123,11 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
               mostVotedPlayer = votedPlayer
             }
           } else {
-            // Kill players who didn't vote
-            killPlayer(docRef, doc.id)
-            daytimeMessage += translateSuicideMessage(doc.data().name, language)
-
-            if (playerRole != 'werewolf') {
-              countsVillager -= 1
-            } else {
-              countsWerewolf -= 1
-            }
+            suicides.push({
+              id: doc.data().id,
+              name: doc.data().name,
+              role: doc.data().role,
+            })
           }
 
           // Reset the selected player every night
@@ -142,121 +140,68 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
         }
       }))
       .then(() => {
-        // Execute the most voted player
-        if (mostVotedPlayer.id != 'mostVotedPlayer' && countsWerewolf > 0 && countsVillager > countsWerewolf) {
-          promises0.push(killPlayer(docRef ,mostVotedPlayer.id))
-
-          // How many votes each player got?
-          for (var key in countsVote) {
-            daytimeMessage += translateVotingResult(countsVote[key][1], countsVote[key][0], language)
+        // Players who didn't vote will commit suicide
+        for (const suicide of suicides) {
+          // If players select a player who didn't vote, the player will be executed instead of killing by himself
+          if (suicide.id != mostVotedPlayer.id) {
+            promises0.push(killPlayer(docRef, suicide.id))
+            daytimeMessage += translateSuicideMessage(suicide.name, language)
           }
 
-          daytimeMessage += translateExecutionMessage(mostVotedPlayer.name, language)
-        } else {
-          hasGameEnded = true
-
-          if (countsWerewolf > 0) {
-            doesVillageWin = false
-            daytimeMessage += translateWerewolvesWinMessage(language)
+          if (suicidalPlayer.role != 'werewolf') {
+            countsVillager -= 1
           } else {
-            daytimeMessage += translateVillageWinMessage(language)
+            countsWerewolf -= 1
           }
-
-          daytimeMessage += revealRoles(playerRoles, language)
-
-          promises0.push(endGame(docRef))
-          promises0.push(sendDaytimeMessage(docRef, daytimeMessage))
-          promises0.push(updateRecords(doesVillageWin, playerRoles))
         }
 
         Promise.all(promises0).then(() => {
-          if (!hasGameEnded) {
+          // Execute the most voted player
+          if (mostVotedPlayer.id != 'mostVotedPlayer' && countsWerewolf > 0 && countsVillager > countsWerewolf) {
+            promises1.push(killPlayer(docRef, mostVotedPlayer.id))
+
+            // How many votes each player got?
+            for (var key in countsVote) {
+              daytimeMessage += translateVotingResult(countsVote[key][1], countsVote[key][0], language)
+            }
+
+            daytimeMessage += translateExecutionMessage(mostVotedPlayer.name, language)
+
             if (mostVotedPlayer.role != 'werewolf') {
               countsVillager -= 1
             } else {
               countsWerewolf -= 1
             }
+          } else {
+            hasGameEnded = true
 
-            if (countsWerewolf > 0 && countsVillager > countsWerewolf) {
-              // Kill the most bitten player if the player isn't protected by knight
-              // TODO: Kill a player randomly when any werewolves didn't select a player
-              if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer') {
-                promises1.push(killPlayer(docRef, mostBittenPlayer.id))
-
-                daytimeMessage += translateKilledPlayerMessage(mostBittenPlayer.name, language)
-                countsVillager -= 1
-              } else {
-                daytimeMessage += translateNoVictimMessage(language)
-              }
+            if (countsWerewolf > 0) {
+              doesVillageWin = false
+              daytimeMessage += translateWerewolvesWinMessage(language)
             } else {
-              // End this game
-              hasGameEnded = true
-
-              if (countsWerewolf > 0) {
-                doesVillageWin = false
-                daytimeMessage += translateWerewolvesWinMessage(language)
-              } else {
-                daytimeMessage += translateVillageWinMessage(language)
-              }
-
-              daytimeMessage += revealRoles(playerRoles, language)
-
-              promises1.push(endGame(docRef))
-              promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
-              promises1.push(updateRecords(doesVillageWin, playerRoles))
+              daytimeMessage += translateVillageWinMessage(language)
             }
+
+            daytimeMessage += revealRoles(playerRoles, language)
+
+            promises1.push(endGame(docRef))
+            promises1.push(sendDaytimeMessage(docRef, daytimeMessage))
+            promises1.push(updateRecords(doesVillageWin, playerRoles))
           }
 
           Promise.all(promises1).then(() => {
             if (!hasGameEnded) {
-              // Check if the number of villagers are greater than the number of wolves after werewolves bite a villager
-              if (countsVillager > countsWerewolf) {
-                daytimeMessage += translateDaytimeNotification(language)
-                var daytimeComes = docRef.update({ isNight: false, })
+              if (countsWerewolf > 0 && countsVillager > countsWerewolf) {
+                // Kill the most bitten player if the player isn't protected by knight
+                if (protectedPlayer.id != mostBittenPlayer.id && mostVotedPlayer.id != mostBittenPlayer.id && mostBittenPlayer.id != 'mostBittenPlayer' && !suicides.includes(mostBittenPlayer.id)) {
+                  promises2.push(killPlayer(docRef, mostBittenPlayer.id))
 
-                promises2.push(daytimeComes)
-                promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
-
-                // Add the tasks for the next day
-                promises2.push(addNightTask(roomId, dayLength, language))
-                promises2.push(addDaytimeTask(roomId, dayLength, nightLength, language))
-
-                if (divinedPlayer.id != 'divinedPlayer') {
-                  var divinedPlayerRole
-                  if (divinedPlayer.role != 'werewolf') {
-                    divinedPlayerRole = 'human'
-                  } else {
-                    divinedPlayerRole = 'werewolf'
-                  }
-
-                  var sendSeerResult = 
-                    docRef.collection('resultsSeer').add({
-                      from: 'GM',
-                      timestamp: admin.firestore.Timestamp.now(),
-                      body: translateRevealRoleMessage(divinedPlayer.name, divinedPlayerRole, language),
-                      gameName: 'GM',
-                      avatar: '',
-                    })
-                  promises2.push(sendSeerResult)
-                }
-
-                if (mostVotedPlayer.id != 'mostVotedPlayer') {
-                  var mostVotedPlayerRole
-                  if (mostVotedPlayer.role != 'werewolf') {
-                    mostVotedPlayerRole = 'human'
-                  } else {
-                    mostVotedPlayerRole = 'werewolf'
-                  }
-
-                  var sendMediumResult = 
-                    docRef.collection('resultsMedium').add({
-                      from: 'GM',
-                      timestamp: admin.firestore.Timestamp.now(),
-                      body: translateRevealRoleMessage(mostVotedPlayer.name, mostVotedPlayerRole, language),
-                      gameName: 'GM',
-                      avatar: '',
-                    })
-                  promises2.push(sendMediumResult)
+                  daytimeMessage += translateKilledPlayerMessage(mostBittenPlayer.name, language)
+                  countsVillager -= 1
+                } else {
+                  // No one will be killed eihter when the player is protected or the player is already executed or all werewolves don't select a player to kill
+                  // or werewolves select a player who didn't vote (the player was supposed to be dead)
+                  daytimeMessage += translateNoVictimMessage(language)
                 }
               } else {
                 // End this game
@@ -274,11 +219,82 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
                 promises2.push(endGame(docRef))
                 promises2.push(sendDaytimeMessage(docRef, daytimeMessage))
                 promises2.push(updateRecords(doesVillageWin, playerRoles))
-              }              
+              }
             }
 
             Promise.all(promises2).then(() => {
-              res.send("It's daytime.")
+              if (!hasGameEnded) {
+                // Check if the number of villagers are greater than the number of wolves after werewolves bite a villager
+                if (countsVillager > countsWerewolf) {
+                  daytimeMessage += translateDaytimeNotification(language)
+                  var daytimeComes = docRef.update({ isNight: false, })
+
+                  promises3.push(daytimeComes)
+                  promises3.push(sendDaytimeMessage(docRef, daytimeMessage))
+
+                  // Add the tasks for the next day
+                  promises3.push(addNightTask(roomId, dayLength, language))
+                  promises3.push(addDaytimeTask(roomId, dayLength, nightLength, language))
+
+                  if (divinedPlayer.id != 'divinedPlayer') {
+                    var divinedPlayerRole
+                    if (divinedPlayer.role != 'werewolf') {
+                      divinedPlayerRole = 'human'
+                    } else {
+                      divinedPlayerRole = 'werewolf'
+                    }
+
+                    var sendSeerResult = 
+                      docRef.collection('resultsSeer').add({
+                        from: 'GM',
+                        timestamp: admin.firestore.Timestamp.now(),
+                        body: translateRevealRoleMessage(divinedPlayer.name, divinedPlayerRole, language),
+                        gameName: 'GM',
+                        avatar: '',
+                      })
+                    promises3.push(sendSeerResult)
+                  }
+
+                  if (mostVotedPlayer.id != 'mostVotedPlayer') {
+                    var mostVotedPlayerRole
+                    if (mostVotedPlayer.role != 'werewolf') {
+                      mostVotedPlayerRole = 'human'
+                    } else {
+                      mostVotedPlayerRole = 'werewolf'
+                    }
+
+                    var sendMediumResult = 
+                      docRef.collection('resultsMedium').add({
+                        from: 'GM',
+                        timestamp: admin.firestore.Timestamp.now(),
+                        body: translateRevealRoleMessage(mostVotedPlayer.name, mostVotedPlayerRole, language),
+                        gameName: 'GM',
+                        avatar: '',
+                      })
+                    promises3.push(sendMediumResult)
+                  }
+                } else {
+                  // End this game
+                  hasGameEnded = true
+
+                  if (countsWerewolf > 0) {
+                    doesVillageWin = false
+                    daytimeMessage += translateWerewolvesWinMessage(language)
+                  } else {
+                    daytimeMessage += translateVillageWinMessage(language)
+                  }
+
+                  daytimeMessage += revealRoles(playerRoles, language)
+
+                  promises3.push(endGame(docRef))
+                  promises3.push(sendDaytimeMessage(docRef, daytimeMessage))
+                  promises3.push(updateRecords(doesVillageWin, playerRoles))
+                }              
+              }
+
+              Promise.all(promises3).then(() => {
+                res.send("It's daytime.")
+              })
             })
           })
         })
