@@ -340,7 +340,11 @@
           try {
             for (var i = 0; i < this.messages.length; i++) {
               if (this.messages[i].from == this.players[this.player - 1].id) {
-                individualMessages.push(this.messages[i])
+                if (this.isAlive && this.isGameOngoing && this.messages[i].isFromGrave) {
+                  // Players can't see the messages from the grave while they are alive
+                } else {
+                  individualMessages.push(this.messages[i])
+                }
               }
             }
             return individualMessages
