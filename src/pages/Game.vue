@@ -151,11 +151,11 @@
       </v-textarea>
       <v-btn 
         class="send-button"
+        icon
         depressed
-        color="#2F3136"
         small
         @click="validate">
-        <v-icon color="#FFFFFF">mdi-send</v-icon>
+        <v-icon color="#757575">mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>

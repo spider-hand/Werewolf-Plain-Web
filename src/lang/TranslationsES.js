@@ -142,8 +142,10 @@ export default {
       },
       credit: {
         title: 'Créditos',
-        logo: 'Logo hecho por',
-        icon: 'Ícono hecho por',
+        logo: 'Logo hecho por ',
+        icon: 'Ícono hecho por ',
+        translationES: 'Traducción (Español) hecho por ',
+        translationPT: 'Traducción (Portugués) hecho por ',
       },
     },
     Rules: {
@@ -169,7 +171,7 @@ export default {
         knight: 'Caballero',
         para5: "El caballero puede elegir un jugador diario para protegerlo. El jugador elegido no será asesinado en la noche por el hombre lobo. Es posible proteger al mismo jugador varias veces.",
         werewolf: 'Hombre lobo',
-        para6: "El hombre lobo puede elegir un jugador cada día y el jugador más seleccionado será asesinado por la noche. Los hombres lobo pueden chatear incluso durante la noche en el chat de hombres lobo. Si ningún hombre lobo no seleccionó a un jugador, un aldeano al azar será asesinado.",
+        para6: "El hombre lobo puede elegir un jugador cada día y el jugador más seleccionado será asesinado por la noche. Los hombres lobo pueden chatear incluso durante la noche en el chat de hombres lobo. Si todos los hombres lobo no seleccionaron a un jugador, nadie será asesinado. ",
         minion: 'Secuaz',
         para7: "El secuaz pertenece al equipo de hombres lobo pero, es visto como un humano. El secuaz gana cuando los hombres lobo ganan. El secuaz no tiene ninguna habilidad y no puede ver qué jugadores son hombres lobo.",
       },
@@ -177,8 +179,6 @@ export default {
         title: 'Otros',
         voting: 'Votación',
         para1: "Todos los jugadores deben votar por un jugador para cuando llegue el día siguiente. Los jugadores que no votaron se suicidarán. Los jugadores pueden cambiar al jugador por el que votaron en cualquier momento del día. Si hay más jugadores seleccionados por votación, el jugador ejecutado se decidirá al azar. Primero se ejecutará a un jugador, luego, si un hombre lobo sigue vivo, se matará a un aldeano. Si los hombres lobo seleccionan al mismo jugador que el que se ejecuta, nadie será asesinado. Si nadie votó y todos los jugadores se suicidan, la aldea será la ganadora.",
-        message: 'Mensaje',
-        para2: 'El mensaje no puede contener más de 500 caracteres.',
       }
     },
     RoomList: {

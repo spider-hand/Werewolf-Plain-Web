@@ -103,7 +103,11 @@
 				<v-card-text>
 					<span>{{ $t('About.credit.logo') }} <a href="http://thenounproject.com/leemette">Lee Mette</a> from <a href="http://thenounproject.com">The Noun Project</a></span>
 					<br>
-					<span>{{ $t('About.credit.icon') }} <a href="http://thenounproject.com/grega.cresnar">Gregor Cresnar</a> from <a href="http://thenounproject.com">The Noun Project</a></span> </span>
+					<span>{{ $t('About.credit.icon') }} <a href="http://thenounproject.com/grega.cresnar">Gregor Cresnar</a> from <a href="http://thenounproject.com">The Noun Project</a></span>
+					<br>
+					<span>{{ $t('About.credit.translationES') }} Alejandra Sandoval</span>
+					<br>
+					<span>{{ $t('About.credit.translationPT') }} Alex Gimenez</span>
 				</v-card-text>
 				<v-footer color="transparent">
 					<span>

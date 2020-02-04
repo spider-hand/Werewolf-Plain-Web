@@ -144,6 +144,8 @@ export default {
         title: 'Créditos',
         logo: 'Logo by ',
         icon: 'Icon by ',
+        translationES: 'Tradução (Espanhol) por ',
+        translationPT: 'Tradução (Portugues) por ',
       },
     },
     Rules: {
@@ -169,7 +171,7 @@ export default {
         knight: 'Cavaleiro',
         para5: "Cavaleiros podem escolher um jogador para proteger a cada dia. O cavaleiro não pode ser morto pelos lobisomens durante a noite. É permitido proteger o mesmo jogador por vários dias consecutivos",
         werewolf: 'Lobisomem',
-        para6: "Lobisomens podem escolher um jogador por dia, e o jogador mais escolhido vai ser morto durante a noite. Lobisomens podem conversar durante a noite no chat de lobisomens. Se nenhum lobisomem escolher jogadores, um jogador aleatório será morto durante a noite.",
+        para6: "Lobisomens podem escolher um jogador por dia, e o jogador mais escolhido vai ser morto durante a noite. Lobisomens podem conversar durante a noite no chat de lobisomens. Se todos os lobisomens não selecionaram um jogador, ninguém será morto.",
         minion: 'Servo',
         para7: "Servos pertencem à equipe dos lobisomens, mas têm aparência humana. Servos vencem quando os lobisomens vencem. Servos não tem habilidades, e não sabem quem são os lobisomens.",
       },
@@ -177,8 +179,6 @@ export default {
         title: 'Outros',
         voting: 'Votação',
         para1: "Todos os jogadores precisam votar para um jogador ao inicio de cada dia. Jogadores que não votarem cometem suicídio. Jogadores podem mudar sua seleção durante o correr do dia. Se houver empate para o jogador mais votado, um jogador será escolhido aleatoriamente entre os jogadores com o número máximo de votos. Um jogador será executado primeiro, e a seguir, se houverem lobisomens vivos ainda, um dos camponeses será executado. Se os lobisomens tiverem escolhido o mesmo jogador que foi executado, este será o único jogador morto neste dia. Se ninguém votar, todos terão cometido suicídio e a vitória será da vila.",
-        message: 'Mensagem',
-        para2: 'Mensagem não pode esceder 500 caracteres',
       }
     },
     RoomList: {

@@ -144,6 +144,8 @@ export default {
         title: 'Credit',
         logo: 'Logo by ',
         icon: 'Icon by ',
+        translationES: 'Translation (Spanish) by ',
+        translationPT: 'Translation (Portuguese) by ',
       },
     },
     PrivacyPolicy: {
@@ -202,7 +204,7 @@ export default {
         knight: 'Knight',
         para5: "Knight can choose one player to protect each day. The player will not be killed by werewolf at the night. It's possible to protect a same player in a row.",
         werewolf: 'Werewolf',
-        para6: "Werewolf can choose a player each day and the most selected player will be killed at night. Werewolves can chat even during night on werewolf chat. If no werewolves didn't select a player, a random villager will be killed.",
+        para6: "Werewolf can choose a player each day and the most selected player will be killed at night. Werewolves can chat even during night on werewolf chat. If all werewolves didn't select a player, no one will be killed.",
         minion: 'Minion',
         para7: "Minion belongs to werewolf team but seen as a human. Minion wins when werewolves win. Minion doesn't have any abilities and can't see which players are werewolves.",
       },
@@ -210,8 +212,6 @@ export default {
         title: 'Others',
         voting: 'Voting',
         para1: "Every players need to vote a player by the time next day's daytime comes. Players who didn't vote will commit suicide. Players can change the selected player anytime in the day. If there are multiple players who are voted the most, the executed player will be decided randomly in the players. A player will be executed first, then, if a werewolf is still alive, a villager will be killed. If werewolves select the same player as the one who are executed, no one will be killed. If nobody voted and all players commit suicide, the village will win.",
-        message: 'Message',
-        para2: 'Message cannot be longer than 500 characters.',
       }
     },
     RoomList: {

@@ -106,6 +106,7 @@
                     <td width="3%">
                       <v-icon 
                         v-if="room.isPrivate == true"
+                        color="#757575"
                         :small="$viewport.width < 450"
                         >mdi-lock
                       </v-icon>
@@ -162,6 +163,7 @@
                     <td width="3%">
                       <v-icon 
                         v-if="room.isPrivate == true"
+                        color="#757575"
                         :small="$viewport.width < 450">
                         mdi-lock
                       </v-icon>
