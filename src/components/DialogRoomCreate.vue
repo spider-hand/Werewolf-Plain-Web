@@ -249,7 +249,7 @@
             value: 5,
           },          
         ],
-        language: navigator.language.split('-')[0],
+        language: this.$i18n.locale,
         languageItems: [
           {
             text: this.$t('DialogRoomCreate.english'),
