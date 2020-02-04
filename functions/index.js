@@ -146,12 +146,12 @@ exports.inDaytime = functions.https.onRequest((req, res) => {
           if (suicide.id != mostVotedPlayer.id) {
             promises0.push(killPlayer(docRef, suicide.id))
             daytimeMessage += translateSuicideMessage(suicide.name, language)
-          }
 
-          if (suicidalPlayer.role != 'werewolf') {
-            countsVillager -= 1
-          } else {
-            countsWerewolf -= 1
+            if (suicide.role != 'werewolf') {
+              countsVillager -= 1
+            } else {
+              countsWerewolf -= 1
+            }
           }
         }
 
