@@ -220,7 +220,7 @@
         const files = event.target.files
         const fileReader = new FileReader()
         if (files[0].size > 200000) {
-          this.avatarErrorMessage = this.$t('avatarErrorMessage')      
+          this.avatarErrorMessage = this.$t('DialogSettings.avatarErrorMessage')      
         } else {
           fileReader.addEventListener('load', () => {
             this.newAvatarUrl = fileReader.result
