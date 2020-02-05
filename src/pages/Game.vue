@@ -704,16 +704,8 @@
   }
 
   @media (max-width: 450px) {
-    ul {
-      padding-left: 15px;
-    }
-
     .message-body {
       font-size: 14px;
-    }
-
-    .message-avatar {
-      margin-right: 5px;
     }
   }
 </style>
