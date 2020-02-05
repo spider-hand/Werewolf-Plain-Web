@@ -134,8 +134,7 @@
     <v-form
       ref="form"
       v-if="isFormVisible"
-      v-model="valid"
-      lazy-validation>
+      v-model="valid">
       <v-textarea
         class="message-input"
         :style="{ width: $viewport.width > 450 ? $viewport.width - 337 + 'px' : $viewport.width + 'px' }"
@@ -155,7 +154,7 @@
         depressed
         small
         @click="validate">
-        <v-icon color="#757575">mdi-send</v-icon>
+        <v-icon :color="valid ? '#DCDDDE' : '#757575'">mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>
@@ -200,7 +199,7 @@
             }
           }
         ],
-        valid: true,
+        valid: false,
         isChatAllOpened: true,
         isWerewolfChatOpened: false,
         isResultsSeerOpened: false,
