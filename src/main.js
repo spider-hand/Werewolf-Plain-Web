@@ -9,6 +9,7 @@ import firebase from 'firebase/app'
 import 'firebase/analytics'
 import 'firebase/auth'
 import axios from 'axios'
+import './registerServiceWorker'
 
 Vue.config.productionTip = false
 

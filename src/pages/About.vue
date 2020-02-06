@@ -65,12 +65,17 @@
 				<v-card-text>
 					<v-container>
 						<v-btn 
+							target="_blank"
+							href="http://twitter.com/share?url=https://werewolfplain.com/"
 							icon
 							color="#FFFFFF">
 							<v-icon size="36">mdi-twitter</v-icon>
 						</v-btn>
 						<v-btn
-							class="ml-4" 
+							class="ml-4"
+							target="_blank"
+							href="http://www.facebook.com/sharer.php?u=https://werewolfplain.com/" 
+							rel="nofollow"
 							icon
 							color="#FFFFFF">
 							<v-icon size="36">mdi-facebook-box</v-icon>
