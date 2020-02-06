@@ -12,6 +12,7 @@
               v-if="isEditing"
               v-model="newUsername"
               :disabled="!isUsernameEditable"
+              :hint="$t('Profile.usernameIsNotEditable')"
               :error-messages="!isUsernameEditable ? $t('Profile.usernameIsNotEditable') : ''"
               :label="$t('Profile.username')"
               maxlength="120"
@@ -161,6 +162,7 @@
     data() {
       return {
         isEditing: false,
+        isMyProfile: false,
         valid: true,
         user: null,
         newUsername: '',
@@ -177,17 +179,6 @@
       }
     },
     computed: {
-      isMyProfile() {
-        try {
-          if (firebase.auth().currentUser.uid == this.$route.params.uid) {
-            return true
-          } else {
-            return false
-          }
-        } catch (err) {
-          return false
-        }
-      },
       getWin() {
         var win = this.user.villagerWin + this.user.werewolfWin + this.user.seerWin + this.user.mediumWin + this.user.knightWin + this.user.minionWin
         return win
@@ -271,6 +262,14 @@
         this.user = doc.data()
         this.newUsername = doc.data().username
         this.newBio = doc.data().bio
+      })
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user && user.uid == this.$route.params.uid) {
+          this.isMyProfile = true
+        } else {
+          this.isMyProfile = false
+        }
       })
     }
   }
