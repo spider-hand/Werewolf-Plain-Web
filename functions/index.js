@@ -33,6 +33,7 @@ exports.atNight = functions.https.onRequest((req, res) => {
       body: translateNightNotification(language),
       gameName: 'GM',
       avatar: '',
+      isFromGrave: false,
     }).then((messageRef) => {
       res.send("It's night.")
     })
