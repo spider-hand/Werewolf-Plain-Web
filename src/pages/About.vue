@@ -84,6 +84,18 @@
 				</v-card-text>
 				<v-divider color="#FFFFFF" />
 				<v-card-text class="text-left white--text pb-0">
+					<h2>{{ $t('About.mobile.title') }}</h2>
+				</v-card-text>
+				<v-card-text class="pb-0">
+					<span>{{ $t('About.mobile.para1') }}</span>
+					<a href="https://play.google.com/store/apps/details?id=com.spiderhand.werewolf_plain">
+						<v-img
+							src="../assets/google-play-badge.png"
+							width="180" />			
+					</a>
+				</v-card-text>
+				<v-divider color="#FFFFFF" />
+				<v-card-text class="text-left white--text pb-0">
 					<h2>{{ $t('About.feedback.title') }}</h2>
 				</v-card-text>
 				<v-card-text class="pb-0">
@@ -98,6 +110,13 @@
 							color="#FFFFFF"
 							href="https://discord.gg/Vrtx7fW">
 							<v-icon size="36">mdi-discord</v-icon>
+						</v-btn>
+						<v-btn
+							class="ml-4"
+							icon
+							color="#FFFFFF"
+							href="https://github.com/spider-hand/Werewolf-Plain-Web">
+							<v-icon size="36">mdi-github-circle</v-icon>
 						</v-btn>
 					</v-container>
 				</v-card-text>

@@ -134,7 +134,11 @@ export default {
       supportThisSite: {
         title: 'Support This Site',
         para1: 'I would really appreciate if you share this site via social media! It would be really fun if players increase!',
-      }, 
+      },
+      mobile : {
+        title: 'Mobile App',
+        para1: 'You can play this game on mobile app as well. Currently there is only Android app but I will release iOS version in the future.',
+      },
       feedback: {
         title: 'Contact',
         para1: 'Join Discord or email me! Feel free to give me feedback.',

@@ -135,6 +135,10 @@ export default {
         title: 'Suporte este Site',
         para1: 'Muito obrigado por compartilhar este site via redes sociais! O jogo vai ser mais legal com mais jogadores!',
       }, 
+      mobile : {
+        title: 'Aplicativo móvel',
+        para1: '',
+      },
       feedback: {
         title: 'Contato',
         para1: 'Me contate pelo Discord ou me mande email! Agradecido por comentários e críticas construtivas.',

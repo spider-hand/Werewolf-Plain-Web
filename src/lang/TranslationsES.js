@@ -135,6 +135,10 @@ export default {
         title: 'Apoya a este sitio',
         para1: '¡Estaría realmente agradecido si compartes este sitio a través de las redes sociales! ¡Sería aún más entretenido si el número de jugadores fueran mas!',
       }, 
+      mobile : {
+        title: 'Aplicación movil',
+        para1: '',
+      },
       feedback: {
         title: 'Contacto',
         para1: 'Cualquier queja, reclamo o sugerencia se tendra en cuenta, ¡así que sientanse libres de darme sus opiniones vía email!',
