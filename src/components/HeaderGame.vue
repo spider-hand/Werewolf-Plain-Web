@@ -51,18 +51,10 @@
     },
     computed: {
       isGameReady() {
-        if (this.room.numberOfParticipants == this.room.capacity) {
-          return true
-        } else {
-          return false
-        }
+        return this.room.numberOfParticipants == this.room.capacity
       },
       hasGameStarted() {
-        if (this.room.status != 'new') {
-          return true
-        } else {
-          return false
-        }
+        return this.room.status != 'new'
       },      
     },
     methods: {
@@ -163,13 +155,7 @@
       isOwner() {
         try {
           if (firebase.auth().currentUser) {
-            if (this.room.ownerId == firebase.auth().currentUser.uid) {
-              return true
-            } else {
-              return false
-            }          
-          } else {
-            return false
+            return this.room.ownerId == firebase.auth().currentUser.uid
           }
         } catch (err) {
           return false

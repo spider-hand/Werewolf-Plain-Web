@@ -208,109 +208,69 @@
     computed: {
       isMyselfOwner() {
         try {
-          if (firebase.auth().currentUser.uid == this.room.ownerId) {
-            return true
-          } else {
-            return false
-          }
+          return firebase.auth().currentUser.uid == this.room.ownerId
         } catch (err) {
           return false
         }
       },
       hasGameStarted() {
         try {
-          if (this.room.status != 'new') {
-            return true
-          } else {
-            return false
-          }
+          return this.room.status != 'new'
         } catch (err) {
           return true
         }
       },
       isGameOngoing() {
         try {
-          if (this.room.status == 'ongoing') {
-            return true
-          } else {
-            return false
-          }
+          return this.room.status == 'ongoing'
         } catch (err) {
           return false
         }
       },
       hasGameDone() {
         try {
-          if (this.room.status == 'closed') {
-            return true
-          } else {
-            return false
-          }
+          return this.room.status == 'closed'
         } catch (err) {
           return false
         }
       },
       isWerewolf() {
         try {
-          if (this.myself.role == 'werewolf') {
-            return true
-          } else {
-            return false
-          }
+          return this.myself.role == 'werewolf'
         } catch (err) {
           return false
         }
       },
       isSeer() {
         try {
-          if (this.myself.role == 'seer') {
-            return true
-          } else {
-            return false
-          }
+          return this.myself.role == 'seer'
         } catch (err) {
           return false
         }
       },
       isMedium() {
         try {
-          if (this.myself.role == 'medium') {
-            return true
-          } else {
-            return false
-          }
+          return this.myself.role == 'medium'
         } catch (err) {
           return false
         }
       },
       isKnight() {
         try {
-          if (this.myself.role == 'knight') {
-            return true
-          } else {
-            return false
-          }
+          return this.myself.role == 'knight'
         } catch (err) {
           return false
         }
       },
       isAlive() {
         try {
-          if (this.myself.isAlive) {
-            return true
-          } else {
-            return false
-          }
+          return this.myself.isAlive
         } catch (err) {
           return true
         }
       },
       isFormVisible() {
-        if (this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWerewolfChatOpened) {
-          return true
-        } else {
-          return false
-        }
+        return this.isJoiningThisGame && (this.isChatAllOpened && !this.room.isNight) || this.isWerewolfChatOpened
       },
       getMessages() {
         if (this.isChatAllOpened) {
@@ -360,19 +320,11 @@
     },
     methods: {
       isOwner(uid) {
-        if (uid == this.room.ownerId) {
-          return true
-        } else {
-          return false
-        }
+        return uid == this.room.ownerId
       },
       isMyself(uid) {
         if (firebase.auth().currentUser) {
-          if (firebase.auth().currentUser.uid == uid) {
-            return true
-          } else {
-            return false
-          }          
+          return firebase.auth().currentUser.uid == uid
         } else {
           return false
         }
