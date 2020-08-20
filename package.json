@@ -25,12 +25,15 @@
     "@vue/cli-plugin-babel": "^3.12.0",
     "@vue/cli-plugin-eslint": "^3.12.0",
     "@vue/cli-plugin-pwa": "^4.1.2",
+    "@vue/cli-plugin-typescript": "^4.5.4",
     "@vue/cli-service": "^3.12.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.17.4",
     "sass-loader": "^7.1.0",
+    "typescript": "~3.9.3",
     "vue-cli-plugin-vuetify": "^1.0.1",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.2.2"
@@ -42,11 +45,12 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "@vue/typescript"
     ],
     "rules": {},
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@typescript-eslint/parser"
     }
   },
   "postcss": {
