@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="room-list-page">
     
   </div>
 </template>
@@ -159,6 +159,10 @@
   })
 </script>
 
-<style scoped>
-  
+<style lang="scss" scoped>
+  #room-list-page {
+    position: relative;
+    height: 100%;
+    background-color: $black;
+  }
 </style>
