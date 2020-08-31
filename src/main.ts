@@ -1,23 +1,31 @@
 import Vue from 'vue'
-import App from './App.vue'
+import AppTS from './AppTS.vue'
 import vuetify from './plugins/vuetify'
-import store from './store'
 import router from './router'
-import i18n from './lang'
 
 import firebase from 'firebase/app'
 import 'firebase/analytics'
 import 'firebase/auth'
-import axios from 'axios'
 import './registerServiceWorker'
 
 Vue.config.productionTip = false
 
-const updateSizes = (obj = {}) => {
+declare interface Viewport {
+  width: number,
+  height: number,
+}
+
+declare module 'vue/types/vue' {
+  interface Vue {
+    $viewport: Viewport,
+  }
+}
+
+const updateSizes = (obj: any = {}) => {
   obj.width = window.innerWidth
   obj.height = window.innerHeight
   return obj
-}
+} 
 
 Object.defineProperty(Vue.prototype, '$viewport', {
   value: Vue.observable(updateSizes())
@@ -41,12 +49,8 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 firebase.analytics()
 
-Vue.prototype.$axios = axios
-
 new Vue({
   vuetify,
-  i18n,
-  store,
   router,
-  render: h => h(App)
+  render: h => h(AppTS)
 }).$mount('#app')
