@@ -1,6 +1,10 @@
 <template>
   <div>
-    
+    <v-btn
+      class="bg-purple"
+      depressed>
+      <span class="color-white">Host Game</span>
+    </v-btn>
   </div>
 </template>
 
@@ -147,8 +151,8 @@
               .doc(firebase.auth().currentUser!.uid)
               .set({
                 id: firebase.auth().currentUser!.uid,
-                name: /** props */,
-                avatar: /** props */,
+                name: '',  // TODO: Set a name
+                avatar: '',  // TODO: Set an avatar
                 isAlive: true,
                 votedPlayer: null,
                 bittenPlayer: null,
@@ -191,6 +195,12 @@
   })
 </script>
 
-<style scoped>
-  
+<style lang="scss" scoped>
+  .color-white {
+    color: $white !important;
+  }
+
+  .bg-purple {
+    background-color: $purple1 !important;
+  }
 </style>

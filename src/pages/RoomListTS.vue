@@ -1,6 +1,56 @@
 <template>
-  <div id="room-list-page">
-    
+  <div id="page">
+    <v-container class="mt-4">
+      <DialogRoomCreate />
+    </v-container>
+    <v-container>
+      <v-tabs
+        background-color="#2F3136"
+        color="#F44336"
+        dark>
+        <v-tab>New</v-tab>
+        <v-tab>Ongoing</v-tab>
+        <v-tab>Closed</v-tab>
+
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  :style="{ backgroundColor: '#2F3136' }">
+                  <td>
+                    <v-icon class="color-gray1">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>Name</span>
+                  </td>
+                  <td>
+                    <span>1 / 15</span>
+                  </td>
+                  <td>
+                    <span>Details</span>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
+      </v-tabs>
+    </v-container>
   </div>
 </template>
 
@@ -12,8 +62,13 @@
   import 'firebase/firestore'
 
   import { Room, Player } from '@/types/index'
+  import DialogRoomCreate from '@/components/dialog/DialogRoomCreateTS.vue'
 
   export default defineComponent({
+    components: {
+      DialogRoomCreate,
+    },
+
     setup() {
       const state = reactive<{
         selectedTab: number,
@@ -160,9 +215,25 @@
 </script>
 
 <style lang="scss" scoped>
-  #room-list-page {
+  tr {
+    background-color: $black2;
+  }
+
+  th span {
+    color: $gray1;
+  }
+
+  td span {
+    color: $white;
+  }
+
+  #page {
     position: relative;
     height: 100%;
-    background-color: $black;
+    background-color: $black1;
+  }
+
+  .color-gray1 {
+    color: $gray2 !important;
   }
 </style>
