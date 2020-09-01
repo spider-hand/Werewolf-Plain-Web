@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      class="bg-purple"
+      class="bg-purple1"
       depressed>
       <span class="color-white">Host Game</span>
     </v-btn>
@@ -200,7 +200,7 @@
     color: $white !important;
   }
 
-  .bg-purple {
+  .bg-purple1 {
     background-color: $purple1 !important;
   }
 </style>

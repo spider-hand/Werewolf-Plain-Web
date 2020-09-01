@@ -33,7 +33,7 @@
                 <tr
                   :style="{ backgroundColor: '#2F3136' }">
                   <td>
-                    <v-icon class="color-gray1">mdi-lock</v-icon>
+                    <v-icon class="color-gray2">mdi-lock</v-icon>
                   </td>
                   <td>
                     <span>Name</span>
@@ -233,7 +233,7 @@
     background-color: $black1;
   }
 
-  .color-gray1 {
+  .color-gray2 {
     color: $gray2 !important;
   }
 </style>
