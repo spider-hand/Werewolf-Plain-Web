@@ -2,6 +2,7 @@ import Vue from 'vue'
 import AppTS from './AppTS.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
+import VueCompositionAPI from '@vue/composition-api'
 
 import firebase from 'firebase/app'
 import 'firebase/analytics'
@@ -48,6 +49,8 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 firebase.analytics()
+
+Vue.use(VueCompositionAPI)
 
 new Vue({
   vuetify,

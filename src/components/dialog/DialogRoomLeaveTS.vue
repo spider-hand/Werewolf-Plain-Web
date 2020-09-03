@@ -1,6 +1,8 @@
 <template>
   <div>
-    
+    <v-btn text>
+      <span class="color-gray2">Leave</span>
+    </v-btn>
   </div>
 </template>
 
@@ -97,6 +99,8 @@
   })
 </script>
 
-<style scoped>
-  
+<style lang="scss" scoped>
+  .color-gray2 {
+    color: $gray2 !important;
+  }
 </style>

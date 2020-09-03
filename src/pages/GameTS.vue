@@ -1,6 +1,63 @@
 <template>
-  <div>
-    
+  <div id="page">
+    <div class="nav-player-list"> 
+      <v-list class="player-list-wrapper">
+        <v-list-item-group>
+          <v-list-item class="player-item">
+            <v-list-item-avatar>
+              <v-img src="https://source.unsplash.com/random" />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>
+                <span class="player-name">Player 1</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </div>
+    <div 
+      class="chat-container"
+      :style="{ height: $viewport.height - 207 + 'px', width: $viewport.width - 337 + 'px' }">
+      <ul>
+        <li>
+          <div class="message">
+            <v-img class="message-avatar" src="https://source.unsplash.com/random"></v-img>
+            <small 
+              class="message-from"
+              :style="{ color: '#FFFFFF' }">In-game Name</small>
+            <div class="message-timestamp">
+              <span>9/2/2020, 11:19:48 PM</span>
+            </div>
+            <div></div>
+            <div class="message-body">Hello, world!</div>
+          </div>
+          <v-divider 
+            class="message-divider"
+            color="#FFFFFF" />
+        </li>
+      </ul>
+    </div>
+    <v-form>
+      <v-textarea 
+        class="message-input"
+        :style="{ width: $viewport.width - 337 + 'px' }"
+        background-color="#2F3136"
+        solo
+        flat
+        dark
+        hide-details
+        max-length="500"
+        placeholder="Enter a message"
+        name="input-7-4" />
+      <v-btn
+        class="send-btn"
+        icon
+        depressed
+        small>
+        <v-icon color="#DCDDDE">mdi-send</v-icon>
+      </v-btn>
+    </v-form>
   </div>
 </template>
 
@@ -300,9 +357,10 @@
       onMounted(() => {
         // emit
 
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route */)
+        // const db = firebase.firestore()
+        // const docRef = db.collection('rooms').doc(/** $route */)
 
+        /**
         docRef.onSnapshot((doc) => {
           if (!doc.exists) {
             // Force the players to exit the game if the room has been deleted
@@ -353,6 +411,7 @@
             })
           })
         })
+        */
       })
 
       return {
@@ -378,6 +437,92 @@
   })
 </script>
 
-<style scoped>
-  
+<style lang="scss" scoped>
+  ul {
+    list-style: none;
+  }
+
+  li {
+    margin: 5px 0 15px 0;
+  }
+
+  #page {
+    position: relative;
+    height: 100%;
+    background-color: $black2;
+  }
+
+  .nav-player-list {
+    position: absolute;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    width: 320px;
+    background-color: $black2;
+    border-right: 0.2px solid $gray21;
+  }
+
+  .player-list-wrapper, .player-item {
+    background-color: $black2;
+  }
+
+  .player-name {
+    color: $white;
+  }
+
+  .chat-container {
+    position: absolute;
+    right: 0px;
+    padding-top: 20px;
+    overflow-y: scroll;
+    background-color: $black2;
+  }
+
+  .message-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: 5px 14px 0 0;
+    float: left;
+  }
+
+  .message-from {
+    display: inline-block;
+    font-weight: 500;
+  }
+
+  .message-timestamp {
+    display: inline-block;
+    padding-left: 6px;
+    font-size: 12px;
+    color: $gray3;
+  }
+
+  .message-body {
+    display: inline-block;
+    max-width: calc(100% - 100px);
+    padding-top: 4px;
+    font-size: 15px;
+    word-break: break-all;
+    white-space: pre-wrap;
+    color: $gray4;
+  }
+
+  .message-divider {
+    margin: 10px 30px 0 0;
+    opacity: 0.06;
+  }
+
+  .message-input {
+    position: fixed;
+    right: 0px;
+    bottom: 28px;
+    border-top: 0.2px solid $gray21;
+  }
+
+  .send-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 0px;
+  }
 </style>

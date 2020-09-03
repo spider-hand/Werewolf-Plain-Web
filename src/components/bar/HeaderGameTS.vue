@@ -1,7 +1,16 @@
 <template>
-  <div>
-    
-  </div>
+  <v-app-bar color="#23272A">
+    <v-btn
+      icon
+      color="#757575">
+      <v-icon>mdi-arrow-left-bold</v-icon>
+    </v-btn>
+    <div class="flex-grow-1"></div>
+    <v-btn text>
+      <span class="color-red1">Start</span>
+    </v-btn>
+    <DialogRoomLeave />
+  </v-app-bar>
 </template>
 
 <script lang="ts">
@@ -13,8 +22,10 @@
   import 'firebase/functions'
 
   import { Room, Player } from '@/types/index'
+  import DialogRoomLeave from '@/components/dialog/DialogRoomLeaveTS.vue'
 
   export default defineComponent({
+    /**
     props: {
       room: {
         type: Object as PropType<Room>,
@@ -24,6 +35,10 @@
         type:Object as PropType<Player>,
         required: true,
       },
+    },
+    */
+    components: {
+      DialogRoomLeave,
     },
 
     setup(props) {
@@ -122,7 +137,7 @@
         const addTasks = functions.httpsCallable('addTasks')
 
         addTasks({
-          roomId: /** $route */,
+          roomId: '', // TODO: $route
           dayLength: props.room.dayLength,
           nightLength: props.room.nightLength,
         })
@@ -137,6 +152,12 @@
   })
 </script>
 
-<style scoped>
-  
+<style lang="scss" scoped>
+  .color-white {
+    color: $white;
+  }
+
+  .color-red1 {
+    color: $red1 !important;
+  }
 </style>

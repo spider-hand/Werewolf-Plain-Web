@@ -154,13 +154,14 @@
         depressed
         small
         @click="validate">
-        <v-icon :color="valid ? '#DCDDDE' : '#757575'">mdi-send</v-icon>
+        <v-icon>mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>
 </template>
 
 <script>
+/**
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
@@ -579,6 +580,7 @@
       })
     }
   }
+*/
 </script>
 
 <style scoped>
