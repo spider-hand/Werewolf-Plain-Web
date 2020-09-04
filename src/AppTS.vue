@@ -1,23 +1,41 @@
 <template>
   <v-app>
-  	<Header v-if="$route.name != 'game'" />
-  	<HeaderGame v-else />
-
+    <component :is="headerComponent" />
     <router-view />
   </v-app>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from '@vue/composition-api'
+  import { defineComponent, computed, } from '@vue/composition-api'
 
   import Header from '@/components/bar/HeaderTS.vue'
   import HeaderGame from '@/components/bar/HeaderGameTS.vue'
 
   export default defineComponent({
     name: 'App',
+
     components: {
-    	Header,
-    	HeaderGame,
+    	'headerDefault': Header,
+    	'headerGame': HeaderGame,
+    },
+
+    setup(props, context) {
+      const headerComponent = computed<string | null>(() => {
+        const route = context.root.$route
+        switch (route.name) {
+          case 'sign-in':
+          case 'sign-up':
+            return null
+          case 'game':
+            return 'headerGame'
+          default:
+            return 'headerDefault'
+        }
+      })
+
+      return {
+        headerComponent,
+      }
     }
   })
 </script>
