@@ -16,7 +16,10 @@
   import 'firebase/firestore'
 
   export default defineComponent({
-    setup() {
+    setup(props, context) {
+      const route = context.root.$route
+      const router = context.root.$router
+
       const state = reactive<{
         dialog: boolean,
       }>({
@@ -25,7 +28,7 @@
 
       function leaveRoom(): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route */)
+        const docRef = db.collection('rooms').doc(route.params.id)
         const promises0 = [] as Promise<void | firebase.firestore.DocumentReference>[]
         const promises1 = [] as Promise<void>[]
 
@@ -81,7 +84,9 @@
               promises1.push(updateRoom)
 
               Promise.all(promises1).then(() => {
-                // $route
+                router.push({
+                  name: 'room-list',
+                })
               })
             }
           })

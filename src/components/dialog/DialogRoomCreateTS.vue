@@ -21,7 +21,9 @@
   }
 
   export default defineComponent({
-    setup() {
+    setup(props, context) {
+      const router = context.root.$router
+      
       const state = reactive<{
         dialog: boolean,
         roomName: string,
@@ -134,7 +136,6 @@
           capacity: state.capacity,
           dayLength: state.dayLength,
           nightLength: state.nightLength,
-          // language
           isPrivate: state.isPrivate,
           accessCode: state.accessCode,
           numberOfParticipants: 1,
@@ -177,7 +178,10 @@
 
           Promise.all(promises)
             .then(() => {
-              // $route
+              router.push({
+                name: 'game',
+                params: { id: docRef.id },
+              })
             }) 
         })
       }

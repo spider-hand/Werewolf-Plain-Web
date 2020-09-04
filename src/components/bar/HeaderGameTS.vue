@@ -41,7 +41,9 @@
       DialogRoomLeave,
     },
 
-    setup(props) {
+    setup(props, context) {
+      const route = context.root.$route
+
       const isOwner = computed<boolean>(() => {
         return props.room.ownerId === firebase.auth().currentUser?.uid
       })
@@ -49,7 +51,7 @@
       function startGame(): void {
         if (props.room.numberOfParticipants === props.room.capacity) {
           const db = firebase.firestore()
-          const docRef = db.collection('rooms').doc(/** $route */)
+          const docRef = db.collection('rooms').doc(route.params.id)
           const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
 
           const updateRoom =
@@ -115,7 +117,7 @@
         }
 
         const db = firebase.firestore()
-        const playersCollectionRef = db.collection('rooms').doc(/** $route */).collection('players')
+        const playersCollectionRef = db.collection('rooms').doc(route.params.id).collection('players')
 
         let k = 0
         playersCollectionRef.get()
@@ -137,7 +139,7 @@
         const addTasks = functions.httpsCallable('addTasks')
 
         addTasks({
-          roomId: '', // TODO: $route
+          roomId: route.params.id,
           dayLength: props.room.dayLength,
           nightLength: props.room.nightLength,
         })

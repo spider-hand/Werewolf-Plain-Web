@@ -69,7 +69,9 @@
       DialogRoomCreate,
     },
 
-    setup() {
+    setup(props, context) {
+      const router = context.root.$router
+      
       const state = reactive<{
         selectedTab: number,
         selectedTableRow: number | null,
@@ -89,7 +91,7 @@
       }
 
       function enterRoom(status: string): void {
-        let roomId
+        let roomId: string
         switch (status) {
           case 'new':
             roomId = state.newRooms[state.selectedTableRow!].id
@@ -156,7 +158,10 @@
 
                   Promise.all(promises)
                     .then(() => {
-                      // $router
+                      router.push({
+                        name: 'game',
+                        params: { id: roomId },
+                      })
                     })
                 })
               } else {
@@ -166,7 +171,13 @@
               // When the room has been deleted
             }
           })
-        }  // When the user didn't sign in
+        }  else {
+          // User who didn't sign in can see the game as a viewer
+          router.push({
+            name: 'game',
+            params: { id: roomId },
+          })
+        }
       }
 
       function updateRoomList(): void {

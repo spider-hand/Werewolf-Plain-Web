@@ -70,6 +70,9 @@
 
   export default defineComponent({
     setup(props, context) {
+      const route = context.root.$route
+      const router = context.root.$router
+
       const state = reactive<{
         room: Room | null,
         myself: Player | null,
@@ -194,7 +197,7 @@
         const db = firebase.firestore()
 
         if (state.isWerewolfChatOpened) {
-          db.collection('rooms').doc(/** $route */).collection('werewolfMessages').add({
+          db.collection('rooms').doc(route.params.id).collection('werewolfMessages').add({
             from: firebase.auth().currentUser!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
@@ -206,7 +209,7 @@
             state.message = ''
           })
         } else {
-          db.collection('rooms').doc(/** $route */).collection('messages').add({
+          db.collection('rooms').doc(route.params.id).collection('messages').add({
             from: firebase.auth().currentUser!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
@@ -222,7 +225,7 @@
 
       function vote(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route **/).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
 
         docRef.update({
           votedPlayer: player,
@@ -231,7 +234,7 @@
 
       function bite(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route **/).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
 
         docRef.update({
           bittenPlayer: player,
@@ -240,7 +243,7 @@
 
       function protect(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route **/).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
 
         docRef.update({
           protectedPlayer: player,
@@ -249,7 +252,7 @@
 
       function checkRole(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route **/).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
 
         docRef.update({
           divinedPlayer: player,
@@ -287,7 +290,7 @@
         (newVal: Player, oldVal: Player) => {
           if (oldVal === null || oldVal.role === null && newVal.role !== null) {
             const db = firebase.firestore()
-            const docRef = db.collection('rooms').doc(/** $route */)
+            const docRef = db.collection('rooms').doc(route.params.id)
 
             if (isWerewolf) {
               docRef.collection('werewolfMessages').orderBy('timestamp', 'asc').get()
@@ -356,13 +359,15 @@
         // emit
 
         // const db = firebase.firestore()
-        // const docRef = db.collection('rooms').doc(/** $route */)
+        // const docRef = db.collection('rooms').doc(route.params.id)
 
         /**
         docRef.onSnapshot((doc) => {
           if (!doc.exists) {
             // Force the players to exit the game if the room has been deleted
-            // $route
+            router.push({
+              name: 'room-list',
+            })
           } else {
             state.room = doc.data() as Room
             // emit
@@ -403,7 +408,9 @@
                   }
                 } else {
                   // Force the player to exit the game when the player doc has been removed
-                  // $route
+                  router.push({
+                    name: 'room-list',
+                  })
                 }
               }
             })

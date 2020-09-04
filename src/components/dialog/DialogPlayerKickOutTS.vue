@@ -24,7 +24,9 @@
       },
     },
 
-    setup(props) {
+    setup(props, context) {
+      const route = context.root.$route
+
       const state = reactive<{
         dialog: boolean,
       }>({
@@ -33,7 +35,7 @@
 
       function kickOut(): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(/** $route */)
+        const docRef = db.collection('rooms').doc(route.params.id)
 
         docRef.collection('messages').add({
           from: 'GM',
