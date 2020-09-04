@@ -1,13 +1,13 @@
 <template>
-  <v-app-bar color="#23272A">
-    <v-btn
-      icon
-      color="#757575">
-      <v-icon>mdi-arrow-left-bold</v-icon>
+  <v-app-bar class="header-game">
+    <v-btn icon>
+      <v-icon class="icon-exit">mdi-arrow-left-bold</v-icon>
     </v-btn>
     <div class="flex-grow-1"></div>
-    <v-btn text>
-      <span class="color-red1">Start</span>
+    <v-btn
+      class="start-btn" 
+      text>
+      <span>Start</span>
     </v-btn>
     <DialogRoomLeave />
   </v-app-bar>
@@ -153,11 +153,15 @@
 </script>
 
 <style lang="scss" scoped>
-  .color-white {
-    color: $white;
+  .header-game {
+    background-color: $black1 !important;
   }
 
-  .color-red1 {
+  .start-btn span {
     color: $red1 !important;
+  }
+
+  .icon-exit {
+    color: $gray2 !important;
   }
 </style>

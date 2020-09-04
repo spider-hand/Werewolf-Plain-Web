@@ -32,9 +32,7 @@
             <div></div>
             <div class="message-body">Hello, world!</div>
           </div>
-          <v-divider 
-            class="message-divider"
-            color="#FFFFFF" />
+          <v-divider class="message-divider" />
         </li>
       </ul>
     </div>
@@ -55,7 +53,7 @@
         icon
         depressed
         small>
-        <v-icon color="#DCDDDE">mdi-send</v-icon>
+        <v-icon class="icon-send">mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>
@@ -511,6 +509,7 @@
   .message-divider {
     margin: 10px 30px 0 0;
     opacity: 0.06;
+    background-color: $white !important;
   }
 
   .message-input {
@@ -524,5 +523,9 @@
     position: fixed;
     right: 20px;
     bottom: 0px;
+  }
+
+  .icon-send {
+    color: $gray4 !important;
   }
 </style>

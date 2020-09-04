@@ -1,7 +1,9 @@
 <template>
   <div>
-    <v-btn text>
-      <span class="color-gray2">Leave</span>
+    <v-btn
+      class="leave-btn" 
+      text>
+      <span>Leave</span>
     </v-btn>
   </div>
 </template>
@@ -100,7 +102,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .color-gray2 {
+  .leave-btn span {
     color: $gray2 !important;
   }
 </style>

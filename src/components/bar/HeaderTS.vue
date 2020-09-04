@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar class="bg-black">
+  <v-app-bar class="header">
     <div>
       <v-img
         src="@/assets/logo.png"
@@ -13,8 +13,8 @@
   
 </script>
 
-<style lang="scss">
- .bg-black {
+<style lang="scss" scoped>
+ .header {
   background-color: $black1 !important;
  }
 </style>

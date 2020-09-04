@@ -6,7 +6,7 @@
     <v-container>
       <v-tabs
         background-color="#2F3136"
-        color="#F44336"
+        color="#FF5252"
         dark>
         <v-tab>New</v-tab>
         <v-tab>Ongoing</v-tab>
@@ -33,7 +33,7 @@
                 <tr
                   :style="{ backgroundColor: '#2F3136' }">
                   <td>
-                    <v-icon class="color-gray2">mdi-lock</v-icon>
+                    <v-icon class="icon-private">mdi-lock</v-icon>
                   </td>
                   <td>
                     <span>Name</span>
@@ -233,7 +233,7 @@
     background-color: $black1;
   }
 
-  .color-gray2 {
+  .icon-private {
     color: $gray2 !important;
   }
 </style>

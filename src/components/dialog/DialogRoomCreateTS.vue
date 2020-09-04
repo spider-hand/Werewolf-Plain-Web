@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-btn
-      class="bg-red1"
+      class="host-game-btn"
       depressed>
-      <span class="color-white">Host Game</span>
+      <span>Host Game</span>
     </v-btn>
   </div>
 </template>
@@ -196,11 +196,11 @@
 </script>
 
 <style lang="scss" scoped>
-  .color-white {
+  .host-game-btn span {
     color: $white !important;
   }
 
-  .bg-red1 {
+  .host-game-btn {
     background-color: $red1 !important;
   }
 </style>
