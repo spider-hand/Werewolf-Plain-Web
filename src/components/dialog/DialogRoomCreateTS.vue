@@ -377,6 +377,7 @@
     border-radius: 3px;
     border: 1.5px solid $black5;
     padding: 0 10px 0 10px;
+    resize: none;
   }
 
   .room-create-textarea:focus {

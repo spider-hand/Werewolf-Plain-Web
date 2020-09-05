@@ -18,7 +18,7 @@
     </div>
     <div 
       class="chat-container"
-      :style="{ height: $viewport.height - 207 + 'px', width: $viewport.width - 337 + 'px' }">
+      :style="{ height: $viewport.height - 193 + 'px', width: $viewport.width - 337 + 'px' }">
       <ul>
         <li>
           <div class="message">
@@ -37,17 +37,11 @@
       </ul>
     </div>
     <v-form>
-      <v-textarea 
+      <textarea 
         class="message-input"
-        :style="{ width: $viewport.width - 337 + 'px' }"
-        background-color="#2F3136"
-        solo
-        flat
-        dark
-        hide-details
-        max-length="500"
-        placeholder="Enter a message"
-        name="input-7-4" />
+        maxlength="500"
+        rows="4"
+        placeholder="Enter a message"></textarea>
       <v-btn
         class="send-btn"
         icon
@@ -516,14 +510,23 @@
   .message-divider {
     margin: 10px 30px 0 0;
     opacity: 0.06;
-    background-color: $white !important;
+    background-color: $white;
   }
 
   .message-input {
     position: fixed;
+    width: calc(100% - 320px);
     right: 0px;
     bottom: 28px;
+    padding: 5px 10px 0 10px;
     border-top: 0.2px solid $gray21;
+    color: $white;
+    background-color: $black2;
+    resize: none;
+  }
+
+  .message-input:focus {
+    outline: none;
   }
 
   .send-btn {
