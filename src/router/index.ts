@@ -5,6 +5,8 @@ import RoomList from '@/pages/RoomListTS.vue'
 import Game from '@/pages/GameTS.vue'
 import SignIn from '@/pages/SignInTS.vue'
 import SignUp from '@/pages/SignUpTS.vue'
+import PasswordReset from '@/pages/PasswordResetTS.vue'
+import PasswordConfirm from '@/pages/PasswordConfirmTS.vue'
 
 Vue.use(Router)
 
@@ -34,6 +36,16 @@ export default new Router ({
       path: '/sign-up',
       name: 'sign-up',
       component: SignUp,
-    }
+    },
+    {
+      path: '/password/reset',
+      name: 'password-reset',
+      component: PasswordReset,
+    },
+    {
+      path: '/password/confirm',
+      name: 'password-confirm',
+      component: PasswordConfirm,
+    },
 	]
 })

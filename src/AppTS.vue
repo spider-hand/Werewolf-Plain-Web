@@ -25,6 +25,8 @@
         switch (route.name) {
           case 'sign-in':
           case 'sign-up':
+          case 'password-reset':
+          case 'password-confirm':
             return null
           case 'game':
             return 'headerGame'
