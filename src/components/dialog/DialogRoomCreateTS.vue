@@ -1,11 +1,112 @@
 <template>
-  <div>
-    <v-btn
-      class="host-game-btn"
-      depressed>
-      <span>Host Game</span>
-    </v-btn>
-  </div>
+  <v-dialog 
+    persistent
+    max-width="600"
+    v-model="state.dialog">
+    <template v-slot:activator="{ on }">
+      <v-btn
+        class="host-game-btn"
+        depressed
+        v-on="on">
+        <span>Host Game</span>
+      </v-btn>
+    </template>
+    <v-card class="dialog-wrapper">
+      <v-card-title class="dialog-title">
+        <span>Create a game</span>
+      </v-card-title>
+      <v-card-text>
+        <form>
+          <div class="input-wrapper">
+            <label class="input-label">ROOM NAME</label>
+            <input 
+              class="room-create-input" 
+              type="text" 
+              name="name">
+          </div>
+          <div class="input-wrapper">
+            <label class="input-label">DESCRIPTION</label>
+            <textarea 
+              class="room-create-textarea" 
+              name="description"
+              rows="4"
+              maxlength="1000"></textarea>
+          </div>
+          <v-row>
+            <v-col cols="4">
+              <div class="input-capacity-wrapper">
+                <label class="input-label">CAPACITY</label>
+                <select 
+                  class="room-create-input" 
+                  name="capacity">
+                  <option value="5">5</option>
+                  <option value="9">9</option>
+                  <option value="11">11</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
+            </v-col>
+            <v-col cols="4">
+              <div class="input-daytime-wrapper">
+                <label class="input-label">DAYTIME</label>
+                <select 
+                  class="room-create-input" 
+                  name="daytime">
+                  <option value="5">5</option>
+                  <option value="9">9</option>
+                  <option value="11">11</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
+            </v-col>
+            <v-col cols="4">
+              <div class="input-night-wrapper">
+                <label class="input-label">NIGHT</label>
+                <select 
+                  class="room-create-input" 
+                  name="night">
+                  <option value="5">5</option>
+                  <option value="9">9</option>
+                  <option value="11">11</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="3">
+              <div class="input-wrapper-2">
+                <!-- TODO: checkbox -->
+              </div>
+            </v-col>
+            <v-col cols="9">
+              <div class="input-wrapper-2">
+                <label class="input-label">ACCESS CODE</label>
+                <input 
+                  class="room-create-input" 
+                  type="text" 
+                  name="code">
+              </div>              
+            </v-col>
+          </v-row>
+        </form>
+      </v-card-text>
+      <v-card-actions>
+        <div class="flex-grow-1"></div>
+        <v-btn 
+          class="confirm-btn" 
+          text>
+          <span>OK</span>
+        </v-btn>
+        <v-btn
+          class="cancel-btn" 
+          text
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -23,7 +124,7 @@
   export default defineComponent({
     setup(props, context) {
       const router = context.root.$router
-      
+
       const state = reactive<{
         dialog: boolean,
         roomName: string,
@@ -201,10 +302,88 @@
 
 <style lang="scss" scoped>
   .host-game-btn span {
-    color: $white !important;
+    color: $white;
   }
 
   .host-game-btn {
     background-color: $red1 !important;
+  }
+
+  .dialog-wrapper {
+    background-color: $black3;
+  }
+
+  .dialog-title span {
+    color: $gray2;
+  }
+
+  .input-wrapper {
+    width: 100%;
+    position: relative;
+    padding: 0 25px 0 25px;
+    margin: 20px 0 20px 0;
+  }
+
+  .input-capacity-wrapper {
+    width: 100%;
+    position: relative;
+    padding: 0 5px 0 25px;
+  }
+
+  .input-daytime-wrapper {
+    width: 100%;
+    position: relative;
+    padding: 0 15px 0 15px;
+  }
+
+  .input-night-wrapper {
+    width: 100%;
+    position: relative;
+    padding: 0 25px 0 5px;
+  }
+
+  .input-wrapper-2 {
+    width: 100%;
+    position: relative;
+    padding: 0 25px 0 25px;
+  }
+
+  .input-label {
+    color: $gray3;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .room-create-input {
+    font-size: 16px;
+    width: 100%;
+    height: 45px;
+    color: $white;
+    background-color: $black4;
+    border-radius: 3px;
+    border: 1.5px solid $black5;
+    padding: 0 10px 0 10px;
+  }
+
+  .room-create-input:focus {
+    outline: none;
+  }
+
+  .room-create-textarea {
+    font-size: 16px;
+    width: 100%;
+    color: $white;
+    background-color: $black4;
+    border-radius: 3px;
+    border: 1.5px solid $black5;
+    padding: 0 10px 0 10px;
+  }
+
+  .room-create-textarea:focus {
+    outline: none;
+  }
+
+  .confirm-btn, .cancel-btn span {
+    color: $white;
   }
 </style>
