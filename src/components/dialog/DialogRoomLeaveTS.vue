@@ -1,11 +1,42 @@
 <template>
-  <div>
-    <v-btn
-      class="leave-btn" 
-      text>
-      <span>Leave</span>
-    </v-btn>
-  </div>
+  <v-dialog
+    persistent
+    max-width="400"
+    v-model="state.dialog">
+    <template v-slot:activator="{ on }">
+      <v-btn
+        class="leave-btn" 
+        text
+        v-on="on">
+        <span>Leave</span>
+      </v-btn>
+    </template>
+    <v-card class="dialog-wrapper">
+      <v-card-title class="dialog-title">
+        <span>Leave game</span>
+      </v-card-title>
+      <v-card-text class="dialog-text">
+        <v-container>
+          <span>Are you sure you want to leave this game?</span>
+        </v-container>
+      </v-card-text>
+      <v-card-actions class="dialog-actions">
+        <div class="flex-grow-1"></div>
+        <v-btn 
+          class="confirm-btn"
+          depressed
+          >
+          <span>LEAVE</span>
+        </v-btn>
+        <v-btn
+          class="cancel-btn"
+          text
+          @click="cancel">
+          <span>CANCEL</span>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -108,6 +139,26 @@
 
 <style lang="scss" scoped>
   .leave-btn span {
-    color: $gray2 !important;
+    color: $gray2;
+  }
+
+  .dialog-wrapper {
+    background-color: $black3 !important;
+  }
+
+  .dialog-text span {
+    color: $gray4;
+  }
+
+  .dialog-actions {
+    background-color: $black2;
+  }
+
+  .confirm-btn {
+    background-color: $red1 !important;
+  }
+
+  .dialog-title, .confirm-btn, .cancel-btn span {
+    color: $white;
   }
 </style>
