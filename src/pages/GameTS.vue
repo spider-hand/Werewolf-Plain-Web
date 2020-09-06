@@ -12,6 +12,9 @@
                 <span class="player-name">Player 1</span>
               </v-list-item-title>
             </v-list-item-content>
+            <v-list-item-action>
+              <DialogPlayerKickOut />
+            </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -61,8 +64,13 @@
   import 'firebase/firestore'
 
   import { Room, Player, Message } from '@/types/index'
+  import DialogPlayerKickOut from '@/components/dialog/DialogPlayerKickOutTS.vue'
 
   export default defineComponent({
+    components: {
+      DialogPlayerKickOut,
+    },
+
     setup(props, context) {
       const route = context.root.$route
       const router = context.root.$router

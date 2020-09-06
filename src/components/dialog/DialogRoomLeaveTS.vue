@@ -161,4 +161,12 @@
   .dialog-title, .confirm-btn, .cancel-btn span {
     color: $white;
   }
+
+  .dialog-title span {
+    font-size: 16px;
+  }
+
+  .confirm-btn, .cancel-btn span {
+    font-size: 12px;
+  }
 </style>
