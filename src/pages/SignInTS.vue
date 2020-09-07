@@ -6,14 +6,24 @@
       fluid>
       <v-row>
         <div class="sign-in-form-wrapper">
-          <form class="sign-in-form-group">
+          <form 
+            class="sign-in-form-group"
+            @submit.prevent="signInWithEmailAndPassword">
             <div class="input-wrapper">
-              <label class="input-label">EMAIL or USERNAME</label>
-              <input class="sign-in-input" type="text" name="username">
+              <label class="input-label">EMAIL</label>
+              <input 
+                class="sign-in-input" 
+                type="email" 
+                name="email"
+                v-model="state.email">
             </div>
             <div class="input-wrapper">
               <label class="input-label">PASSWORD</label>
-              <input class="sign-in-input" type="password" name="password">
+              <input 
+                class="sign-in-input" 
+                type="password" 
+                name="password"
+                v-model="state.password">
               <router-link
                 class="password-reset-link" 
                 to="/password/reset">
@@ -21,7 +31,9 @@
               </router-link>
             </div>
             <div class="btn-wrapper">
-              <button class="sign-in-btn">SIGN IN</button>
+              <button 
+                class="sign-in-btn"
+                type="submit">SIGN IN</button>
             </div>
           </form>
         </div>
@@ -44,7 +56,43 @@
 </template>
 
 <script lang="ts">
-  
+  import { defineComponent, reactive, } from '@vue/composition-api'
+
+  import firebase from 'firebase/app'
+  import 'firebase/auth'
+
+  export default defineComponent({
+
+    setup(props, context) {
+      const router = context.root.$router
+
+      const state = reactive<{
+        email: string,
+        password: string,
+      }>({
+        email: '',
+        password: '',
+      })
+
+      function signInWithEmailAndPassword(): void {
+        firebase.auth().signInWithEmailAndPassword(state.email, state.password)
+          .then(() => {
+            router.push({
+              name: 'room-list',
+            })
+          })
+          .catch((err) => {
+            console.log(err)
+            // TODO: Show an error (Username and password do not match.)
+          })
+      }
+
+      return {
+        state,
+        signInWithEmailAndPassword,
+      }
+    }
+  })
 </script>
 
 <style lang="scss" scoped>
