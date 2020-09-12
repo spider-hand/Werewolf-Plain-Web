@@ -37,3 +37,9 @@ export interface Message {
 	avatar: string,
 	isFromGrave: boolean,
 }
+
+export interface User {
+	username: string,
+	inGameName: string,
+	avatar: string,
+}
