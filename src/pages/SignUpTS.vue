@@ -8,27 +8,45 @@
 	  		<div class="sign-up-form-wrapper">
 	  			<form 
             class="sign-up-form-group"
-            @submit.prevent="signUpWithEmailAndPassword">
+            @submit.prevent="validate">
 	  				<div class="input-wrapper">
-	  					<label class="input-label">EMAIL</label>
+	  					<label 
+                class="input-label"
+                :class="{ 'text-error': hasEmailError }">EMAIL</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>
 	  					<input 
                 class="sign-up-input" 
+                :class="{ 'input-error': hasEmailError }"
                 type="email" 
                 name="email"
                 v-model="state.email">
 	  				</div>
 	  				<div class="input-wrapper">
-	  					<label class="input-label">USERNAME</label>
+	  					<label 
+                class="input-label"
+                :class="{ 'text-error': hasUsernameError }">USERNAME</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasUsernameError }">{{ state.usernameErrorMessage }}</label>
 	  					<input 
-                class="sign-up-input" 
+                class="sign-up-input"
+                :class="{ 'input-error': hasUsernameError }"
                 type="text" 
                 name="username"
                 v-model="state.username">
 	  				</div>
 	  				<div class="input-wrapper">
-	  					<label class="input-label">PASSWORD</label>
+	  					<label 
+                class="input-label"
+                :class="{ 'text-error': hasPasswordError }">PASSWORD</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
 	  					<input 
-                class="sign-up-input" 
+                class="sign-up-input"
+                :class="{ 'input-error': hasPasswordError }"
                 type="password" 
                 name="password"
                 v-model="state.password">
@@ -57,7 +75,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
@@ -68,15 +86,55 @@
     setup(props, context) {
       const router = context.root.$router
 
+       const required = "This field is required."
+       const emailInUse = "This email has already been registered."
+       const invalidEmail = "This email is invalid."
+       const weakPassword = "This password is too weak."
+       const usernameInUse = "This username is already taken."
+
       const state = reactive<{
         email: string,
         username: string,
         password: string,
+        emailErrorMessage: string,
+        usernameErrorMessage: string,
+        passwordErrorMessage: string,        
       }>({
         email: '',
         username: '',
         password: '',
+        emailErrorMessage: '',
+        usernameErrorMessage: '',
+        passwordErrorMessage: '',
       })
+
+      const hasEmailError = computed<boolean>(() => {
+        return state.emailErrorMessage !== ''
+      })
+
+      const hasUsernameError = computed<boolean>(() => {
+        return state.usernameErrorMessage !== ''
+      })
+
+      const hasPasswordError = computed<boolean>(() => {
+        return state.passwordErrorMessage !== ''
+      })
+
+      function validate(): void {
+        if (state.email === '' || state.username === '' || state.password === '') {
+          if (state.email === '') {
+            state.emailErrorMessage = required
+          }
+          if (state.username === '') {
+            state.usernameErrorMessage = required
+          }
+          if (state.password === '') {
+            state.passwordErrorMessage = required
+          }
+        } else {
+          signUpWithEmailAndPassword()
+        }        
+      }
 
       function signUpWithEmailAndPassword(): void {
         // Check if the username is alreay taken
@@ -91,7 +149,7 @@
                   // Sign up and create the user document
                   userCollectionRef.doc(data.user!.uid).set({
                     username: state.username,
-                    inGameName: '',
+                    inGameName: 'Anonymous',
                     avatar: '',
                   })
                   .then(() => {
@@ -107,21 +165,25 @@
                   console.log(err)
                   // When the validation for email and password failed
                   if (err.code === 'auth/email-already-in-use') {
-                    // TODO: Show error message
+                    state.emailErrorMessage = emailInUse
                   } else if (err.code === 'auth/invalid-email') {
-                    // TODO: Show error message
+                    state.emailErrorMessage = invalidEmail
                   } else if (err.code === 'auth/weak-password') {
-                    // TODO: Show error message
+                    state.passwordErrorMessage = weakPassword
                   }  
                 })
             } else {
-              // When the username is already taken
+              state.usernameErrorMessage = usernameInUse
             }
           })
       }
 
       return {
         state,
+        hasEmailError,
+        hasUsernameError,
+        hasPasswordError,
+        validate,
         signUpWithEmailAndPassword,
       }
     }
@@ -199,5 +261,13 @@
  .link-wrapper span {
   	font-size: 14px;
   	color: $gray1;
+  }
+
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
   }
 </style>

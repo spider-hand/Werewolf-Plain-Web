@@ -8,19 +8,31 @@
         <div class="sign-in-form-wrapper">
           <form 
             class="sign-in-form-group"
-            @submit.prevent="signInWithEmailAndPassword">
+            @submit.prevent="validate">
             <div class="input-wrapper">
-              <label class="input-label">EMAIL</label>
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasEmailError }">EMAIL</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>
               <input 
-                class="sign-in-input" 
+                class="sign-in-input"
+                :class="{ 'input-error': hasEmailError }"
                 type="email" 
                 name="email"
                 v-model="state.email">
             </div>
             <div class="input-wrapper">
-              <label class="input-label">PASSWORD</label>
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasPasswordError }">PASSWORD</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
               <input 
-                class="sign-in-input" 
+                class="sign-in-input"
+                :class="{ 'input-error': hasPasswordError }"
                 type="password" 
                 name="password"
                 v-model="state.password">
@@ -56,7 +68,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
@@ -66,13 +78,42 @@
     setup(props, context) {
       const router = context.root.$router
 
+      const required = "This field is required."
+      const emailDoesNotMatch = "Email does not match."
+      const passwordDoesNotMatch = "Password does not match."
+
       const state = reactive<{
         email: string,
         password: string,
+        emailErrorMessage: string,
+        passwordErrorMessage: string,
       }>({
         email: '',
         password: '',
+        emailErrorMessage: '',
+        passwordErrorMessage: '',
       })
+
+      const hasEmailError = computed<boolean>(() => {
+        return state.emailErrorMessage !== ''
+      })
+
+      const hasPasswordError = computed<boolean>(() => {
+        return state.passwordErrorMessage !== ''
+      })
+
+      function validate(): void {
+        if (state.email === '' || state.password === '') {
+          if (state.email === '') {
+            state.emailErrorMessage = required
+          }
+          if (state.password === '') {
+            state.passwordErrorMessage = required
+          }
+        } else {
+          signInWithEmailAndPassword()
+        }
+      }
 
       function signInWithEmailAndPassword(): void {
         firebase.auth().signInWithEmailAndPassword(state.email, state.password)
@@ -83,12 +124,17 @@
           })
           .catch((err) => {
             console.log(err)
-            // TODO: Show an error (Username and password do not match.)
+
+            state.emailErrorMessage = emailDoesNotMatch
+            state.passwordErrorMessage = passwordDoesNotMatch
           })
       }
 
       return {
         state,
+        hasEmailError,
+        hasPasswordError,
+        validate,
         signInWithEmailAndPassword,
       }
     }
@@ -173,5 +219,13 @@
     font-weight: 400;
     color: $gray3;
     text-decoration: none;
+  }
+
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
   }
 </style>
