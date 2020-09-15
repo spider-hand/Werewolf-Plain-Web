@@ -1,12 +1,11 @@
 export interface Room {
-	id?: string,
+	id: string,
 	timestamp: Date,
 	name: string,
 	description: string,
 	capacity: number,
 	dayLength: number,
 	nightLength: number,
-	language: string,
 	isPrivate: boolean,
 	accessCode: string,
 	numberOfParticipants: number,
@@ -14,13 +13,12 @@ export interface Room {
 	isNight: boolean,
 	ownerId: string,
 	banList: string[],
-	language: string,
 }
 
 export interface Player {
 	uid: string,
 	name: string,
-	role: string,
+	role: string | null,
 	avatar: string,
 	isAlive: boolean,
 	votedPlayer: Player | null,
