@@ -3,13 +3,16 @@
     <div class="nav-player-list"> 
       <v-list class="player-list-wrapper">
         <v-list-item-group>
-          <v-list-item class="player-item">
+          <v-list-item 
+            class="player-item"
+            v-for="player in state.players"
+            :key="player.uid">
             <v-list-item-avatar>
               <v-img src="https://source.unsplash.com/random" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="player-name">Player 1</span>
+                <span class="player-name">{{ player.name }}</span>
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
@@ -23,36 +26,40 @@
       class="chat-container"
       :style="{ height: $viewport.height - 193 + 'px', width: $viewport.width - 337 + 'px' }">
       <ul>
-        <li>
+        <li v-for="message in selectedMessages">
           <div class="message">
-            <v-img class="message-avatar" src="https://source.unsplash.com/random"></v-img>
+            <v-img 
+              class="message-avatar" 
+              src="https://source.unsplash.com/random"></v-img>
             <small 
               class="message-from"
-              :style="{ color: '#FFFFFF' }">In-game Name</small>
+              :style="{ color: '#FFFFFF' }">{{ message.gameName }}</small>
             <div class="message-timestamp">
-              <span>9/2/2020, 11:19:48 PM</span>
+              <span>{{ message.timestamp.toDate().toLocaleString() }}</span>
             </div>
             <div></div>
-            <div class="message-body">Hello, world!</div>
+            <div class="message-body">{{ message.body }}</div>
           </div>
           <v-divider class="message-divider" />
         </li>
       </ul>
     </div>
-    <v-form>
+    <form @submit.prevent="validate">
       <textarea 
         class="message-input"
         maxlength="500"
         rows="4"
-        placeholder="Enter a message"></textarea>
+        placeholder="Enter a message"
+        v-model="state.message"></textarea>
       <v-btn
         class="send-btn"
+        type="submit"
         icon
         depressed
         small>
         <v-icon class="icon-send">mdi-send</v-icon>
       </v-btn>
-    </v-form>
+    </form>
   </div>
 </template>
 
@@ -105,7 +112,7 @@
         resultsSeer: [],
         resultsMedium: [],
         isJoiningThisGame: false,
-        isChatAllOpened: false,
+        isChatAllOpened: true,
         isWerewolfChatOpened: false,
         isResultsSeerOpened: false,
         isResultsMediumOpened: false,
@@ -193,6 +200,14 @@
 
       function isOwner(uid: string) {
         return uid === state.room!.ownerId
+      }
+
+      function validate(): void {
+        if (state.message !== '' && 
+            state.message.length <= 500 &&
+            state.message.replace(/\s/g, '').length) {
+          sendMessage()
+        }
       }
 
       function sendMessage(): void {
@@ -358,12 +373,11 @@
       )
 
       onMounted(() => {
-        // emit
+        // TODO: emit
 
-        // const db = firebase.firestore()
-        // const docRef = db.collection('rooms').doc(route.params.id)
+        const db = firebase.firestore()
+        const docRef = db.collection('rooms').doc(route.params.id)
 
-        /**
         docRef.onSnapshot((doc) => {
           if (!doc.exists) {
             // Force the players to exit the game if the room has been deleted
@@ -400,25 +414,42 @@
 
             firebase.auth().onAuthStateChanged((user) => {
               if (user) {
-                if (user.uid === change.doc.data().id) {
+                if (user.uid === change.doc.data().uid) {
                   state.isJoiningThisGame = true
                   // emit
 
                   if (change.type === 'added' || change.type === 'modified') {
                     state.myself = change.doc.data() as Player
                     // emit
+                  } else {
+                    // Force the player to exit the game when the player doc has been removed
+                    router.push({
+                      name: 'room-list',
+                    })
                   }
-                } else {
-                  // Force the player to exit the game when the player doc has been removed
-                  router.push({
-                    name: 'room-list',
-                  })
                 }
               }
             })
           })
         })
-        */
+
+        docRef.collection('messages').orderBy('timestamp', 'asc').get()
+          .then((querySnapshot) => {
+            Promise.all(querySnapshot.docs.map((doc) => {
+              state.messages.push(doc.data() as Message)
+            }))
+            .then(() => {
+              // Set the listener for messages and retrieve the latest message every time it is added
+              docRef.collection('messages').orderBy('timestamp', 'desc').limit(1).onSnapshot((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  if (!doc.metadata.hasPendingWrites && state.isInitialTriggerDone) {
+                    state.messages.push(doc.data() as Message)
+                  }
+                  state.isInitialTriggerDone = true
+                })
+              })
+            })
+          })
       })
 
       return {
@@ -434,6 +465,7 @@
         isAlive,
         isFormVisible,
         selectedMessages,
+        validate,
         sendMessage,
         vote,
         bite,
