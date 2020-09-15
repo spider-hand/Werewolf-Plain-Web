@@ -12,6 +12,7 @@
         <v-tab>Ongoing</v-tab>
         <v-tab>Closed</v-tab>
 
+        <!-- New -->
         <v-tab-item
           transition="false"
           reverse-transition="false">
@@ -29,20 +30,155 @@
                   <th class="text-left"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody 
+                v-for="(room, index) in state.newRooms"
+                :key="room.id">
                 <tr
-                  :style="{ backgroundColor: '#2F3136' }">
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index)">
                   <td>
-                    <v-icon class="icon-private">mdi-lock</v-icon>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
                   </td>
                   <td>
-                    <span>Name</span>
+                    <span>{{ room.name }}</span>
                   </td>
                   <td>
-                    <span>1 / 15</span>
+                    <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
                   </td>
                   <td>
                     <span>Details</span>
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 0 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn
+                      class="enter-btn" 
+                      text>
+                      <span>Enter</span>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
+
+        <!-- Ongoing -->
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody 
+                v-for="(room, index) in state.ongoingRooms"
+                :key="room.id">
+                <tr
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index)">
+                  <td>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>{{ room.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ room.numberOfParticipants }}</span>
+                  </td>
+                  <td>
+                    <span>Details</span>
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 1 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn
+                      class="enter-btn" 
+                      text>
+                      <span>Enter</span>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
+
+        <!-- Closed -->
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody 
+                v-for="(room, index) in state.closedRooms"
+                :key="room.id">
+                <tr
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index)">
+                  <td>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>{{ room.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ room.numberOfParticipants }}</span>
+                  </td>
+                  <td>
+                    <span>Details</span>
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 2 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn 
+                      class="enter-btn"
+                      text>
+                      <span>Enter</span>
+                    </v-btn>
                   </td>
                 </tr>
               </tbody>
@@ -71,7 +207,7 @@
 
     setup(props, context) {
       const router = context.root.$router
-      
+
       const state = reactive<{
         selectedTab: number,
         selectedTableRow: number | null,
@@ -90,6 +226,10 @@
         state.selectedTableRow = index
       }
 
+      function openAccessCodeDialog(status: string): void {
+        // TODO: Open AccessCodeDialog
+      }
+
       function enterRoom(status: string): void {
         let roomId: string
         switch (status) {
@@ -102,6 +242,8 @@
           case 'closed':
             roomId = state.closedRooms[state.selectedTableRow!].id
             break
+          default:
+            roomId = state.newRooms[state.selectedTableRow!].id
         }
 
         if (firebase.auth().currentUser) {
@@ -187,7 +329,7 @@
 
         const db = firebase.firestore()
 
-        db.collection('rooms').where('language', '==' ,'en').orderBy('timestamp', 'desc').get()
+        db.collection('rooms').orderBy('timestamp', 'desc').get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               if (doc.data()!.status! === 'new') {
@@ -245,6 +387,11 @@
   }
 
   .icon-private {
-    color: $gray2 !important;
+    color: $gray2;
+  }
+
+  .enter-btn span {
+    font-size: 14px;
+    text-transform: none;
   }
 </style>
