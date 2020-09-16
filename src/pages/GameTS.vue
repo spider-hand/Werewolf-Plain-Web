@@ -2,7 +2,16 @@
   <div id="page">
     <div class="nav-player-list"> 
       <v-list class="player-list-wrapper">
-        <v-list-item-group>
+        <v-list-item-group v-model="state.selectedPlayerIndex">
+          <v-list-item class="player-item">
+            <v-list-item-icon>
+              <v-icon class="icon-all">mdi-pound</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <span class="player-name">All</span>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider />
           <v-list-item 
             class="player-item"
             v-for="player in state.players"
@@ -24,7 +33,9 @@
     </div>
     <div 
       class="chat-container"
-      :style="{ height: $viewport.height - 193 + 'px', width: $viewport.width - 337 + 'px' }">
+      :style="{ 
+        height: $viewport.height - 193 + 'px', 
+        width: $viewport.width - 337 + 'px' }">
       <ul>
         <li v-for="message in selectedMessages">
           <div class="message">
@@ -85,7 +96,7 @@
       const state = reactive<{
         room: Room | null,
         myself: Player | null,
-        playerIndex: number,
+        selectedPlayerIndex: number,
         players: Player[],
         message: string,
         messages: Message[],
@@ -104,7 +115,7 @@
       }>({
         room: null,
         myself: null,
-        playerIndex: 0,
+        selectedPlayerIndex: 0,
         players: [],
         message: '',
         messages: [],
@@ -187,12 +198,18 @@
         } else {
           let individualMessages = []
 
-          for (let i = 0; i < state.messages.length; i++) {
-            if (state.messages[i].from === state.players[state.playerIndex - 1].uid) {
-              if (!isAlive && !isGameOngoing && !state.messages[i].isFromGrave) {
-                individualMessages.push(state.messages[i])
+          try {
+            for (let i = 0; i < state.messages.length; i++) {
+              if (state.messages[i].from === state.players[state.selectedPlayerIndex - 1].uid) {
+                // Players can not see the messages from the grave while the game is ongoing and the player is alive
+                if (!isAlive || !isGameOngoing || !state.messages[i].isFromGrave) {
+                  individualMessages.push(state.messages[i])
+                }
               }
             }
+          } catch (err) {
+            // Switch to all chat when the selected player has been kicked out or left
+            state.selectedPlayerIndex = 0
           }
           return individualMessages
         }
@@ -277,14 +294,17 @@
       }
 
       watch(
-        () => state.playerIndex,
-        (newVal: number, oldVal: number) => {
-          if (newVal === 0) {
+        () => state.selectedPlayerIndex,
+        (newVal: number | undefined, oldVal: number) => {
+          if (newVal === 0 || newVal === undefined) {
             state.isChatAllOpened = true
             state.isWerewolfChatOpened = false
+            state.isResultsSeerOpened = false
+            state.isResultsMediumOpened = false
           } else if (newVal === state.players.length + 1) {
             // When an extra chat is opened
             state.isChatAllOpened = false
+
             if (state.myself?.role === 'werewolf') {
               state.isWerewolfChatOpened = true
             } else if (state.myself?.role === 'seer') {
@@ -507,6 +527,11 @@
 
   .player-name {
     color: $white;
+  }
+
+  .icon-all {
+    color: $gray2 !important;
+    font-size: 18px;
   }
 
   .chat-container {
