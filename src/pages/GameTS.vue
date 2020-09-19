@@ -21,11 +21,40 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="player-name">{{ player.name }}</span>
+                <span 
+                  class="player-name"
+                  :class="{ 'text-danger' : !player.isAlive }">{{ player.name }}</span>
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <DialogPlayerKickOut />
+              <DialogPlayerKickOut
+                v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.uid)" />
+            </v-list-item-action>
+            <v-list-item-action>
+              <v-btn
+                v-if="isGameOngoing && state.isJoiningThisGame && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                icon
+                @click="vote(player)">
+                <v-icon class="icon-action">mdi-vote</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="isGameOngoing && state.isJoiningThisGame && isWerewolf && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                icon
+                @click="bite(player)">
+                <v-icon class="icon-bite">mdi-vote</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="isGameOngoing && state.isJoiningThisGame && isKnight && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                icon
+                @click="protect(player)">
+                <v-icon class="icon-action">mdi-shield-cross-outline</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="isGameOngoing && state.isJoiningThisGame && isSeer && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                icon
+                @click="checkRole(player)">
+                <v-icon class="icon-action">mdi-eye</v-icon>
+              </v-btn>            
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
@@ -34,7 +63,7 @@
     <div 
       class="chat-container"
       :style="{ 
-        height: $viewport.height - 193 + 'px', 
+        height: isFormVisible ? $viewport.height - 193 + 'px' : $viewport.height - 64 + 'px', 
         width: $viewport.width - 337 + 'px' }">
       <ul>
         <li v-for="message in selectedMessages">
@@ -55,7 +84,9 @@
         </li>
       </ul>
     </div>
-    <form @submit.prevent="validate">
+    <form 
+      v-if="isFormVisible"
+      @submit.prevent="validate">
       <textarea 
         class="message-input"
         maxlength="500"
@@ -131,6 +162,10 @@
         isInitialWerewolfgTriggerDone: false,
         isInitialSeerTriggerDone: false,
         isInitialMediumTriggerDone: false,
+      })
+
+      const isMyselfOwner = computed<boolean>(() => {
+        return firebase.auth().currentUser?.uid === state.room?.ownerId
       })
 
       const hasGameStarted = computed<boolean>(() => {
@@ -215,8 +250,13 @@
         }
       })
 
-      function isOwner(uid: string) {
-        return uid === state.room!.ownerId
+      function isMyself(uid: string) {
+        // Check if the selected player is myself
+        if (firebase.auth().currentUser) {
+          return firebase.auth().currentUser!.uid === uid
+        } else {
+          return false
+        }
       }
 
       function validate(): void {
@@ -474,7 +514,7 @@
 
       return {
         state,
-        isOwner,
+        isMyselfOwner,
         hasGameStarted,
         isGameOngoing,
         hasGameDone,
@@ -485,6 +525,7 @@
         isAlive,
         isFormVisible,
         selectedMessages,
+        isMyself,
         validate,
         sendMessage,
         vote,
@@ -532,6 +573,14 @@
   .icon-all {
     color: $gray2 !important;
     font-size: 18px;
+  }
+
+  .icon-action {
+    color: $gray2 !important;
+  }
+
+  .icon-bite {
+    color: $red1 !important;
   }
 
   .chat-container {
@@ -602,5 +651,9 @@
 
   .icon-send {
     color: $gray4 !important;
+  }
+
+  .text-danger {
+    color: $red1 !important;
   }
 </style>
