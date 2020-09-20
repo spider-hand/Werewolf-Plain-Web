@@ -46,20 +46,51 @@
         <v-container v-else>
           <form>
             <div class="input-wrapper">
-              <label class="input-label">In game name</label>
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasInGameNameError }">In game name</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasInGameNameError }">{{ state.inGameNameErrorMessage }}</label>
               <input 
-                class="settings-input" 
+                class="settings-input"
+                :class="{ 'input-error': hasInGameNameError }"
                 type="text" 
-                name="in-game-name">
+                name="in-game-name"
+                maxlength="16" 
+                v-model="state.newGameName">
             </div>
+            <v-row 
+              class="pt-0"
+              v-if="state.newAvatarUrl !== ''">
+              <v-col
+                class="input-label pt-0 pb-0"
+                cols="12">
+                <span>Preview</span>
+              </v-col>
+              <v-col cols="8">
+                <v-img
+                  class="avatar"
+                  :src="state.newAvatarUrl">
+                </v-img>
+              </v-col>
+            </v-row>
             <v-btn
               class="upload-avatar-btn"
-              depressed>
+              depressed
+              @click="onClickAvatarInput">
               <v-icon 
                 class="upload-icon"
                 left>mdi-upload</v-icon>
               <span>UPLOAD AVATAR</span>
             </v-btn>
+            <input 
+              type="file" 
+              name="avatar"
+              hidden 
+              accept="image/*"
+              ref="avatarInput"
+              @change="getFile">
           </form>
         </v-container>
       </v-card-text>
@@ -76,7 +107,7 @@
           class="save-btn"
           depressed
           v-else
-          @click="update">
+          @click="validate">
           <span>SAVE</span>
         </v-btn>
         <v-btn
@@ -91,7 +122,7 @@
           text
           v-else
           @click="cancel">
-          <span>CANCel</span>
+          <span>CANCEl</span>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -99,26 +130,116 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, } from '@vue/composition-api'
+  import { defineComponent, reactive, ref, computed, } from '@vue/composition-api'
+
+  import firebase from 'firebase/app'
+  import 'firebase/auth'
+  import 'firebase/firestore'
+  import 'firebase/storage'
 
   export default defineComponent({
 
     setup(props, context) {
+      const avatarInput = ref(null)
 
       const state = reactive<{
         dialog: boolean,
         isEditing: boolean,
+        newGameName: string,
+        newAvatarUrl: string | ArrayBuffer | null,
+        newAvatar: Blob | Uint8Array | ArrayBuffer | null,
+        inGameNameErrorMessage: string,
+        avatarErrorMessage: string,
       }>({
         dialog: false,
         isEditing: false,
+        newGameName: '',
+        newAvatarUrl: '',
+        newAvatar: null,
+        inGameNameErrorMessage: '',
+        avatarErrorMessage: '',
+      })
+
+      const hasInGameNameError = computed<boolean>(() => {
+        return state.inGameNameErrorMessage !== ''
+      })
+
+      const hasAvatarError = computed<boolean>(() => {
+        return state.avatarErrorMessage !== ''
       })
 
       function edit(): void {
         state.isEditing = true
       }
 
-      function update(): void {
+      function validate(): void {
+        if (state.newGameName.length > 16) {
+          state.inGameNameErrorMessage = "Name is too long."
+        } else if (state.newGameName === '') {
+          state.inGameNameErrorMessage = "Name can not be empty."
+        } else {
+          update()
+        }
+      }
 
+      function update(): void {
+        state.isEditing = false
+        // TODO: Make sure the user is logged in
+        // TODO: Update to the new in game name and avatar
+        if (state.newAvatar !== null) {
+          const storage = firebase.storage()
+          const storageRef = storage.ref('avatars/' + firebase.auth().currentUser?.uid)
+          storageRef.put(state.newAvatar).then((snapShot) => {
+            storageRef.getDownloadURL().then((url) => {
+              const db = firebase.firestore()
+              const docRef = db.collection('users').doc(firebase.auth().currentUser?.uid)
+              docRef.update({
+                inGameName: state.newGameName,
+                avatar: url,
+              })
+              .then(() => {
+                docRef.get().then((doc) => {
+                  firebase.auth().currentUser?.updateProfile({
+                    displayName: doc.data()!.inGameName!,
+                    photoURL: doc.data()!.avatar!,
+                  })
+                })
+              })
+            })
+          })
+        } else {
+          const db = firebase.firestore()
+          const docRef = db.collection('users').doc(firebase.auth().currentUser?.uid)
+          docRef.update({
+            inGameName: state.newGameName,
+          })
+          .then(() => {
+            docRef.get().then((doc) => {
+                firebase.auth().currentUser?.updateProfile({
+                  displayName: doc.data()!.inGameName!,
+                })
+            })
+          })
+        }
+      }
+
+      function onClickAvatarInput(): void {
+        avatarInput.value.click()
+      }
+
+      function getFile(event: Event): void {
+        const files = (event.target as HTMLInputElement).files
+        const fileReader = new FileReader()
+        if (files[0].size > 2000000) {
+          state.avatarErrorMessage = 'Image size cannot exceed 2MB.'
+        } else {
+          fileReader.addEventListener('load', () => {
+            state.newAvatarUrl = fileReader.result
+          })
+          fileReader.readAsDataURL(files[0])
+          state.newAvatar = files[0]
+          state.avatarErrorMessage = ''
+        }
       }
 
       function cancel(): void {
@@ -130,9 +251,15 @@
       }
 
       return {
+        avatarInput,
         state,
+        hasInGameNameError,
+        hasAvatarError,
         edit,
+        validate,
         update,
+        onClickAvatarInput,
+        getFile,
         cancel,
         close,
       }
@@ -182,7 +309,7 @@
 
   .edit-btn, .save-btn, .close-btn, .cancel-btn, .upload-avatar-btn span {
     color: $white !important;
-    font-size: 12px;
+    font-size: 12px !important;
   }
 
   .input-wrapper {
@@ -214,5 +341,13 @@
 
   .upload-icon {
     color: $white !important;
+  }
+
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
   }
 </style>
