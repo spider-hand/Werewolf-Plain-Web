@@ -6,6 +6,9 @@
         ref="dialogAccessCode"
         :validAccessCode="state.validAccessCode"
         @validateAccessCode="enterRoom" />
+      <DialogMessage 
+        ref="dialogMessage"
+        :message="state.errorMessage" />
     </v-container>
     <v-container>
       <v-tabs
@@ -207,16 +210,19 @@
   import { Room, Player } from '@/types/index'
   import DialogRoomCreate from '@/components/dialog/DialogRoomCreateTS.vue'
   import DialogAccessCode from '@/components/dialog/DialogAccessCodeTS.vue'
+  import DialogMessage from '@/components/dialog/DialogMessageTS.vue'
 
   export default defineComponent({
     components: {
       DialogRoomCreate,
       DialogAccessCode,
+      DialogMessage,
     },
 
     setup(props, context) {
       const router = context.root.$router
       const dialogAccessCode = ref(null)
+      const dialogMessage = ref(null)
 
       const state = reactive<{
         selectedTab: number,
@@ -225,6 +231,7 @@
         ongoingRooms: Room[],
         closedRooms: Room[],
         validAccessCode: string,
+        errorMessage: string,
       }>({
         selectedTab: 0,
         selectedTableRow: null,
@@ -232,6 +239,7 @@
         ongoingRooms: [],
         closedRooms: [],
         validAccessCode: '',
+        errorMessage: '',
       })
 
       const selectedStatus = computed<string>(() => {
@@ -334,9 +342,13 @@
                 })
               } else {
                 // When player has been blocked
+                state.errorMessage = "You have been blocked by the owner of this room."
+                showErrorDialog()
               }
             } else {
               // When the room has been deleted
+              state.errorMessage = "Can not find this room. Looks like this room has been deleted."
+              showErrorDialog()
             }
           })
         }  else {
@@ -346,6 +358,10 @@
             params: { id: roomId },
           })
         }
+      }
+
+      function showErrorDialog(): void {
+        dialogMessage.value.open()
       }
 
       function updateRoomList(): void {
@@ -387,9 +403,11 @@
         state,
         selectedStatus,
         dialogAccessCode,
+        dialogMessage,
         onClickTableRow,
         validateAccessCode,
         enterRoom,
+        showErrorDialog,
         updateRoomList
       }
     }
