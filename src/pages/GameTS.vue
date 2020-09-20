@@ -5,7 +5,7 @@
         <v-list-item-group v-model="state.selectedPlayerIndex">
           <v-list-item class="player-item">
             <v-list-item-icon>
-              <v-icon class="icon-all">mdi-pound</v-icon>
+              <v-icon class="icon-pound">mdi-pound</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <span class="player-name">All</span>
@@ -56,6 +56,18 @@
                 <v-icon class="icon-action">mdi-eye</v-icon>
               </v-btn>            
             </v-list-item-action>
+          </v-list-item>
+          <v-divider v-if="isWerewolf || isSeer || isMedium" />
+          <v-list-item v-if="isWerewolf || isSeer || isMedium">
+            <v-list-icon>
+              <v-icon class="icon-pound">mdi-pound</v-icon>
+            </v-list-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <span v-if="isWereowlf">Werewolf Chat</span>
+                <span v-if="isSeer || isMedium">Result</span>
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -570,7 +582,7 @@
     color: $white;
   }
 
-  .icon-all {
+  .icon-pound {
     color: $gray2 !important;
     font-size: 18px;
   }
