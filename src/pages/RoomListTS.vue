@@ -2,6 +2,10 @@
   <div id="page">
     <v-container class="mt-4">
       <DialogRoomCreate />
+      <DialogAccessCode 
+        ref="dialogAccessCode"
+        :validAccessCode="state.validAccessCode"
+        @validateAccessCode="enterRoom" />
     </v-container>
     <v-container>
       <v-tabs
@@ -35,7 +39,7 @@
                 :key="room.id">
                 <tr
                   :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
-                  @click="onClickTableRow(index)">
+                  @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
                       class="icon-private"
@@ -60,7 +64,8 @@
                   <td>
                     <v-btn
                       class="enter-btn" 
-                      text>
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
                       <span>Enter</span>
                     </v-btn>
                   </td>
@@ -118,7 +123,8 @@
                   <td>
                     <v-btn
                       class="enter-btn" 
-                      text>
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
                       <span>Enter</span>
                     </v-btn>
                   </td>
@@ -176,7 +182,8 @@
                   <td>
                     <v-btn 
                       class="enter-btn"
-                      text>
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
                       <span>Enter</span>
                     </v-btn>
                   </td>
@@ -191,7 +198,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, onMounted, watch } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, onMounted, watch, ref, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
@@ -199,14 +206,17 @@
 
   import { Room, Player } from '@/types/index'
   import DialogRoomCreate from '@/components/dialog/DialogRoomCreateTS.vue'
+  import DialogAccessCode from '@/components/dialog/DialogAccessCodeTS.vue'
 
   export default defineComponent({
     components: {
       DialogRoomCreate,
+      DialogAccessCode,
     },
 
     setup(props, context) {
       const router = context.root.$router
+      const dialogAccessCode = ref(null)
 
       const state = reactive<{
         selectedTab: number,
@@ -214,25 +224,41 @@
         newRooms: Room[],
         ongoingRooms: Room[],
         closedRooms: Room[],
+        validAccessCode: string,
       }>({
         selectedTab: 0,
         selectedTableRow: null,
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
+        validAccessCode: '',
       })
 
-      function onClickTableRow(index: number) {
+      const selectedStatus = computed<string>(() => {
+        switch (state.selectedTab) {
+          case 0:
+            return 'new'
+          case 1:
+            return 'ongoing'
+          case 2:
+            return 'closed'
+          default:
+            return 'new'
+        }
+      })
+
+      function onClickTableRow(index: number, accessCode: string) {
         state.selectedTableRow = index
+        state.validateAccessCode = accessCode
       }
 
-      function openAccessCodeDialog(status: string): void {
-        // TODO: Open AccessCodeDialog
+      function validateAccessCode(): void {
+        dialogAccessCode.value.open()
       }
 
-      function enterRoom(status: string): void {
+      function enterRoom(): void {
         let roomId: string
-        switch (status) {
+        switch (selectedStatus) {
           case 'new':
             roomId = state.newRooms[state.selectedTableRow!].id
             break
@@ -359,7 +385,10 @@
 
       return {
         state,
+        selectedStatus,
+        dialogAccessCode,
         onClickTableRow,
+        validateAccessCode,
         enterRoom,
         updateRoomList
       }
