@@ -55,7 +55,7 @@
                     <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
                   </td>
                   <td>
-                    <span>Details</span>
+                    <DialogRoomDetails :room="room" />
                   </td>
                 </tr>
                 <tr
@@ -114,7 +114,7 @@
                     <span>{{ room.numberOfParticipants }}</span>
                   </td>
                   <td>
-                    <span>Details</span>
+                    <DialogRoomDetails :room="room" />
                   </td>
                 </tr>
                 <tr
@@ -173,7 +173,7 @@
                     <span>{{ room.numberOfParticipants }}</span>
                   </td>
                   <td>
-                    <span>Details</span>
+                    <DialogRoomDetails :room="room" />
                   </td>
                 </tr>
                 <tr
@@ -211,12 +211,14 @@
   import DialogRoomCreate from '@/components/dialog/DialogRoomCreateTS.vue'
   import DialogAccessCode from '@/components/dialog/DialogAccessCodeTS.vue'
   import DialogMessage from '@/components/dialog/DialogMessageTS.vue'
+  import DialogRoomDetails from '@/components/dialog/DialogRoomDetailsTS.vue'
 
   export default defineComponent({
     components: {
       DialogRoomCreate,
       DialogAccessCode,
       DialogMessage,
+      DialogRoomDetails,
     },
 
     setup(props, context) {
@@ -257,7 +259,7 @@
 
       function onClickTableRow(index: number, accessCode: string) {
         state.selectedTableRow = index
-        state.validateAccessCode = accessCode
+        state.validAccessCode = accessCode
       }
 
       function validateAccessCode(): void {
