@@ -18,19 +18,33 @@
       <v-card-text>
         <form>
           <div class="input-wrapper">
-            <label class="input-label">ROOM NAME</label>
+            <label 
+              class="input-label"
+              :class="{ 'text-error': hasRoomNameError }">ROOM NAME</label>
+            <label
+              class="input-label ml-2"
+              :class="{ 'text-error': hasRoomNameError }">{{ state.roonNameErrorMessage }}</label>
             <input 
-              class="room-create-input" 
+              class="room-create-input"
+              :class="{ 'input-error': hasRoomNameError }"
               type="text" 
-              name="name">
+              name="name"
+              v-model="state.roomName">
           </div>
           <div class="input-wrapper">
-            <label class="input-label">DESCRIPTION</label>
+            <label 
+              class="input-label"
+              :class="{ 'text-error': hasDescriptionError }">DESCRIPTION</label>
+            <label
+              class="input-label ml-2"
+              :class="{ 'text-error': hasDescriptionError }">{{ state.desciptionErrorMessage }}</label>
             <textarea 
-              class="room-create-textarea" 
+              class="room-create-textarea"
+              :class="{ 'input-error': hasDescriptionError }" 
               name="description"
               rows="4"
-              maxlength="1000"></textarea>
+              maxlength="1000"
+              v-model="state.roomDescription"></textarea>
           </div>
           <v-row>
             <v-col cols="4">
@@ -38,11 +52,14 @@
                 <label class="input-label">CAPACITY</label>
                 <select 
                   class="room-create-input" 
-                  name="capacity">
-                  <option value="5">5</option>
-                  <option value="9">9</option>
-                  <option value="11">11</option>
-                  <option value="15">15</option>
+                  name="capacity"
+                  v-model="state.capacity">
+                  <option 
+                    v-for="item in state.capacityItems"
+                    :key="item.text"
+                    :value="item.value">
+                    {{ item.text }}  
+                  </option>
                 </select>
               </div>
             </v-col>
@@ -51,11 +68,14 @@
                 <label class="input-label">DAYTIME</label>
                 <select 
                   class="room-create-input" 
-                  name="daytime">
-                  <option value="5">5</option>
-                  <option value="9">9</option>
-                  <option value="11">11</option>
-                  <option value="15">15</option>
+                  name="daytime"
+                  v-model="state.dayLength">
+                  <option 
+                    v-for="item in state.dayLengthItems"
+                    :key="item.text"
+                    :value="item.value">
+                    {{ item.text }}    
+                  </option>
                 </select>
               </div>
             </v-col>
@@ -64,11 +84,14 @@
                 <label class="input-label">NIGHT</label>
                 <select 
                   class="room-create-input" 
-                  name="night">
-                  <option value="5">5</option>
-                  <option value="9">9</option>
-                  <option value="11">11</option>
-                  <option value="15">15</option>
+                  name="night"
+                  v-model="state.nightLength">
+                  <option 
+                    v-for="item in state.nightLengthItems"
+                    :key="item.text"
+                    :value="item.value">
+                    {{ item.text }}    
+                  </option>
                 </select>
               </div>
             </v-col>
@@ -76,26 +99,41 @@
           <v-row>
             <v-col cols="3">
               <div class="input-wrapper-2">
-                <!-- TODO: checkbox -->
+                <input 
+                  type="checkbox"
+                  v-model="state.isPrivate">
+                <label 
+                  class="input-label"
+                  for="isPrivate">Private</label>
               </div>
             </v-col>
             <v-col cols="9">
               <div class="input-wrapper-2">
-                <label class="input-label">ACCESS CODE</label>
+                <label 
+                  class="input-label"
+                  :class="{ 'text-error': hasAccessCodeError }">ACCESS CODE</label>
+                <label
+                  class="input-label ml-2"
+                  :class="{ 'text-error': hasAccessCodeError }">{{ state.accessCodeErrorMessage }}</label>
                 <input 
-                  class="room-create-input" 
+                  class="room-create-input"
+                  :class="{ 'input-error': hasAccessCodeError }"
                   type="text" 
-                  name="code">
+                  name="code"
+                  maxlength="16" 
+                  v-model="state.accessCode"
+                  :disabled="!state.isPrivate">
               </div>              
             </v-col>
           </v-row>
         </form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="dialog-actions">
         <div class="flex-grow-1"></div>
         <v-btn 
           class="confirm-btn" 
-          text>
+          depressed
+          @click="validate">
           <span>OK</span>
         </v-btn>
         <v-btn
@@ -110,7 +148,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
@@ -137,6 +175,9 @@
         nightLengthItems: Item[],
         isPrivate: boolean,
         accessCode: string,
+        roonNameErrorMessage: string,
+        descriptionErrorMessage: string,
+        accessCodeErrorMessage: string,
       }>({
         dialog: false,
         roomName: '',
@@ -224,7 +265,68 @@
         ],
         isPrivate: false,
         accessCode: '',
+        roonNameErrorMessage: '',
+        descriptionErrorMessage: '',
+        accessCodeErrorMessage: '',
       })
+
+      const hasRoomNameError = computed<boolean>(() => {
+        return state.roonNameErrorMessage !== ''
+      })
+
+      const hasDescriptionError = computed<boolean>(() => {
+        return state.descriptionErrorMessage !== ''
+      })
+
+      const hasAccessCodeError = computed<boolean>(() => {
+        return state.accessCodeErrorMessage !== ''
+      })
+
+      function validate(): void {
+        const isValidName = validateRoomName()
+        const isValidDescription = validateRoomDescription()
+        const isValidAccessCode = validateAccessCode()
+
+        if (isValidName && isValidDescription && isValidAccessCode) {
+          createRoom()
+        }
+      }
+
+      function validateRoomName(): boolean {
+        if (!state.roomName.replace(/\s/g, '').length) {
+          state.roonNameErrorMessage = "This field is required."
+          return false
+        } else if (state.roomName.length > 16) {
+          state.roonNameErrorMessage = "Name is too long."
+          return false
+        } else {
+          return true
+        }
+      }
+
+      function validateRoomDescription(): boolean {
+        if (state.roomDescription.length > 500) {
+          state.descriptionErrorMessage = "Description is too long."
+          return false
+        } else {
+          return true
+        }
+      }
+
+      function validateAccessCode(): boolean {
+        if (state.isPrivate && !state.accessCode.replace(/\s/g, '').length) {
+          state.accessCodeErrorMessage = "This field is required."
+          return false
+        } else if (state.isPrivate && /\s/.test(state.accessCode)) {
+          state.accessCodeErrorMessage = "Whitespace is not allowed."
+          return false
+        } else if (state.accessCode.length > 16) {
+          state.accessCodeErrorMessage = "Access code is too long."
+          return false
+        } else {
+          return true
+        }
+      }
 
       function createRoom(): void {
         const db = firebase.firestore()
@@ -252,9 +354,10 @@
               .collection('players')
               .doc(firebase.auth().currentUser!.uid)
               .set({
-                id: firebase.auth().currentUser!.uid,
-                name: '',  // TODO: Set a name
+                uid: firebase.auth().currentUser!.uid,
+                name: 'Anonymous',  // TODO: Set a name
                 avatar: '',  // TODO: Set an avatar
+                role: null,
                 isAlive: true,
                 votedPlayer: null,
                 bittenPlayer: null,
@@ -266,9 +369,9 @@
               .doc(docRef.id)
               .collection('messages')
               .add({
-                from: 'GM',
+                from: '',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                body: 'A room has been created.', // TODO: Set a message
+                body: 'A player has joined.', 
                 gameName: 'GM',
                 avatar: '',
                 isFromGrave: false,
@@ -293,6 +396,13 @@
 
       return {
         state,
+        hasRoomNameError,
+        hasDescriptionError,
+        hasAccessCodeError,
+        validate,
+        validateRoomName,
+        validateRoomDescription,
+        validateAccessCode,
         createRoom,
         cancel,
       }
@@ -313,8 +423,13 @@
     background-color: $black3;
   }
 
+  .dialog-actions {
+    background-color: $black2;
+  }
+
   .dialog-title span {
-    color: $gray2;
+    color: $white;
+    font-size: 16px;
   }
 
   .input-wrapper {
@@ -384,7 +499,20 @@
     outline: none;
   }
 
+  .confirm-btn {
+    background-color: $red1 !important;
+  }
+
   .confirm-btn, .cancel-btn span {
     color: $white;
+    font-size: 12px !important;
+  }
+
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
   }
 </style>
