@@ -1,306 +1,317 @@
 <template>
-  <div id="room-list-page">
+  <div id="page">
+    <v-container class="mt-4">
+      <DialogRoomCreate />
+      <DialogAccessCode 
+        ref="dialogAccessCode"
+        :validAccessCode="state.validAccessCode"
+        @validateAccessCode="enterRoom" />
+      <DialogMessage 
+        ref="dialogMessage"
+        :message="state.errorMessage" />
+    </v-container>
     <v-container>
-      <v-container fill-height>
-        <v-layout>
-          <DialogRoomCreate
-            :gameName="gameName"
-            :avatar="avatar" />
-          <DialogAccessCode 
-            ref="dialogAccessCode"
-            :validAccessCode="validAccessCode"
-            @validateAccessCode="enterRoom" />
-          <DialogErrorMessage ref="dialogErrorMessage" />
-          <div class="flex-grow-1"></div>
-        </v-layout>
-      </v-container>
+      <v-tabs
+        background-color="#2F3136"
+        color="#FF5252"
+        dark>
+        <v-tab>New</v-tab>
+        <v-tab>Ongoing</v-tab>
+        <v-tab>Closed</v-tab>
 
-      <v-container>
-        <v-tabs
-          background-color="#2F3136"
-          color="#F44336"
-          dark
-          v-model="tabs">
-          <v-tab>{{ $t('RoomList.new') }}</v-tab>
-          <v-tab>{{ $t('RoomList.ongoing') }}</v-tab>
-          <v-tab>{{ $t('RoomList.closed') }}</v-tab>
+        <!-- New -->
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody 
+                v-for="(room, index) in state.newRooms"
+                :key="room.id">
+                <tr
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index, room.accessCode)">
+                  <td>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>{{ room.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
+                  </td>
+                  <td>
+                    <DialogRoomDetails :room="room" />
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 0 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn
+                      class="enter-btn" 
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
+                      <span>Enter</span>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
 
-          <v-tab-item 
-            transition="false"
-            reverse-transition="false">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left"></th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.name') }}</span>
-                    </th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.participants') }}</span>
-                    </th>
-                    <th class="text-left"></th>
-                  </tr>
-                </thead>
-                <tbody v-for="(room, index) in newRooms">
-                  <tr
-                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
-                    @click="onClickTableRow(index, room.accessCode)">
-                    <td width="3%">
-                      <v-icon 
-                        v-if="room.isPrivate == true"
-                        color="#757575"
-                        :small="$viewport.width < 450"
-                        >mdi-lock
-                      </v-icon>
-                    </td>
-                    <td width="60%">
-                      <span>{{ room.name }}</span>
-                    </td>
-                    <td>
-                      <span>{{ room.numberOfParticipants }} / {{ room.capacity }}</span>
-                    </td>
-                    <td>
-                      <DialogRoomDetails :room="room" />
-                    </td>
-                  </tr>
-                  <tr 
-                    v-if="tabs == 0 && clickedTableRow == index"
-                    style="background-color: #2F3136;">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <v-btn 
-                        text
-                        @click="room.isPrivate != true ? enterRoom('new') : beforeEnterRoom('new')">
-                        <span>{{ $t('RoomList.enter') }}</span>
-                      </v-btn>
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-tab-item>
-          <v-tab-item 
-            transition="false"
-            reverse-transition="false">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left"></th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.name') }}</span>
-                    </th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.participants') }}</span>
-                    </th>
-                    <th class="text-left"></th>
-                  </tr>
-                </thead>
-                <tbody v-for="(room, index) in ongoingRooms">
-                  <tr 
-                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
-                    @click="onClickTableRow(index, room.accessCode)">
-                    <td width="3%">
-                      <v-icon 
-                        v-if="room.isPrivate == true"
-                        color="#757575"
-                        :small="$viewport.width < 450"
-                        >mdi-lock
-                      </v-icon>
-                    </td>
-                    <td width="60%">
-                      <span>{{ room.name }}</span>
-                    </td>
-                    <td>
-                      <span>{{ room.numberOfParticipants }}</span>
-                    </td>
-                    <td>
-                      <DialogRoomDetails :room="room" />
-                    </td>
-                  </tr>
-                  <tr 
-                    v-if="tabs == 1 && clickedTableRow == index"
-                    style="background-color: #2F3136;">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <v-btn 
-                        text
-                        @click="room.isPrivate != true ? enterRoom('ongoing') : beforeEnterRoom('ongoing')">
-                        <span>{{ $t('RoomList.enter') }}</span>
-                      </v-btn>
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-tab-item>
-          <v-tab-item 
-            transition="false"
-            reverse-transition="false">
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left"></th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.name') }}</span>
-                    </th>
-                    <th class="text-left">
-                      <span>{{ $t('RoomList.participants') }}</span>
-                    </th>
-                    <th class="text-left"></th>
-                  </tr>
-                </thead>
-                <tbody v-for="(room, index) in closedRooms">
-                  <tr
-                    :style="{ backgroundColor: clickedTableRow == index ? '#393C43' : '#2F3136' }" 
-                    @click="onClickTableRow(index, room.accessCode)">
-                    <td width="3%">
-                      <v-icon 
-                        v-if="room.isPrivate == true"
-                        color="#757575"
-                        :small="$viewport.width < 450">
-                        mdi-lock
-                      </v-icon>
-                    </td>
-                    <td width="60%">
-                      <span>{{ room.name }}</span>
-                    </td>
-                    <td>
-                      <span>{{ room.numberOfParticipants }}</span>
-                    </td>
-                    <td>
-                      <DialogRoomDetails :room="room" />
-                    </td>
-                  </tr>
-                  <tr 
-                    v-if="tabs == 2 && clickedTableRow == index"
-                    style="background-color: #2F3136;">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <v-btn 
-                        text
-                        @click="room.isPrivate != true ? enterRoom('closed') : beforeEnterRoom('closed')">
-                        <span>{{ $t('RoomList.enter') }}</span>
-                      </v-btn>
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-tab-item>
-        </v-tabs>
-      </v-container>
+        <!-- Ongoing -->
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody 
+                v-for="(room, index) in state.ongoingRooms"
+                :key="room.id">
+                <tr
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index)">
+                  <td>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>{{ room.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ room.numberOfParticipants }}</span>
+                  </td>
+                  <td>
+                    <DialogRoomDetails :room="room" />
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 1 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn
+                      class="enter-btn" 
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
+                      <span>Enter</span>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
+
+        <!-- Closed -->
+        <v-tab-item
+          transition="false"
+          reverse-transition="false">
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left"></th>
+                  <th class="text-left">
+                    <span>Name</span>
+                  </th>
+                  <th class="text-left">
+                    <span>Participants</span>
+                  </th>
+                  <th class="text-left"></th>
+                </tr>
+              </thead>
+              <tbody 
+                v-for="(room, index) in state.closedRooms"
+                :key="room.id">
+                <tr
+                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  @click="onClickTableRow(index)">
+                  <td>
+                    <v-icon 
+                      class="icon-private"
+                      v-if="room.isPrivate">mdi-lock</v-icon>
+                  </td>
+                  <td>
+                    <span>{{ room.name }}</span>
+                  </td>
+                  <td>
+                    <span>{{ room.numberOfParticipants }}</span>
+                  </td>
+                  <td>
+                    <DialogRoomDetails :room="room" />
+                  </td>
+                </tr>
+                <tr
+                  v-if="state.selectedTab === 2 && state.selectedTableRow === index"
+                  style="background-color: #2F3136;">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <v-btn 
+                      class="enter-btn"
+                      text
+                      @click="room.isPrivate ? validateAccessCode() : enterRoom()">
+                      <span>Enter</span>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-tab-item>
+      </v-tabs>
     </v-container>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+  import { defineComponent, reactive, computed, onMounted, watch, ref, } from '@vue/composition-api'
+
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
 
-  import DialogErrorMessage from '@/components/DialogErrorMessage'
-  import DialogRoomCreate from '@/components/DialogRoomCreate'
-  import DialogAccessCode from '@/components/DialogAccessCode'
-  import DialogRoomDetails from '@/components/DialogRoomDetails'
+  import { Room, Player } from '@/types/index'
+  import DialogRoomCreate from '@/components/dialog/DialogRoomCreate.vue'
+  import DialogAccessCode from '@/components/dialog/DialogAccessCode.vue'
+  import DialogMessage from '@/components/dialog/DialogMessage.vue'
+  import DialogRoomDetails from '@/components/dialog/DialogRoomDetails.vue'
 
-  export default {
-    props: [
-      'gameName',
-      'avatar',
-    ],
+  export default defineComponent({
     components: {
-      DialogErrorMessage,
       DialogRoomCreate,
       DialogAccessCode,
+      DialogMessage,
       DialogRoomDetails,
     },
-    data() {
-      return {
-        ip: null,
-        tabs: 0,
-        clickedTableRow: null,
-        validAccessCode: '',
+
+    setup(props, context) {
+      const router = context.root.$router
+      const dialogAccessCode = ref(null)
+      const dialogMessage = ref(null)
+
+      const state = reactive<{
+        selectedTab: number,
+        selectedTableRow: number | null,
+        newRooms: Room[],
+        ongoingRooms: Room[],
+        closedRooms: Room[],
+        validAccessCode: string,
+        errorMessage: string,
+      }>({
+        selectedTab: 0,
+        selectedTableRow: null,
         newRooms: [],
         ongoingRooms: [],
         closedRooms: [],
+        validAccessCode: '',
+        errorMessage: '',
+      })
+
+      const selectedStatus = computed<string>(() => {
+        switch (state.selectedTab) {
+          case 0:
+            return 'new'
+          case 1:
+            return 'ongoing'
+          case 2:
+            return 'closed'
+          default:
+            return 'new'
+        }
+      })
+
+      function onClickTableRow(index: number, accessCode: string) {
+        state.selectedTableRow = index
+        state.validAccessCode = accessCode
       }
-    },
-    methods: {
-      getIP() {
-        this.$axios.get("https://api.ipify.org?format=json").then((resp) => {
-          this.ip = resp.data.ip
-        })
-      },
-      onClickTableRow(index, accessCode) {
-        this.clickedTableRow = index
-        this.validAccessCode = accessCode
-      },
-      beforeEnterRoom(status) {
-        this.$refs.dialogAccessCode.open(status)
-      },
-      enterRoom(status) {
-        var roomId
-        switch (status) {
+
+      function validateAccessCode(): void {
+        dialogAccessCode.value.open()
+      }
+
+      function enterRoom(): void {
+        let roomId: string
+        switch (selectedStatus) {
           case 'new':
-            roomId = this.newRooms[this.clickedTableRow].id
+            roomId = state.newRooms[state.selectedTableRow!].id
             break
           case 'ongoing':
-            roomId = this.ongoingRooms[this.clickedTableRow].id
+            roomId = state.ongoingRooms[state.selectedTableRow!].id
             break
           case 'closed':
-            roomId = this.closedRooms[this.clickedTableRow].id
+            roomId = state.closedRooms[state.selectedTableRow!].id
             break
+          default:
+            roomId = state.newRooms[state.selectedTableRow!].id
         }
 
         if (firebase.auth().currentUser) {
-          var db = firebase.firestore()
-          var room = db.collection('rooms').doc(roomId)
-          var isBanned = false
-          var isThisIPBlocked = false
-          var promises = []
+          const db = firebase.firestore()
+          const room = db.collection('rooms').doc(roomId)
+          const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+          let isBanned = false
 
           room.get().then((roomDoc) => {
             if (roomDoc.exists) {
-              for (var i = 0; i < roomDoc.data().banList.length; i++) {
-                if (roomDoc.data().banList[i] == firebase.auth().currentUser.uid) {
-                  isBanned = true
-                  break
+              if (roomDoc.data()!.banList!.length) {
+                for (let i = 0; i < roomDoc.data()!.banList!.length; i++) {
+                  if (roomDoc.data()!.banList[i]! === firebase.auth().currentUser?.uid) {
+                    isBanned = true
+                    break
+                  }
                 }
               }
 
-              for (var i = 0; i < roomDoc.data().ipList.length; i++) {
-                if (roomDoc.data().ipList[i].ip == this.ip && roomDoc.data().ipList[i].uid != firebase.auth().currentUser.uid) {
-                  isThisIPBlocked = true
-                }
-              }
-
-              if (!isBanned && !isThisIPBlocked) {
-                room.collection('players').doc(firebase.auth().currentUser.uid).get().then((playerDoc) => {
-                  if (!playerDoc.exists  && roomDoc.data().status == 'new' && roomDoc.data().numberOfParticipants < roomDoc.data().capacity) {
-                    var updateRoom = 
+              if (!isBanned) {
+                room.collection('players').doc(firebase.auth().currentUser!.uid).get().then((playerDoc) => {
+                  if (!playerDoc.exists && roomDoc.data()!.status! === 'new' && roomDoc.data()!.numberOfParticipants! < roomDoc.data()!.capacity!) {
+                    const updateRoom = 
                       room.update({
                         numberOfParticipants: firebase.firestore.FieldValue.increment(1),
-                        ipList: firebase.firestore.FieldValue.arrayUnion({
-                          ip: this.ip,
-                          uid: firebase.auth().currentUser.uid,
-                        }),
                       })
 
-                    var putPlayer = 
-                      room.collection('players').doc(firebase.auth().currentUser.uid).set({
-                        id: firebase.auth().currentUser.uid,
-                        role: null,
-                        name: this.gameName,
-                        avatar: this.avatar,
+                    const putPlayer = 
+                      room.collection('players').doc(firebase.auth().currentUser!.uid).set({
+                        id: firebase.auth().currentUser!.uid,
+                        name: 'test', // props
+                        avatar: '', // props
                         isAlive: true,
                         votedPlayer: null,
                         bittenPlayer: null,
@@ -308,11 +319,11 @@
                         divinedPlayer: null,
                       })
 
-                    var sendMessage = 
+                    const sendMessage = 
                       room.collection('messages').add({
                         from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        body: this.$t('RoomList.playerJoined', roomDoc.data().language, [this.gameName]),
+                        body: 'A player has entered.',  // TODO: Set a message
                         gameName: 'GM',
                         avatar: '',
                         isFromGrave: false,
@@ -325,94 +336,111 @@
 
                   Promise.all(promises)
                     .then(() => {
-                      // Enter the room as a viewer if the room has already started or got full
-                      this.$router.push({
+                      router.push({
                         name: 'game',
-                        params:{ id: roomId },
+                        params: { id: roomId },
                       })
-                  })
+                    })
                 })
               } else {
-                if (isBanned) {
-                  var errorMessage = this.$t('DialogErrorMessage.banned')
-                  this.$refs.dialogErrorMessage.open(errorMessage)
-                } else if (isThisIPBlocked) {
-                  var errorMessage = this.$t('DialogErrorMessage.alreadyEntered')
-                  this.$refs.dialogErrorMessage.open(errorMessage)
-                }
-              }         
+                // When player has been blocked
+                state.errorMessage = "You have been blocked by the owner of this room."
+                showErrorDialog()
+              }
             } else {
-              var errorMessage = this.$t('DialogErrorMessage.cantFind')
-              this.$refs.dialogErrorMessage.open(errorMessage)
+              // When the room has been deleted
+              state.errorMessage = "Can not find this room. Looks like this room has been deleted."
+              showErrorDialog()
             }
           })
-        } else {
-          // User who doesn't log in can see the game as a viewer
-          this.$router.push({
+        }  else {
+          // User who didn't sign in can see the game as a viewer
+          router.push({
             name: 'game',
             params: { id: roomId },
           })
         }
-      },
-      updateRoomList() {
-        this.newRooms = []
-        this.ongoingRooms = []
-        this.closedRooms = []
+      }
 
-        var db = firebase.firestore()
+      function showErrorDialog(): void {
+        dialogMessage.value.open()
+      }
 
-        // Get rooms
-        db.collection('rooms').where('language', '==', this.$i18n.locale).orderBy('timestamp', 'desc').get()
-          .then((querySnapShot) => {
-            querySnapShot.forEach((doc) => {
-              if (doc.data().status == 'new') {
-                this.newRooms.push(doc.data())
-                this.newRooms[this.newRooms.length - 1].id = doc.id
-              } else if (doc.data().status == 'ongoing') {
-                this.ongoingRooms.push(doc.data())
-                this.ongoingRooms[this.ongoingRooms.length - 1].id = doc.id
+      function updateRoomList(): void {
+        state.newRooms = []
+        state.ongoingRooms = []
+        state.closedRooms = []
+
+        const db = firebase.firestore()
+
+        db.collection('rooms').orderBy('timestamp', 'desc').get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              if (doc.data()!.status! === 'new') {
+                state.newRooms.push(doc.data() as Room)
+                state.newRooms[state.newRooms.length - 1].id = doc.id
+              } else if (doc.data()!.status! === 'ongoing') {
+                state.ongoingRooms.push(doc.data() as Room)
+                state.ongoingRooms[state.ongoingRooms.length - 1].id = doc.id
               } else {
-                this.closedRooms.push(doc.data())
-                this.closedRooms[this.closedRooms.length - 1].id = doc.id
+                state.closedRooms.push(doc.data() as Room)
+                state.closedRooms[state.closedRooms.length - 1].id = doc.id
               }
             })
-          })        
-      },
-    },
-    watch: {
-      tabs: function(newVal, oldVal) {
-        this.clickedTableRow = null
+          })
       }
-    },
-    mounted() {
-      this.updateRoomList()
-      this.getIP()
-    },
-  }
+
+      watch(
+        () => state.selectedTab,
+        (newVal: number, oldVal: number) => {
+          state.selectedTableRow = null
+        }
+      )
+
+      onMounted(() => {
+        updateRoomList()
+      })
+
+      return {
+        state,
+        selectedStatus,
+        dialogAccessCode,
+        dialogMessage,
+        onClickTableRow,
+        validateAccessCode,
+        enterRoom,
+        showErrorDialog,
+        updateRoomList
+      }
+    }
+  })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   tr {
-    background-color: #2F3136;
+    background-color: $black2;
   }
 
   th span {
-    color: #8E9297;
+    color: $gray1;
   }
 
   td span {
-    color: #FFFFFF;
+    color: $white;
   }
 
-  #room-list-page {
+  #page {
     position: relative;
     height: 100%;
-    background-color: #23272A;
+    background-color: $black1;
   }
 
-  @media (max-width: 450px) {
-    td {
-      font-size: 12px;
-    }
+  .icon-private {
+    color: $gray2;
+  }
+
+  .enter-btn span {
+    font-size: 14px;
+    text-transform: none;
   }
 </style>

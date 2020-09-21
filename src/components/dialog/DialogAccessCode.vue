@@ -25,7 +25,7 @@
           </div>
         </form>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="dialog-actions">
         <div class="flex-grow-1"></div>
         <v-btn
           class="confirm-btn"
@@ -106,6 +106,10 @@
     background-color: $black3;
   }
 
+  .dialog-actions {
+    background-color: $black2;
+  }
+
   .input-wrapper {
     width: 100%;
     position: relative;
@@ -134,8 +138,20 @@
     outline: none;
   }
 
+  .confirm-btn {
+    background-color: $red1 !important;
+  }
+
   .dialog-title, .confirm-btn, .cancel-btn span {
     color: $white;
+  }
+
+  .dialog-title span {
+    font-size: 16px;
+  }
+
+  .confirm-btn, .cancel-btn span {
+    font-size: 12px;
   }
 
   .text-error {

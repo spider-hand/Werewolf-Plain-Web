@@ -35,8 +35,8 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
 
-  import DialogSettings from '@/components/dialog/DialogSettingsTS.vue'
-  import DialogUserSignOut from '@/components/dialog/DialogUserSignOutTS.vue'
+  import DialogSettings from '@/components/dialog/DialogSettings.vue'
+  import DialogUserSignOut from '@/components/dialog/DialogUserSignOut.vue'
 
   export default defineComponent({
     components: {

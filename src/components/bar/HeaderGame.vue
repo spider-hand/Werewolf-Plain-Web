@@ -1,20 +1,26 @@
 <template>
   <v-app-bar class="header-game">
-    <v-btn icon>
+    <v-btn 
+      icon
+      @click="$router.push({ name: 'room-list' })">
       <v-icon class="icon-exit">mdi-arrow-left-bold</v-icon>
     </v-btn>
     <div class="flex-grow-1"></div>
     <v-btn
       class="start-btn" 
-      text>
+      text
+      @click="startGame">
       <span>Start</span>
     </v-btn>
     <DialogRoomLeave />
+    <DialogMessage 
+      ref="dialogMessage"
+      :message="state.errorMessage" />
   </v-app-bar>
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, PropType } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, PropType, ref, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
@@ -22,7 +28,8 @@
   import 'firebase/functions'
 
   import { Room, Player } from '@/types/index'
-  import DialogRoomLeave from '@/components/dialog/DialogRoomLeaveTS.vue'
+  import DialogRoomLeave from '@/components/dialog/DialogRoomLeave.vue'
+  import DialogMessage from '@/components/dialog/DialogMessage.vue'
 
   export default defineComponent({
     /**
@@ -39,10 +46,18 @@
     */
     components: {
       DialogRoomLeave,
+      DialogMessage,
     },
 
     setup(props, context) {
       const route = context.root.$route
+      const dialogMessage = ref(null)
+
+      const state = reactive<{
+        errorMessage: string,
+      }>({
+        errorMessage: '',
+      })
 
       const isOwner = computed<boolean>(() => {
         return props.room.ownerId === firebase.auth().currentUser?.uid
@@ -79,8 +94,13 @@
               callCloudFunction()
             })
         } else {
-          // TODO: Open error dialog
+          state.errorMessage = "This room is not ready."
+          showErrorDialog()
         }
+      }
+
+      function showErrorDialog(): void {
+        dialogMessage.value.open()
       }
 
       function decideRoles(capacity: number): void {
@@ -146,7 +166,10 @@
       }
 
       return {
+        dialogMessage,
+        state,
         startGame,
+        showErrorDialog,
         decideRoles,
         callCloudFunction,
       }
@@ -156,11 +179,11 @@
 
 <style lang="scss" scoped>
   .header-game {
-    background-color: $black1 !important;
+    background-color: $black1;
   }
 
   .start-btn span {
-    color: $red1 !important;
+    color: $red1;
   }
 
   .icon-exit {

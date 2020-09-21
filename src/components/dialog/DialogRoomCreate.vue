@@ -266,7 +266,7 @@
         isPrivate: false,
         accessCode: '',
         roonNameErrorMessage: '',
-        descriptionErrorMessage: '',
+        roomDescriptionErrorMessage: '',
         accessCodeErrorMessage: '',
       })
 
@@ -275,7 +275,7 @@
       })
 
       const hasDescriptionError = computed<boolean>(() => {
-        return state.descriptionErrorMessage !== ''
+        return state.roomDescriptionErrorMessage !== ''
       })
 
       const hasAccessCodeError = computed<boolean>(() => {
@@ -392,6 +392,9 @@
 
       function cancel(): void {
         state.dialog = false
+        state.roonNameErrorMessage = ''
+        state.roomDescriptionErrorMessage = ''
+        state.accessCodeErrorMessage = ''
       }
 
       return {

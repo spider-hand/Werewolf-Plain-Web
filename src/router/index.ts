@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import RoomList from '@/pages/RoomListTS.vue'
-import Game from '@/pages/GameTS.vue'
-import SignIn from '@/pages/SignInTS.vue'
-import SignUp from '@/pages/SignUpTS.vue'
-import PasswordReset from '@/pages/PasswordResetTS.vue'
-import PasswordConfirm from '@/pages/PasswordConfirmTS.vue'
+import RoomList from '@/pages/RoomList.vue'
+import Game from '@/pages/Game.vue'
+import SignIn from '@/pages/SignIn.vue'
+import SignUp from '@/pages/SignUp.vue'
+import PasswordReset from '@/pages/PasswordReset.vue'
+import PasswordConfirm from '@/pages/PasswordConfirm.vue'
 
 Vue.use(Router)
 
