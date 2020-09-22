@@ -1,3 +1,5 @@
+import { User as FirebaseUser } from 'firebase'
+
 export interface Room {
   id: string,
   timestamp: Date,
@@ -43,6 +45,6 @@ export interface User {
 }
 
 export interface UserState {
-  user: User | null,
+  user: FirebaseUser | null,
   status: boolean,
 }

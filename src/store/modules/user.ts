@@ -1,4 +1,6 @@
-import { User, UserState } from '@/types/index'
+import { User as FirebaseUser } from 'firebase'
+
+import { UserState } from '@/types/index'
 
 const state = {
   user: null,
@@ -6,14 +8,14 @@ const state = {
 } as UserState
 
 const mutations = {
-  onAuthStateChanged(state: UserState, user: User) {
+  onAuthStateChanged(state: UserState, user: FirebaseUser) {
     state.user = user
     state.status = Boolean(user)
   }
 }
 
 const getters = {
-  user(state: UserState): User | null {
+  user(state: UserState): FirebaseUser | null {
     return state.user
   },
 
