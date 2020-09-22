@@ -38,7 +38,7 @@
               :class="{ 'text-error': hasDescriptionError }">DESCRIPTION</label>
             <label
               class="input-label ml-2"
-              :class="{ 'text-error': hasDescriptionError }">{{ state.desciptionErrorMessage }}</label>
+              :class="{ 'text-error': hasDescriptionError }">{{ state.roomDesciptionErrorMessage }}</label>
             <textarea 
               class="room-create-textarea"
               :class="{ 'input-error': hasDescriptionError }" 
@@ -178,7 +178,7 @@
         isPrivate: boolean,
         accessCode: string,
         roonNameErrorMessage: string,
-        descriptionErrorMessage: string,
+        roomDescriptionErrorMessage: string,
         accessCodeErrorMessage: string,
       }>({
         dialog: false,
@@ -308,7 +308,7 @@
 
       function validateRoomDescription(): boolean {
         if (state.roomDescription.length > 500) {
-          state.descriptionErrorMessage = "Description is too long."
+          state.roomDescriptionErrorMessage = "Description is too long."
           return false
         } else {
           return true
