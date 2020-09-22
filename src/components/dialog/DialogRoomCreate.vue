@@ -7,6 +7,7 @@
       <v-btn
         class="host-game-btn"
         depressed
+        :disabled="!store.getters.isSignedIn"
         v-on="on">
         <span>Host Game</span>
       </v-btn>
@@ -162,6 +163,7 @@
   export default defineComponent({
     setup(props, context) {
       const router = context.root.$router
+      const store = context.root.$store
 
       const state = reactive<{
         dialog: boolean,
@@ -398,6 +400,8 @@
       }
 
       return {
+        router,
+        store,
         state,
         hasRoomNameError,
         hasDescriptionError,

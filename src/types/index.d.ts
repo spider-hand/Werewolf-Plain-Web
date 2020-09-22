@@ -41,3 +41,8 @@ export interface User {
   inGameName: string,
   avatar: string,
 }
+
+export interface UserState {
+  user: User | null,
+  status: boolean,
+}
