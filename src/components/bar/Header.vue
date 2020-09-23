@@ -30,10 +30,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, } from '@vue/composition-api'
+  import { defineComponent } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
 
   import DialogSettings from '@/components/dialog/DialogSettings.vue'
   import DialogUserSignOut from '@/components/dialog/DialogUserSignOut.vue'

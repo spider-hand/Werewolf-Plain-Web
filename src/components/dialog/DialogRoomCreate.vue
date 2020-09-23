@@ -152,7 +152,6 @@
   import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
   import 'firebase/firestore'
 
   declare interface Item {
@@ -164,6 +163,7 @@
     setup(props, context) {
       const router = context.root.$router
       const store = context.root.$store
+      const user = store.getters.user
 
       const state = reactive<{
         dialog: boolean,
@@ -346,7 +346,7 @@
           numberOfParticipants: 1,
           status: 'new',
           isNight: false,
-          ownerId: firebase.auth().currentUser!.uid,
+          ownerId: user.uid,
           banList: [],
         })
         .then((docRef) => {
@@ -354,11 +354,11 @@
             db.collection('rooms')
               .doc(docRef.id)
               .collection('players')
-              .doc(firebase.auth().currentUser!.uid)
+              .doc(user.uid)
               .set({
-                uid: firebase.auth().currentUser!.uid,
-                name: 'Anonymous',  // TODO: Set a name
-                avatar: '',  // TODO: Set an avatar
+                uid: user.uid,
+                name: user.displayName,
+                avatar: user.photoURL,
                 role: null,
                 isAlive: true,
                 votedPlayer: null,
@@ -402,6 +402,7 @@
       return {
         router,
         store,
+        user,
         state,
         hasRoomNameError,
         hasDescriptionError,

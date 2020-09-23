@@ -23,7 +23,6 @@
   import { defineComponent, reactive, computed, PropType, ref, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
   import 'firebase/firestore'
   import 'firebase/functions'
 
@@ -51,6 +50,9 @@
 
     setup(props, context) {
       const route = context.root.$route
+      const store = context.root.$store
+      const user = store.getters.user
+
       const dialogMessage = ref(null)
 
       const state = reactive<{
@@ -60,7 +62,7 @@
       })
 
       const isOwner = computed<boolean>(() => {
-        return props.room.ownerId === firebase.auth().currentUser?.uid
+        return props.room.ownerId === user?.uid
       })
 
       function startGame(): void {

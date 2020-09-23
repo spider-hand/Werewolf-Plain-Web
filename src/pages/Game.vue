@@ -17,7 +17,7 @@
             v-for="player in state.players"
             :key="player.uid">
             <v-list-item-avatar>
-              <v-img src="https://source.unsplash.com/random" />
+              <v-img :src="player.avatar !== '' ? player.avatar : 'https://source.unsplash.com/random'" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -82,7 +82,7 @@
           <div class="message">
             <v-img 
               class="message-avatar" 
-              src="https://source.unsplash.com/random"></v-img>
+              :src="message.avatar !== '' ? message.avatar : 'https://source.unsplash.com/random'"></v-img>
             <small 
               class="message-from"
               :style="{ color: '#FFFFFF' }">{{ message.gameName }}</small>
@@ -121,7 +121,6 @@
   import { defineComponent, reactive, computed, watch, onMounted } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
   import 'firebase/firestore'
 
   import { Room, Player, Message } from '@/types/index'
@@ -135,6 +134,8 @@
     setup(props, context) {
       const route = context.root.$route
       const router = context.root.$router
+      const store = context.root.$store
+      const user = store.getters.user
 
       const state = reactive<{
         room: Room | null,
@@ -177,7 +178,7 @@
       })
 
       const isMyselfOwner = computed<boolean>(() => {
-        return firebase.auth().currentUser?.uid === state.room?.ownerId
+        return user?.uid === state.room?.ownerId
       })
 
       const hasGameStarted = computed<boolean>(() => {
@@ -264,8 +265,8 @@
 
       function isMyself(uid: string) {
         // Check if the selected player is myself
-        if (firebase.auth().currentUser) {
-          return firebase.auth().currentUser!.uid === uid
+        if (user) {
+          return user!.uid === uid
         } else {
           return false
         }
@@ -284,7 +285,7 @@
 
         if (state.isWerewolfChatOpened) {
           db.collection('rooms').doc(route.params.id).collection('werewolfMessages').add({
-            from: firebase.auth().currentUser!.uid,
+            from: user!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
             gameName: state.myself!.name,
@@ -296,7 +297,7 @@
           })
         } else {
           db.collection('rooms').doc(route.params.id).collection('messages').add({
-            from: firebase.auth().currentUser!.uid,
+            from: user!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
             gameName: state.myself!.name,
@@ -311,7 +312,7 @@
 
       function vote(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(user!.uid)
 
         docRef.update({
           votedPlayer: player,
@@ -320,7 +321,7 @@
 
       function bite(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(user!.uid)
 
         docRef.update({
           bittenPlayer: player,
@@ -329,7 +330,7 @@
 
       function protect(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(user!.uid)
 
         docRef.update({
           protectedPlayer: player,
@@ -338,7 +339,7 @@
 
       function checkRole(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(firebase.auth().currentUser!.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(user!.uid)
 
         docRef.update({
           divinedPlayer: player,
@@ -484,24 +485,22 @@
               }
             }
 
-            firebase.auth().onAuthStateChanged((user) => {
-              if (user) {
-                if (user.uid === change.doc.data().uid) {
-                  state.isJoiningThisGame = true
-                  // emit
+            if (user) {
+              if (user.uid === change.doc.data().uid) {
+                state.isJoiningThisGame = true
+                // emit
 
-                  if (change.type === 'added' || change.type === 'modified') {
-                    state.myself = change.doc.data() as Player
-                    // emit
-                  } else {
-                    // Force the player to exit the game when the player doc has been removed
-                    router.push({
-                      name: 'room-list',
-                    })
-                  }
+                if (change.type === 'added' || change.type === 'modified') {
+                  state.myself = change.doc.data() as Player
+                  // emit
+                } else {
+                  // Force the player to exit the game when the player doc has been removed
+                  router.push({
+                    name: 'room-list',
+                  })
                 }
               }
-            })
+            }
           })
         })
 
@@ -525,6 +524,10 @@
       })
 
       return {
+        router,
+        route,
+        store,
+        user,
         state,
         isMyselfOwner,
         hasGameStarted,

@@ -204,7 +204,6 @@
   import { defineComponent, reactive, computed, onMounted, watch, ref, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
   import 'firebase/firestore'
 
   import { Room, Player } from '@/types/index'
@@ -223,6 +222,9 @@
 
     setup(props, context) {
       const router = context.root.$router
+      const store = context.root.$store
+      const user = store.getters.user
+
       const dialogAccessCode = ref(null)
       const dialogMessage = ref(null)
 
@@ -282,7 +284,7 @@
             roomId = state.newRooms[state.selectedTableRow!].id
         }
 
-        if (firebase.auth().currentUser) {
+        if (user) {
           const db = firebase.firestore()
           const room = db.collection('rooms').doc(roomId)
           const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
@@ -292,7 +294,7 @@
             if (roomDoc.exists) {
               if (roomDoc.data()!.banList!.length) {
                 for (let i = 0; i < roomDoc.data()!.banList!.length; i++) {
-                  if (roomDoc.data()!.banList[i]! === firebase.auth().currentUser?.uid) {
+                  if (roomDoc.data()!.banList[i]! === user.uid) {
                     isBanned = true
                     break
                   }
@@ -300,7 +302,7 @@
               }
 
               if (!isBanned) {
-                room.collection('players').doc(firebase.auth().currentUser!.uid).get().then((playerDoc) => {
+                room.collection('players').doc(user.uid).get().then((playerDoc) => {
                   if (!playerDoc.exists && roomDoc.data()!.status! === 'new' && roomDoc.data()!.numberOfParticipants! < roomDoc.data()!.capacity!) {
                     const updateRoom = 
                       room.update({
@@ -308,10 +310,10 @@
                       })
 
                     const putPlayer = 
-                      room.collection('players').doc(firebase.auth().currentUser!.uid).set({
-                        id: firebase.auth().currentUser!.uid,
-                        name: 'test', // props
-                        avatar: '', // props
+                      room.collection('players').doc(user.uid).set({
+                        id: user.uid,
+                        name: user.displayName,
+                        avatar: user.photoURL,
                         isAlive: true,
                         votedPlayer: null,
                         bittenPlayer: null,
@@ -402,6 +404,8 @@
       })
 
       return {
+        store,
+        user,
         state,
         selectedStatus,
         dialogAccessCode,

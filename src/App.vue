@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, } from '@vue/composition-api'
+  import { defineComponent, computed, onMounted, } from '@vue/composition-api'
 
   import Header from '@/components/bar/Header.vue'
   import HeaderGame from '@/components/bar/HeaderGame.vue'
-
+  
   export default defineComponent({
     name: 'App',
 
@@ -20,6 +20,8 @@
     },
 
     setup(props, context) {
+      const store = context.root.$store
+
       const headerComponent = computed<string | null>(() => {
         const route = context.root.$route
         switch (route.name) {

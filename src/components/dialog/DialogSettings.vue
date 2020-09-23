@@ -26,7 +26,7 @@
             <v-col 
               cols="12"
               class="pt-0">
-              <span class="in-game-name-value">Anonymous</span>
+              <span class="in-game-name-value">{{ user ? user.displayName : '' }}</span>
             </v-col>
           </v-row>
           <v-row>
@@ -38,7 +38,7 @@
             <v-col cols="12">
               <v-img
                 class="avatar"
-                src="@/assets/logo.png">
+                :src="user.photoURL ? user.photoURL : '@/assets/logo.png'">
               </v-img>
             </v-col>
           </v-row>
@@ -57,7 +57,7 @@
                 :class="{ 'input-error': hasInGameNameError }"
                 type="text" 
                 name="in-game-name"
-                maxlength="16" 
+                maxlength="16"
                 v-model="state.newGameName">
             </div>
             <v-row 
@@ -130,16 +130,18 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, ref, computed, } from '@vue/composition-api'
+  import { defineComponent, reactive, ref, computed, onMounted, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
-  import 'firebase/auth'
   import 'firebase/firestore'
   import 'firebase/storage'
 
   export default defineComponent({
 
     setup(props, context) {
+      const store = context.root.$store
+      const user = store.getters.user
+
       const avatarInput = ref(null)
 
       const state = reactive<{
@@ -183,42 +185,55 @@
       }
 
       function update(): void {
-        state.isEditing = false
+        const promises0 = [] as Promise<void>[]
         // TODO: Make sure the user is logged in
         // TODO: Update to the new in game name and avatar
-        if (state.newAvatar !== null) {
+        if (state.newAvatar) {
           const storage = firebase.storage()
-          const storageRef = storage.ref('avatars/' + firebase.auth().currentUser?.uid)
+          const storageRef = storage.ref('avatars/' + user.uid)
           storageRef.put(state.newAvatar).then((snapShot) => {
             storageRef.getDownloadURL().then((url) => {
               const db = firebase.firestore()
-              const docRef = db.collection('users').doc(firebase.auth().currentUser?.uid)
-              docRef.update({
-                inGameName: state.newGameName,
-                avatar: url,
-              })
-              .then(() => {
-                docRef.get().then((doc) => {
-                  firebase.auth().currentUser?.updateProfile({
-                    displayName: doc.data()!.inGameName!,
-                    photoURL: doc.data()!.avatar!,
-                  })
+              const docRef = db.collection('users').doc(user.uid)
+
+              const updateUserdoc = 
+                docRef.update({
+                  inGameName: state.newGameName,
+                  avatar: url,
                 })
+
+              const updateProfile = 
+                user.updateProfile({
+                  displayName: state.newGameName,
+                  photoURL: url
+                })
+
+              promises0.push(updateUserdoc)
+              promises0.push(updateProfile)
+
+              Promise.all(promises0).then(() => {
+                state.isEditing = false
               })
             })
           })
         } else {
           const db = firebase.firestore()
-          const docRef = db.collection('users').doc(firebase.auth().currentUser?.uid)
-          docRef.update({
-            inGameName: state.newGameName,
-          })
-          .then(() => {
-            docRef.get().then((doc) => {
-                firebase.auth().currentUser?.updateProfile({
-                  displayName: doc.data()!.inGameName!,
-                })
+          const docRef = db.collection('users').doc(user.uid)
+
+          const updateInGameName = 
+            docRef.update({
+              inGameName: state.newGameName,
             })
+          const updateDisplayName =
+            user.updateProfile({
+              displayName: state.newGameName,
+            })
+
+          promises0.push(updateInGameName)
+          promises0.push(updateDisplayName)
+
+          Promise.all(promises0).then(() => {
+            state.isEditing = false
           })
         }
       }
@@ -244,13 +259,29 @@
 
       function cancel(): void {
         state.isEditing = false
+        state.newGameName = user.displayName
+        state.newAvatarUrl = ''
+        state.newAvatar = null
+        state.inGameNameErrorMessage = ''
+        state.avatarErrorMessage = ''
       }
 
       function close(): void {
         state.dialog = false
+        state.newGameName = user.displayName
+        state.newAvatarUrl = ''
+        state.newAvatar = null
+        state.inGameNameErrorMessage = ''
+        state.avatarErrorMessage = ''
       }
 
+      onMounted(() => {
+        state.newGameName = user.displayName
+      })
+
       return {
+        store,
+        user,
         avatarInput,
         state,
         hasInGameNameError,

@@ -140,6 +140,7 @@
         // Check if the username is alreay taken
         const db = firebase.firestore()
         const userCollectionRef = db.collection('users')
+        const promises0 = [] as Promise<void>[]
 
         userCollectionRef.where('username', '==', state.username).limit(1).get()
           .then((querySnapshot) => {
@@ -147,13 +148,25 @@
               firebase.auth().createUserWithEmailAndPassword(state.email, state.password)
                 .then((data) => {
                   // Sign up and create the user document
-                  userCollectionRef.doc(data.user!.uid).set({
-                    username: state.username,
-                    inGameName: 'Anonymous',
-                    avatar: '',
-                  })
-                  .then(() => {
+                  const createUserDoc = 
+                    userCollectionRef.doc(data.user!.uid).set({
+                      username: state.username,
+                      inGameName: 'Anonymous',
+                      avatar: '',
+                    })
+
+                  // Set a default in game name
+                  const updateProfile = 
+                    firebase.auth().currentUser.updateProfile({
+                      displayName: 'Anonymous',
+                    })
+
+                  promises0.push(createUserDoc)
+                  promises0.push(updateProfile)
+
+                  Promise.all(promises0).then(() => {
                     // TODO: Send a verification email
+
 
                     // Redirect to home page
                     router.push({

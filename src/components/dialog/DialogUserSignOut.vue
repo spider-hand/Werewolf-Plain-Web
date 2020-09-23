@@ -58,7 +58,7 @@
 
       function signOut(): void {
         firebase.auth().signOut().then(() => {
-
+          state.dialog = false
         })
         .catch((err) => {
           console.log(err)
