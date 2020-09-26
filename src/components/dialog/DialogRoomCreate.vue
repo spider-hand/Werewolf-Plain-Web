@@ -373,7 +373,7 @@
               .add({
                 from: '',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                body: 'A player has joined.', 
+                body: `${user.displayName} has joined.`, 
                 gameName: 'GM',
                 avatar: '',
                 isFromGrave: false,
