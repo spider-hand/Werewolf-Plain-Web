@@ -68,15 +68,15 @@
       })
 
       const isOwner = computed<boolean>(() => {
-        return room?.value.ownerId === user?.value.uid
+        return room?.value?.ownerId === user?.value?.uid
       })
 
       const hasGameStarted = computed<boolean>(() => {
-        return room?.value.status !== 'new'
+        return room?.value?.status !== 'new'
       })
 
       const isGameReady = computed<boolean>(() => {
-        return room?.value.numberOfParticipants === room?.value.capacity
+        return room?.value?.numberOfParticipants === room?.value?.capacity
       })
 
       function startGame(): void {
@@ -105,7 +105,7 @@
 
           Promise.all(promises)
             .then(() => {
-              decideRoles(room.capacity)
+              decideRoles(room.value.capacity)
 
               callCloudFunction()
             })
@@ -176,8 +176,8 @@
 
         addTasks({
           roomId: route.params.id,
-          dayLength: room.dayLength,
-          nightLength: room.nightLength,
+          dayLength: room.value.dayLength,
+          nightLength: room.value.nightLength,
         })
       }
 

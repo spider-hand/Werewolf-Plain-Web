@@ -270,7 +270,7 @@
 
       function enterRoom(): void {
         let roomId: string
-        switch (selectedStatus) {
+        switch (selectedStatus.value) {
           case 'new':
             roomId = state.newRooms[state.selectedTableRow!].id
             break
