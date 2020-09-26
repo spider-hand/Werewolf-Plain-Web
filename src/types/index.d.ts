@@ -48,3 +48,9 @@ export interface UserState {
   user: FirebaseUser | null,
   status: boolean,
 }
+
+export interface GameState {
+  isJoiningThisGame: boolean,
+  room: Room | null,
+  myself: Player | null,
+}

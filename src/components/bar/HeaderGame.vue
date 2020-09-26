@@ -7,12 +7,14 @@
     </v-btn>
     <div class="flex-grow-1"></div>
     <v-btn
-      class="start-btn" 
+      class="start-btn"
+      :class="{ 'text-danger': isGameReady }"
+      v-if="isOwner && !hasGameStarted"
       text
       @click="startGame">
-      <span>Start</span>
+      <span>START</span>
     </v-btn>
-    <DialogRoomLeave />
+    <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
     <DialogMessage 
       ref="dialogMessage"
       :message="state.errorMessage" />
@@ -20,9 +22,10 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, computed, PropType, ref, } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, ref, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
+  import { User as FirebaseUser } from 'firebase'
   import 'firebase/firestore'
   import 'firebase/functions'
 
@@ -31,18 +34,6 @@
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
 
   export default defineComponent({
-    /**
-    props: {
-      room: {
-        type: Object as PropType<Room>,
-        required: true,
-      },
-      myself: {
-        type:Object as PropType<Player>,
-        required: true,
-      },
-    },
-    */
     components: {
       DialogRoomLeave,
       DialogMessage,
@@ -51,7 +42,6 @@
     setup(props, context) {
       const route = context.root.$route
       const store = context.root.$store
-      const user = store.getters.user
 
       const dialogMessage = ref(null)
 
@@ -61,12 +51,36 @@
         errorMessage: '',
       })
 
+      const isJoiningThisGame = computed<boolean>(() => {
+        return store.getters.isJoiningThisGame
+      })
+
+      const user = computed<FirebaseUser | null>(() => {
+        return store.getters.user
+      })
+
+      const room = computed<Room | null>(() => {
+        return store.getters.room
+      })
+
+      const myself = computed<Player | null>(() => {
+        return store.getters.myself
+      })
+
       const isOwner = computed<boolean>(() => {
-        return props.room.ownerId === user?.uid
+        return room?.value.ownerId === user?.value.uid
+      })
+
+      const hasGameStarted = computed<boolean>(() => {
+        return room?.value.status !== 'new'
+      })
+
+      const isGameReady = computed<boolean>(() => {
+        return room?.value.numberOfParticipants === room?.value.capacity
       })
 
       function startGame(): void {
-        if (props.room.numberOfParticipants === props.room.capacity) {
+        if (isGameReady.value) {
           const db = firebase.firestore()
           const docRef = db.collection('rooms').doc(route.params.id)
           const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
@@ -91,7 +105,7 @@
 
           Promise.all(promises)
             .then(() => {
-              decideRoles(props.room.capacity)
+              decideRoles(room.capacity)
 
               callCloudFunction()
             })
@@ -162,14 +176,23 @@
 
         addTasks({
           roomId: route.params.id,
-          dayLength: props.room.dayLength,
-          nightLength: props.room.nightLength,
+          dayLength: room.dayLength,
+          nightLength: room.nightLength,
         })
       }
 
       return {
+        route,
+        store,
+        isJoiningThisGame,
+        user,
+        room,
+        myself,
         dialogMessage,
         state,
+        isOwner,
+        hasGameStarted,
+        isGameReady,
         startGame,
         showErrorDialog,
         decideRoles,
@@ -185,10 +208,14 @@
   }
 
   .start-btn span {
-    color: $red1;
+    color: $gray2;
   }
 
   .icon-exit {
     color: $gray2 !important;
+  }
+
+  .text-danger {
+    color: $red1 !important;
   }
 </style>
