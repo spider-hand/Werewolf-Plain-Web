@@ -139,7 +139,7 @@
 
 <style lang="scss" scoped>
   .leave-btn span {
-    color: $gray2;
+    color: $red1;
   }
 
   .dialog-wrapper {
