@@ -24,11 +24,19 @@
                 <span 
                   class="player-name"
                   :class="{ 'text-danger' : !player.isAlive }">{{ player.name }}</span>
+                <v-icon 
+                  class="icon-crown ml-1"
+                  v-if="player.uid === state.room.ownerId"
+                  size="16">
+                  mdi-crown
+                </v-icon>
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <DialogPlayerKickOut
-                v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.uid)" />
+                v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.uid)"
+                :player="player"
+                :room="state.room" />
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
@@ -182,7 +190,7 @@
       })
 
       const hasGameStarted = computed<boolean>(() => {
-        return state.room?.status === 'new'
+        return state.room?.status !== 'new'
       })
 
       const isGameOngoing = computed<boolean>(() => {
@@ -376,12 +384,13 @@
       )
 
       watch(
-        () => state.myself as Player,
-        (newVal: Player, oldVal: Player) => {
-          if (oldVal === null || oldVal.role === null && newVal.role !== null) {
+        () => state.myself as Player | null,
+        (newVal: Player | null, oldVal: Player | null) => {
+          if (oldVal?.role === null && newVal?.role !== null) {
             const db = firebase.firestore()
             const docRef = db.collection('rooms').doc(route.params.id)
 
+            // Get werewolf messages if the player's role is werewolf
             if (isWerewolf) {
               docRef.collection('werewolfMessages').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
@@ -402,6 +411,7 @@
                 })
             }
 
+            // Get the results messages if the player's role is seer
             if (isSeer) {
               docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
@@ -422,6 +432,7 @@
                 })              
             }
 
+            // Get the results messages if the player's role is medium
             if (isMedium) {
               docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
@@ -446,8 +457,6 @@
       )
 
       onMounted(() => {
-        // TODO: emit
-
         const db = firebase.firestore()
         const docRef = db.collection('rooms').doc(route.params.id)
 
@@ -459,7 +468,7 @@
             })
           } else {
             state.room = doc.data() as Room
-            // emit
+            store.commit('onRoomUpdated', state.room)
           }
         })
 
@@ -488,11 +497,11 @@
             if (user) {
               if (user.uid === change.doc.data().uid) {
                 state.isJoiningThisGame = true
-                // emit
+                store.commit('isJoiningUpdated', true)
 
                 if (change.type === 'added' || change.type === 'modified') {
                   state.myself = change.doc.data() as Player
-                  // emit
+                  store.commit('onMyselfUpdated', state.myself)
                 } else {
                   // Force the player to exit the game when the player doc has been removed
                   router.push({
@@ -596,6 +605,10 @@
 
   .icon-bite {
     color: $red1 !important;
+  }
+
+  .icon-crown {
+    color: $yellow1 !important;
   }
 
   .chat-container {

@@ -46,7 +46,6 @@
   import { Player, Room } from '@/types/index'
 
   export default defineComponent({
-    /**
     props: {
       player: {
         type: Object as PropType<Player>,
@@ -57,7 +56,6 @@
         required: true,
       },
     },
-    */
 
     setup(props, context) {
       const route = context.root.$route
