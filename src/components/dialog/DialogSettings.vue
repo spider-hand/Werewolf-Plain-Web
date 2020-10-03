@@ -38,7 +38,7 @@
             <v-col cols="12">
               <v-img
                 class="avatar"
-                :src="user.photoURL ? user.photoURL : '@/assets/logo.png'">
+                :src="user.photoURL ? user.photoURL : require(`@/assets/logo.png`)">
               </v-img>
             </v-col>
           </v-row>
