@@ -29,6 +29,7 @@
           case 'sign-up':
           case 'password-reset':
           case 'password-confirm':
+          case 'email-verify':
             return null
           case 'game':
             return 'headerGame'

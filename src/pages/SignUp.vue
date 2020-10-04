@@ -157,17 +157,19 @@
 
                   // Set a default in game name
                   const updateProfile = 
-                    firebase.auth().currentUser.updateProfile({
+                    data.user!.updateProfile({
                       displayName: 'Anonymous',
                     })
 
+                  // Send a verification email
+                  const sendEmail = 
+                    data.user!.sendEmailVerification()
+
                   promises0.push(createUserDoc)
                   promises0.push(updateProfile)
+                  promises0.push(sendEmail)
 
                   Promise.all(promises0).then(() => {
-                    // TODO: Send a verification email
-
-
                     // Redirect to home page
                     router.push({
                       name: 'room-list',
@@ -207,6 +209,10 @@
   #page {
     position: relative;
     height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
     background-color: $black1;
   }
 
