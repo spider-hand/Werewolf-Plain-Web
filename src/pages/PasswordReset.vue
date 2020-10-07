@@ -6,10 +6,22 @@
       fluid>
       <v-row>
         <div class="password-reset-form-wrapper">
-          <form class="password-reset-form-group">
+          <form 
+            class="password-reset-form-group"
+            @submit.prevent="validate">
             <div class="input-wrapper">
-              <label class="input-label">EMAIL or USERNAME</label>
-              <input class="password-reset-input" type="text" name="username">
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasEmailError }">EMAIL</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>              
+              <input 
+                class="password-reset-input"
+                :class="{ 'input-error': hasEmailError }"
+                type="email" 
+                name="email"
+                v-model="state.email">
             </div>
             <div class="btn-wrapper">
               <button class="password-reset-btn">SEND RESET LINK</button>
@@ -22,7 +34,56 @@
 </template>
 
 <script lang="ts">
-  
+  import { defineComponent, reactive, computed, } from '@vue/composition-api'
+
+  import firebase from 'firebase/app'
+  import 'firebase/auth'
+
+  export default defineComponent({
+
+    setup(props, context) {
+      const state = reactive<{
+        email: string,
+        emailErrorMessage: string,
+      }>({
+        email: '',
+        emailErrorMessage: '',
+      })
+
+      const hasEmailError = computed<boolean>(() => {
+        return state.emailErrorMessage !== ''
+      })
+
+      function validate(): void {
+        if (state.email === '') {
+          state.emailErrorMessage = "This field is required."
+        } else {
+          sendPasswordResetEmail()
+        }
+      }
+
+      function sendPasswordResetEmail(): void {
+        const auth = firebase.auth()
+
+        auth.sendPasswordResetEmail(state.email).then(() => {
+          // Email sent.
+          // TODO: Notify something so the user can check the email.
+        }).catch((err) => {
+          if (err.code === 'auth/user-not-found') {
+            state.emailErrorMessage = "This email address can not be found."
+          } else if (err.code === 'auth/invalid-email') {
+            state.emailErrorMessage = "This email is invalid."
+          }
+        })
+      }
+
+      return {
+        state,
+        hasEmailError,
+        validate,
+      }
+    }
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -81,4 +142,11 @@
     border-radius: 3px;
   }
 
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
+  }
 </style>

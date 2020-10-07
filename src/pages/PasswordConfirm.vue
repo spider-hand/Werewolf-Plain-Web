@@ -6,14 +6,36 @@
       fluid>
       <v-row>
         <div class="password-confirm-form-wrapper">
-          <form class="password-confirm-form-group">
+          <form 
+            class="password-confirm-form-group"
+            @submit.prevent="validate">
             <div class="input-wrapper">
-              <label class="input-label">NEW PASSWORD</label>
-              <input class="password-confirm-input" type="password" name="new-password">
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasPasswordError }">NEW PASSWORD</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
+              <input 
+                class="password-confirm-input"
+                :class="{ 'input-error': hasPasswordError }"
+                type="password" 
+                name="new-password"
+                v-model="state.newPassword">
             </div>
             <div class="input-wrapper">
-              <label class="input-label">CONFIRM PASSWORD</label>
-              <input class="password-confirm-input" type="password" name="confirm-password">
+              <label 
+                class="input-label"
+                :class="{ 'text-error': hasPasswordError }">CONFIRM PASSWORD</label>
+              <label 
+                class="input-label ml-2"
+                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
+              <input 
+                class="password-confirm-input" 
+                :class="{ 'input-error': hasPasswordError }"
+                type="password" 
+                name="confirm-password"
+                v-model="state.confirmPassword">
             </div>
             <div class="btn-wrapper">
               <button class="password-confirm-btn">RESET PASSWORD</button>
@@ -26,7 +48,96 @@
 </template>
 
 <script lang="ts">
-  
+  import { defineComponent, reactive, computed, onMounted, } from '@vue/composition-api'
+
+  import firebase from 'firebase/app'
+  import 'firebase/auth'
+
+  export default defineComponent({
+
+    setup(props, context) {
+      const auth = firebase.auth()
+      const urlParams = new URLSearchParams(window.location.search)
+
+      const state = reactive<{
+        newPassword: string,
+        confirmPassword: string,
+        passwordErrorMessage: string,
+      }>({
+        newPassword: '',
+        confirmPassword: '',
+        passwordErrorMessage: '',
+      })
+
+      const mode = computed<string>(() => {
+        return urlParams.get('mode') || ''
+      })
+
+      const actionCode = computed<string>(() => {
+        return urlParams.get('oobCode') || ''
+      })
+
+      const lang = computed<string>(() => {
+        return urlParams.get('lang') || 'en'
+      })
+
+      const hasPasswordError = computed<boolean>(() => {
+        return state.passwordErrorMessage !== ''
+      })
+
+      function handleResetPassword(auth: firebase.auth.Auth, actionCode: string, lang: string): void {
+        auth.verifyPasswordResetCode(actionCode).then((email) => {
+
+        })
+        .catch((err) => {
+          // Invalid or expired action code.
+          state.passwordErrorMessage = "This credential is invalid or has been expired."
+        })
+      }
+
+      function validate(): void {
+        // Check if the new passwords are the same
+        if (state.newPassword !== state.confirmPassword) {
+          state.passwordErrorMessage = "Password does not match."
+        } else {
+          confirmPasswordReset()
+        }
+      }
+
+      function confirmPasswordReset(): void {
+        auth.confirmPasswordReset(actionCode, state.newPassword).then((resp) => {
+
+        })
+        .catch((err) => {
+          if (err.code === 'auth/expired-action-code' || err.code === 'auth/invalid-action-code') {
+            state.passwordErrorMessage = "This credential is invalid or has been expired."
+          } else if (err.code === 'auth/user-not-found' || err.code === 'auth/user-disabled') {
+            state.passwordErrorMessage = "This user can not be found."
+          } else if (err.code === 'auth/weak-password') {
+            state.passwordErrorMessage = "This password is too weak."
+          }
+        })
+      }
+
+      onMounted(() => {
+        if (mode === 'resetPassword') {
+          handleResetPassword(auth, actionCode, lang)
+        } else {
+          state.passwordErrorMessage = "This credential is invalid or has been expired."
+        }        
+      })
+
+      return {
+        auth,
+        urlParams,
+        state,
+        mode,
+        actionCode,
+        lang,
+        hasPasswordError,
+      }
+    }
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -85,4 +196,11 @@
     border-radius: 3px;
   }
 
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
+  }
 </style>
