@@ -1,20 +1,18 @@
 <template>
-  <div id="page">
-    <v-container
-      fill-height
-      fluid>
-      <v-card 
-        class="message-wrapper"
-        flat>
-        <v-card-title class="message-title">
-          <span>{{ state.title }}</span>
-        </v-card-title>
-        <v-card-text class="message-text">
-          <span>{{ state.text }}</span>
-        </v-card-text>
-      </v-card>
-    </v-container>
-  </div>
+  <v-container
+    fill-height
+    fluid>
+    <v-card 
+      class="message-wrapper"
+      flat>
+      <v-card-title class="message-title">
+        <span>{{ state.title }}</span>
+      </v-card-title>
+      <v-card-text class="message-text">
+        <span>{{ state.text }}</span>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -25,7 +23,23 @@
 
   export default defineComponent({
 
+    props: {
+      mode: {
+        type: String,
+        required: true,
+      },
+      actionCode: {
+        type: String,
+        required: true,
+      },
+      lang: {
+        type: String,
+        required: true,
+      }
+    },
+
     setup(props, context) {
+      const auth = firebase.auth()
 
       const state = reactive<{
         title: string,
@@ -56,18 +70,7 @@
       }
 
       onMounted(() => {
-        const auth = firebase.auth()
-
-        const urlParams = new URLSearchParams(window.location.search)
-        const mode = urlParams.get('mode') || ''
-        const actionCode = urlParams.get('oobCode') || ''
-        const lang = urlParams.get('lang') || 'en'
-
-        if (mode === 'verifyEmail') {
-          handleVerifyEmail(auth, actionCode, lang)
-        } else {
-          showFailedMessage()
-        }
+        handleVerifyEmail(auth, props.actionCode, props.lang)
       })
 
       return {
@@ -79,12 +82,6 @@
 </script>
 
 <style lang="scss" scoped>
-  #page {
-    position: relative;
-    height: 100%;
-    background-color: $black1;
-  } 
-
   .message-wrapper {
     background-color: $black3;
     min-height: 150px;

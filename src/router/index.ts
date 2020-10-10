@@ -6,8 +6,7 @@ import Game from '@/pages/Game.vue'
 import SignIn from '@/pages/SignIn.vue'
 import SignUp from '@/pages/SignUp.vue'
 import PasswordReset from '@/pages/PasswordReset.vue'
-import PasswordConfirm from '@/pages/PasswordConfirm.vue'
-import EmailVerify from '@/pages/EmailVerify.vue'
+import AuthAction from '@/pages/AuthAction.vue'
 
 Vue.use(Router)
 
@@ -44,14 +43,9 @@ export default new Router ({
       component: PasswordReset,
     },
     {
-      path: '/password/confirm',
-      name: 'password-confirm',
-      component: PasswordConfirm,
-    },
-    {
-      path: '/email/verify',
-      name: 'email-verify',
-      component: EmailVerify,
-    },
+      path: '/auth/action',
+      name: 'auth-action',
+      component: AuthAction,
+    }
 	]
 })

@@ -1,50 +1,48 @@
 <template>
-  <div id="page">
-    <v-container
-      class="password-confirm-form-container"
-      fill-height
-      fluid>
-      <v-row>
-        <div class="password-confirm-form-wrapper">
-          <form 
-            class="password-confirm-form-group"
-            @submit.prevent="validate">
-            <div class="input-wrapper">
-              <label 
-                class="input-label"
-                :class="{ 'text-error': hasPasswordError }">NEW PASSWORD</label>
-              <label 
-                class="input-label ml-2"
-                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
-              <input 
-                class="password-confirm-input"
-                :class="{ 'input-error': hasPasswordError }"
-                type="password" 
-                name="new-password"
-                v-model="state.newPassword">
-            </div>
-            <div class="input-wrapper">
-              <label 
-                class="input-label"
-                :class="{ 'text-error': hasPasswordError }">CONFIRM PASSWORD</label>
-              <label 
-                class="input-label ml-2"
-                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
-              <input 
-                class="password-confirm-input" 
-                :class="{ 'input-error': hasPasswordError }"
-                type="password" 
-                name="confirm-password"
-                v-model="state.confirmPassword">
-            </div>
-            <div class="btn-wrapper">
-              <button class="password-confirm-btn">RESET PASSWORD</button>
-            </div>
-          </form>
-        </div>
-      </v-row>
-    </v-container>
-  </div>
+  <v-container
+    class="password-confirm-form-container"
+    fill-height
+    fluid>
+    <v-row>
+      <div class="password-confirm-form-wrapper">
+        <form 
+          class="password-confirm-form-group"
+          @submit.prevent="validate">
+          <div class="input-wrapper">
+            <label 
+              class="input-label"
+              :class="{ 'text-error': hasPasswordError }">NEW PASSWORD</label>
+            <label 
+              class="input-label ml-2"
+              :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
+            <input 
+              class="password-confirm-input"
+              :class="{ 'input-error': hasPasswordError }"
+              type="password" 
+              name="new-password"
+              v-model="state.newPassword">
+          </div>
+          <div class="input-wrapper">
+            <label 
+              class="input-label"
+              :class="{ 'text-error': hasPasswordError }">CONFIRM PASSWORD</label>
+            <label 
+              class="input-label ml-2"
+              :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
+            <input 
+              class="password-confirm-input" 
+              :class="{ 'input-error': hasPasswordError }"
+              type="password" 
+              name="confirm-password"
+              v-model="state.confirmPassword">
+          </div>
+          <div class="btn-wrapper">
+            <button class="password-confirm-btn">RESET PASSWORD</button>
+          </div>
+        </form>
+      </div>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -54,10 +52,23 @@
   import 'firebase/auth'
 
   export default defineComponent({
+    props: {
+      mode: {
+        type: String,
+        required: true,
+      },
+      actionCode: {
+        type: String,
+        required: true,
+      },
+      lang: {
+        type: String,
+        required: true,
+      }
+    },
 
     setup(props, context) {
       const auth = firebase.auth()
-      const urlParams = new URLSearchParams(window.location.search)
 
       const state = reactive<{
         newPassword: string,
@@ -67,18 +78,6 @@
         newPassword: '',
         confirmPassword: '',
         passwordErrorMessage: '',
-      })
-
-      const mode = computed<string>(() => {
-        return urlParams.get('mode') || ''
-      })
-
-      const actionCode = computed<string>(() => {
-        return urlParams.get('oobCode') || ''
-      })
-
-      const lang = computed<string>(() => {
-        return urlParams.get('lang') || 'en'
       })
 
       const hasPasswordError = computed<boolean>(() => {
@@ -105,7 +104,7 @@
       }
 
       function confirmPasswordReset(): void {
-        auth.confirmPasswordReset(actionCode, state.newPassword).then((resp) => {
+        auth.confirmPasswordReset(props.actionCode, state.newPassword).then((resp) => {
 
         })
         .catch((err) => {
@@ -120,20 +119,11 @@
       }
 
       onMounted(() => {
-        if (mode === 'resetPassword') {
-          handleResetPassword(auth, actionCode, lang)
-        } else {
-          state.passwordErrorMessage = "This credential is invalid or has been expired."
-        }        
+        handleResetPassword(auth, props.actionCode, props.lang)     
       })
 
       return {
-        auth,
-        urlParams,
         state,
-        mode,
-        actionCode,
-        lang,
         hasPasswordError,
       }
     }
@@ -141,12 +131,6 @@
 </script>
 
 <style lang="scss" scoped>
-  #page {
-    position: relative;
-    height: 100%;
-    background-color: $black1;
-  }
-
   .password-confirm-form-wrapper {
     width: 500px;
     border-radius: 3px;
