@@ -12,7 +12,7 @@
     </template>
     <v-card class="dialog-wrapper">
       <v-card-title class="dialog-title">
-        <span>Kick 'Player1'</span>
+        <span>Kick '{{ props.player.name }}'</span>
       </v-card-title>
       <v-card-text class="dialog-text">
         <v-container>
@@ -23,7 +23,8 @@
         <div class="flex-grow-1"></div>
         <v-btn
           class="confirm-btn"
-          depressed>
+          depressed
+          @click="state.isButtonEnabled ? kickOut() : null">
           <span>Confirm</span>
         </v-btn>
         <v-btn
@@ -62,29 +63,47 @@
 
       const state = reactive<{
         dialog: boolean,
+        isButtonEnabled: boolean,
       }>({
         dialog: false,
+        isButtonEnabled: true,
       })
 
       function kickOut(): void {
         const db = firebase.firestore()
         const docRef = db.collection('rooms').doc(route.params.id)
+        const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+        // Disable the button while the function is executed
+        state.isButtonEnabled = false
 
-        docRef.collection('messages').add({
-          from: 'GM',
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          body: 'A player has been kicked out.', // TODO: Set a message
-          gameName: 'GM',
-          avatar: '',
-          isFromGrave: false,
-        })
+        const sendMessage = 
+          docRef.collection('messages').add({
+            from: 'GM',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            body: `${props.player.name} has been kicked out.`,
+            gameName: 'GM',
+            avatar: '',
+            isFromGrave: false,
+          })
 
-        docRef.collection('players').doc(props.player.uid).delete()
+        const deletePlayer = 
+          docRef.collection('players').doc(props.player.uid).delete()
 
-        docRef.update({
-          numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
-          banList: firebase.firestore.FieldValue.arrayUnion(props.player.uid)
-        })
+        const updateRoom = 
+          docRef.update({
+            numberOfParticipants: firebase.firestore.FieldValue.increment(-1),
+            banList: firebase.firestore.FieldValue.arrayUnion(props.player.uid)
+          })
+
+        promises.push(sendMessage)
+        promises.push(deletePlayer)
+        promises.push(updateRoom)
+
+        Promise.all(promises)
+          .then(() => {
+            state.isButtonEnabled = true
+            state.dialog = false
+          })
       }
 
       function cancel(): void {
@@ -92,6 +111,7 @@
       }
 
       return {
+        props,
         state,
         kickOut,
         cancel

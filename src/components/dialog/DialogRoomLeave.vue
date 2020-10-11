@@ -25,6 +25,7 @@
         <v-btn 
           class="confirm-btn"
           depressed
+          @click="leaveRoom"
           >
           <span>LEAVE</span>
         </v-btn>
@@ -40,21 +41,28 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive } from '@vue/composition-api'
+  import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
 
+  import { Player } from '@/types/index'
+
   export default defineComponent({
     setup(props, context) {
       const route = context.root.$route
       const router = context.root.$router
+      const store = context.root.$store
 
       const state = reactive<{
         dialog: boolean,
       }>({
         dialog: false,
+      })
+
+      const myself = computed<Player | null>(() => {
+        return store.getters.myself
       })
 
       function leaveRoom(): void {
@@ -67,7 +75,7 @@
           docRef.collection('messages').add({
             from: 'GM',
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            body: 'A player has left', // TODO: Set a message
+            body: `${myself.value.name} has left.`,
             gameName: 'GM',
             avatar: '',
             isFromGrave: false,

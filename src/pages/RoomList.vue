@@ -311,7 +311,7 @@
 
                     const putPlayer = 
                       room.collection('players').doc(user.uid).set({
-                        id: user.uid,
+                        uid: user.uid,
                         name: user.displayName,
                         avatar: user.photoURL,
                         isAlive: true,
@@ -325,7 +325,7 @@
                       room.collection('messages').add({
                         from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        body: 'A player has entered.',  // TODO: Set a message
+                        body: `${user.displayName} has entered.`, 
                         gameName: 'GM',
                         avatar: '',
                         isFromGrave: false,

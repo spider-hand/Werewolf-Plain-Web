@@ -17,7 +17,7 @@
             v-for="player in state.players"
             :key="player.uid">
             <v-list-item-avatar>
-              <v-img :src="player.avatar !== '' ? player.avatar : 'https://source.unsplash.com/random'" />
+              <v-img :src="player.avatar ? player.avatar : 'https://source.unsplash.com/random'" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -90,7 +90,7 @@
           <div class="message">
             <v-img 
               class="message-avatar" 
-              :src="message.avatar !== '' ? message.avatar : 'https://source.unsplash.com/random'"></v-img>
+              :src="message.avatar ? message.avatar : 'https://source.unsplash.com/random'"></v-img>
             <small 
               class="message-from"
               :style="{ color: '#FFFFFF' }">{{ message.gameName }}</small>
@@ -480,7 +480,7 @@
 
             if (change.type === 'modified') {
               for (let i = 0; i < state.players.length; i++) {
-                if (state.players[i].uid === change.doc.data().id) {
+                if (state.players[i].uid === change.doc.data().uid) {
                   state.players[i] = change.doc.data() as Player
                 }
               }
@@ -488,7 +488,7 @@
 
             if (change.type === 'removed') {
               for (let i = 0; i < state.players.length; i++) {
-                if (state.players[i].uid === change.doc.data().id) {
+                if (state.players[i].uid === change.doc.data().uid) {
                   state.players.splice(i, 1)
                 }
               }

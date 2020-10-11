@@ -21,7 +21,7 @@ export interface Player {
   uid: string,
   name: string,
   role: string | null,
-  avatar: string,
+  avatar: string | null,
   isAlive: boolean,
   votedPlayer: Player | null,
   bittenPlayer: Player | null,
