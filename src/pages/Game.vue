@@ -388,7 +388,7 @@
       )
 
       watch(
-        () => state.myself as Player | null,
+        () => state.myself,
         (newVal: Player | null, oldVal: Player | null) => {
           if (oldVal?.role === null && newVal?.role !== null) {
             const db = firebase.firestore()

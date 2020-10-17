@@ -337,7 +337,7 @@
       function createRoom(): void {
         if (user.value) {
           const db = firebase.firestore()
-          const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+          const promises: Promise<void | firebase.firestore.DocumentReference>[]  = []
 
           db.collection('rooms').add({
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),

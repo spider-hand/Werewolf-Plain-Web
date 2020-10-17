@@ -291,7 +291,7 @@
         if (user.value) {
           const db = firebase.firestore()
           const room = db.collection('rooms').doc(roomId)
-          const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+          const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
           let isBanned = false
 
           room.get().then((roomDoc) => {
@@ -307,7 +307,7 @@
 
               if (!isBanned) {
                 room.collection('players').doc(user!.value!.uid).get().then((playerDoc) => {
-                  if (!playerDoc.exists && roomDoc.data()!.status! === 'new' && roomDoc.data()!.numberOfParticipants! < roomDoc.data()!.capacity!) {
+                  if (!playerDoc.exists && roomDoc.data()!.status === 'new' && roomDoc.data()!.numberOfParticipants < roomDoc.data()!.capacity) {
                     const updateRoom = 
                       room.update({
                         numberOfParticipants: firebase.firestore.FieldValue.increment(1),

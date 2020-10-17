@@ -68,8 +68,8 @@
         if (myself.value) {
           const db = firebase.firestore()
           const docRef = db.collection('rooms').doc(route.params.id)
-          const promises0 = [] as Promise<void | firebase.firestore.DocumentReference>[]
-          const promises1 = [] as Promise<void>[]
+          const promises0: Promise<void | firebase.firestore.DocumentReference>[] = [] 
+          const promises1: Promise<void>[] = [] 
 
           const sendMessage =
             docRef.collection('messages').add({

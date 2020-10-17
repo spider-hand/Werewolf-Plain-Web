@@ -72,7 +72,7 @@
       function kickOut(): void {
         const db = firebase.firestore()
         const docRef = db.collection('rooms').doc(route.params.id)
-        const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+        const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
         // Disable the button while the function is executed
         state.isButtonEnabled = false
 

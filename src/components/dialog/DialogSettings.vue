@@ -198,7 +198,7 @@
       }
 
       function update(): void {
-        const promises0 = [] as Promise<void>[]
+        const promises0: Promise<void>[] = [] 
         // TODO: What if auth user has been updated while updating firestore has been failed
         if (user.value) {
           if (state.newAvatar) {

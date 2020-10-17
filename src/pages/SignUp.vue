@@ -140,7 +140,7 @@
         // Check if the username is alreay taken
         const db = firebase.firestore()
         const userCollectionRef = db.collection('users')
-        const promises0 = [] as Promise<void>[]
+        const promises0: Promise<void>[] = [] 
 
         userCollectionRef.where('username', '==', state.username).limit(1).get()
           .then((querySnapshot) => {
