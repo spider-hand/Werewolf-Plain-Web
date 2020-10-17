@@ -42,6 +42,15 @@
               </v-img>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col
+              cols="12"
+              class="pb-0">
+              <router-link
+                class="account-delete-link" 
+                to="/account/delete">Delete account</router-link>
+            </v-col>
+          </v-row>
         </v-container>
         <v-container v-else>
           <form>
@@ -332,6 +341,13 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
+  }
+
+  .account-delete-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: $red1;
+    text-decoration: none;
   }
 
   .edit-btn, .save-btn, .upload-avatar-btn {

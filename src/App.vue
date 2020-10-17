@@ -30,6 +30,8 @@
           case 'password-reset':
           case 'password-confirm':
           case 'email-verify':
+          case 'auth-action':
+          case 'account-delete':
             return null
           case 'game':
             return 'headerGame'

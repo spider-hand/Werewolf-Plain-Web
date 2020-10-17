@@ -7,6 +7,7 @@ import SignIn from '@/pages/SignIn.vue'
 import SignUp from '@/pages/SignUp.vue'
 import PasswordReset from '@/pages/PasswordReset.vue'
 import AuthAction from '@/pages/AuthAction.vue'
+import AccountDelete from '@/pages/AccountDelete.vue'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router ({
       path: '/auth/action',
       name: 'auth-action',
       component: AuthAction,
-    }
+    },
+    {
+      path: '/account/delete',
+      name: 'account-delete',
+      component: AccountDelete,
+    },
 	]
 })
