@@ -113,7 +113,7 @@
               // Delete the account if the email and the password are correct
               user.value.delete().then(() => {
                 const db = firebase.firestore()
-                const docRef = db.collection('users').doc(user.uid)
+                const docRef = db.collection('users').doc(user.value.uid)
 
                 docRef.delete().then(() => {
                   router.push({

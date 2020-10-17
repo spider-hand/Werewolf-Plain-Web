@@ -153,6 +153,7 @@
 
   import firebase from 'firebase/app'
   import 'firebase/firestore'
+  import { User as FirebaseUser } from 'firebase'
 
   declare interface Item {
     text: string,
@@ -163,7 +164,6 @@
     setup(props, context) {
       const router = context.root.$router
       const store = context.root.$store
-      const user = store.getters.user
 
       const state = reactive<{
         dialog: boolean,
@@ -272,6 +272,10 @@
         accessCodeErrorMessage: '',
       })
 
+      const user = computed<FirebaseUser | null>(() => {
+        return store.getters.user
+      })
+
       const hasRoomNameError = computed<boolean>(() => {
         return state.roonNameErrorMessage !== ''
       })
@@ -346,7 +350,7 @@
           numberOfParticipants: 1,
           status: 'new',
           isNight: false,
-          ownerId: user.uid,
+          ownerId: user.value.uid,
           banList: [],
         })
         .then((docRef) => {
@@ -354,11 +358,11 @@
             db.collection('rooms')
               .doc(docRef.id)
               .collection('players')
-              .doc(user.uid)
+              .doc(user.value.uid)
               .set({
-                uid: user.uid,
-                name: user.displayName,
-                avatar: user.photoURL,
+                uid: user.value.uid,
+                name: user.value.displayName,
+                avatar: user.value.photoURL,
                 role: null,
                 isAlive: true,
                 votedPlayer: null,
@@ -373,7 +377,7 @@
               .add({
                 from: '',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                body: `${user.displayName} has joined.`, 
+                body: `${user.value.displayName} has joined.`, 
                 gameName: 'GM',
                 avatar: '',
                 isFromGrave: false,

@@ -94,7 +94,7 @@
             docRef.collection('messages').add({
               from: 'GM',
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              body: 'Game has started.',  // TODO: Set a message
+              body: 'Game has started.', 
               gameName: 'GM',
               avatar: '',
               isFromGrave: false,

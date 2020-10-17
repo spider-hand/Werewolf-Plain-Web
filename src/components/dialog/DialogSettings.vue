@@ -144,12 +144,12 @@
   import firebase from 'firebase/app'
   import 'firebase/firestore'
   import 'firebase/storage'
+  import { User as FirebaseUser } from 'firebase'
 
   export default defineComponent({
 
     setup(props, context) {
       const store = context.root.$store
-      const user = store.getters.user
 
       const avatarInput = ref(null)
 
@@ -169,6 +169,10 @@
         newAvatar: null,
         inGameNameErrorMessage: '',
         avatarErrorMessage: '',
+      })
+
+      const user = computed<FirebaseUser | null>(() => {
+        return store.getters.user
       })
 
       const hasInGameNameError = computed<boolean>(() => {
@@ -199,11 +203,11 @@
         // TODO: Update to the new in game name and avatar
         if (state.newAvatar) {
           const storage = firebase.storage()
-          const storageRef = storage.ref('avatars/' + user.uid)
+          const storageRef = storage.ref('avatars/' + user.value.uid)
           storageRef.put(state.newAvatar).then((snapShot) => {
             storageRef.getDownloadURL().then((url) => {
               const db = firebase.firestore()
-              const docRef = db.collection('users').doc(user.uid)
+              const docRef = db.collection('users').doc(user.value.uid)
 
               const updateUserdoc = 
                 docRef.update({
@@ -212,7 +216,7 @@
                 })
 
               const updateProfile = 
-                user.updateProfile({
+                user.value.updateProfile({
                   displayName: state.newGameName,
                   photoURL: url
                 })
@@ -227,14 +231,14 @@
           })
         } else {
           const db = firebase.firestore()
-          const docRef = db.collection('users').doc(user.uid)
+          const docRef = db.collection('users').doc(user.value.uid)
 
           const updateInGameName = 
             docRef.update({
               inGameName: state.newGameName,
             })
           const updateDisplayName =
-            user.updateProfile({
+            user.value.updateProfile({
               displayName: state.newGameName,
             })
 
@@ -268,7 +272,7 @@
 
       function cancel(): void {
         state.isEditing = false
-        state.newGameName = user.displayName
+        state.newGameName = user.value.displayName
         state.newAvatarUrl = ''
         state.newAvatar = null
         state.inGameNameErrorMessage = ''
@@ -277,7 +281,7 @@
 
       function close(): void {
         state.dialog = false
-        state.newGameName = user.displayName
+        state.newGameName = user.value.displayName
         state.newAvatarUrl = ''
         state.newAvatar = null
         state.inGameNameErrorMessage = ''
@@ -285,7 +289,7 @@
       }
 
       onMounted(() => {
-        state.newGameName = user.displayName
+        state.newGameName = user.value.displayName
       })
 
       return {
