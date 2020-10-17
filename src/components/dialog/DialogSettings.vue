@@ -199,55 +199,56 @@
 
       function update(): void {
         const promises0 = [] as Promise<void>[]
-        // TODO: Make sure the user is logged in
-        // TODO: Update to the new in game name and avatar
-        if (state.newAvatar) {
-          const storage = firebase.storage()
-          const storageRef = storage.ref('avatars/' + user.value.uid)
-          storageRef.put(state.newAvatar).then((snapShot) => {
-            storageRef.getDownloadURL().then((url) => {
-              const db = firebase.firestore()
-              const docRef = db.collection('users').doc(user.value.uid)
+        // TODO: What if auth user has been updated while updating firestore has been failed
+        if (user.value) {
+          if (state.newAvatar) {
+            const storage = firebase.storage()
+            const storageRef = storage.ref('avatars/' + user!.value!.uid)
+            storageRef.put(state.newAvatar).then((snapShot) => {
+              storageRef.getDownloadURL().then((url) => {
+                const db = firebase.firestore()
+                const docRef = db.collection('users').doc(user!.value!.uid)
 
-              const updateUserdoc = 
-                docRef.update({
-                  inGameName: state.newGameName,
-                  avatar: url,
+                const updateUserdoc = 
+                  docRef.update({
+                    inGameName: state.newGameName,
+                    avatar: url,
+                  })
+
+                const updateProfile = 
+                  user.value.updateProfile({
+                    displayName: state.newGameName,
+                    photoURL: url
+                  })
+
+                promises0.push(updateUserdoc)
+                promises0.push(updateProfile)
+
+                Promise.all(promises0).then(() => {
+                  state.isEditing = false
                 })
-
-              const updateProfile = 
-                user.value.updateProfile({
-                  displayName: state.newGameName,
-                  photoURL: url
-                })
-
-              promises0.push(updateUserdoc)
-              promises0.push(updateProfile)
-
-              Promise.all(promises0).then(() => {
-                state.isEditing = false
               })
             })
-          })
-        } else {
-          const db = firebase.firestore()
-          const docRef = db.collection('users').doc(user.value.uid)
+          } else {
+            const db = firebase.firestore()
+            const docRef = db.collection('users').doc(user!.value!.uid)
 
-          const updateInGameName = 
-            docRef.update({
-              inGameName: state.newGameName,
+            const updateInGameName = 
+              docRef.update({
+                inGameName: state.newGameName,
+              })
+            const updateDisplayName =
+              user!.value!.updateProfile({
+                displayName: state.newGameName,
+              })
+
+            promises0.push(updateInGameName)
+            promises0.push(updateDisplayName)
+
+            Promise.all(promises0).then(() => {
+              state.isEditing = false
             })
-          const updateDisplayName =
-            user.value.updateProfile({
-              displayName: state.newGameName,
-            })
-
-          promises0.push(updateInGameName)
-          promises0.push(updateDisplayName)
-
-          Promise.all(promises0).then(() => {
-            state.isEditing = false
-          })
+          }
         }
       }
 

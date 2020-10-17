@@ -298,7 +298,7 @@
             if (roomDoc.exists) {
               if (roomDoc.data()!.banList!.length) {
                 for (let i = 0; i < roomDoc.data()!.banList!.length; i++) {
-                  if (roomDoc.data()!.banList[i]! === user.value.uid) {
+                  if (roomDoc.data()!.banList[i]! === user!.value!.uid) {
                     isBanned = true
                     break
                   }
@@ -306,7 +306,7 @@
               }
 
               if (!isBanned) {
-                room.collection('players').doc(user.value.uid).get().then((playerDoc) => {
+                room.collection('players').doc(user!.value!.uid).get().then((playerDoc) => {
                   if (!playerDoc.exists && roomDoc.data()!.status! === 'new' && roomDoc.data()!.numberOfParticipants! < roomDoc.data()!.capacity!) {
                     const updateRoom = 
                       room.update({
@@ -314,10 +314,10 @@
                       })
 
                     const putPlayer = 
-                      room.collection('players').doc(user.value.uid).set({
-                        uid: user.value.uid,
-                        name: user.value.displayName,
-                        avatar: user.value.photoURL,
+                      room.collection('players').doc(user!.value!.uid).set({
+                        uid: user!.value!.uid,
+                        name: user!.value!.displayName,
+                        avatar: user!.value!.photoURL,
                         isAlive: true,
                         votedPlayer: null,
                         bittenPlayer: null,
@@ -329,7 +329,7 @@
                       room.collection('messages').add({
                         from: 'GM',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        body: `${user.value.displayName} has entered.`, 
+                        body: `${user!.value!.displayName} has entered.`, 
                         gameName: 'GM',
                         avatar: '',
                         isFromGrave: false,

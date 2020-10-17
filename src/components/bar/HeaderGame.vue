@@ -76,7 +76,11 @@
       })
 
       const isGameReady = computed<boolean>(() => {
-        return room?.value?.numberOfParticipants === room?.value?.capacity
+        if (room?.value === null) {
+          return false
+        } else {
+          return room!.value!.numberOfParticipants === room!.value!.capacity
+        }
       })
 
       function startGame(): void {
@@ -105,7 +109,7 @@
 
           Promise.all(promises)
             .then(() => {
-              decideRoles(room.value.capacity)
+              decideRoles(room!.value!.capacity)
 
               callCloudFunction()
             })
@@ -176,8 +180,8 @@
 
         addTasks({
           roomId: route.params.id,
-          dayLength: room.value.dayLength,
-          nightLength: room.value.nightLength,
+          dayLength: room!.value!.dayLength,
+          nightLength: room!.value!.nightLength,
         })
       }
 

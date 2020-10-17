@@ -108,12 +108,12 @@
         const credentials = firebase.auth.EmailAuthProvider.credential(state.email, state.password)
 
         if (user.value) {
-          user.value.reauthenticateWithCredential(credentials)
+          user!.value!.reauthenticateWithCredential(credentials)
             .then((credential) => {
               // Delete the account if the email and the password are correct
-              user.value.delete().then(() => {
+              user!.value!.delete().then(() => {
                 const db = firebase.firestore()
-                const docRef = db.collection('users').doc(user.value.uid)
+                const docRef = db.collection('users').doc(user!.value!.uid)
 
                 docRef.delete().then(() => {
                   router.push({

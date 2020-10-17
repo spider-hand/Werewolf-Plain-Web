@@ -278,7 +278,7 @@
       function isMyself(uid: string) {
         // Check if the selected player is myself
         if (user.value) {
-          return user.value.uid === uid
+          return user!.value!.uid === uid
         } else {
           return false
         }
@@ -297,11 +297,11 @@
 
         if (state.isWerewolfChatOpened) {
           db.collection('rooms').doc(route.params.id).collection('werewolfMessages').add({
-            from: state.myself.uid,
+            from: state!.myself!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
-            gameName: state.myself!.name,
-            avatar: state.myself!.avatar,
+            gameName: state!.myself!.name,
+            avatar: state!.myself!.avatar,
             isFromGrave: !isAlive,
           })
           .then((docRef) => {
@@ -309,11 +309,11 @@
           })
         } else {
           db.collection('rooms').doc(route.params.id).collection('messages').add({
-            from: state.myself.uid,
+            from: state!.myself!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
-            gameName: state.myself!.name,
-            avatar: state.myself!.avatar,
+            gameName: state!.myself!.name,
+            avatar: state!.myself!.avatar,
             isFromGrave: !isAlive,
           })
           .then((docRef) => {
@@ -324,7 +324,7 @@
 
       function vote(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state.myself.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
 
         docRef.update({
           votedPlayer: player,
@@ -333,7 +333,7 @@
 
       function bite(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state.myself.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
 
         docRef.update({
           bittenPlayer: player,
@@ -342,7 +342,7 @@
 
       function protect(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state.myself.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
 
         docRef.update({
           protectedPlayer: player,
@@ -351,7 +351,7 @@
 
       function checkRole(player: Player): void {
         const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state.myself.uid)
+        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
 
         docRef.update({
           divinedPlayer: player,

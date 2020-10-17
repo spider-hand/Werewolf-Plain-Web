@@ -335,65 +335,67 @@
       }
 
       function createRoom(): void {
-        const db = firebase.firestore()
-        const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
+        if (user.value) {
+          const db = firebase.firestore()
+          const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
 
-        db.collection('rooms').add({
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          name: state.roomName,
-          description: state.roomDescription,
-          capacity: state.capacity,
-          dayLength: state.dayLength,
-          nightLength: state.nightLength,
-          isPrivate: state.isPrivate,
-          accessCode: state.accessCode,
-          numberOfParticipants: 1,
-          status: 'new',
-          isNight: false,
-          ownerId: user.value.uid,
-          banList: [],
-        })
-        .then((docRef) => {
-          const putPlayer =
-            db.collection('rooms')
-              .doc(docRef.id)
-              .collection('players')
-              .doc(user.value.uid)
-              .set({
-                uid: user.value.uid,
-                name: user.value.displayName,
-                avatar: user.value.photoURL,
-                role: null,
-                isAlive: true,
-                votedPlayer: null,
-                bittenPlayer: null,
-                protectedPlayer: null,
-                divinedPlayer: null,
-              })
-          const sendMessage = 
-            db.collection('rooms')
-              .doc(docRef.id)
-              .collection('messages')
-              .add({
-                from: '',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                body: `${user.value.displayName} has joined.`, 
-                gameName: 'GM',
-                avatar: '',
-                isFromGrave: false,
-              })
+          db.collection('rooms').add({
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            name: state.roomName,
+            description: state.roomDescription,
+            capacity: state.capacity,
+            dayLength: state.dayLength,
+            nightLength: state.nightLength,
+            isPrivate: state.isPrivate,
+            accessCode: state.accessCode,
+            numberOfParticipants: 1,
+            status: 'new',
+            isNight: false,
+            ownerId: user!.value!.uid,
+            banList: [],
+          })
+          .then((docRef) => {
+            const putPlayer =
+              db.collection('rooms')
+                .doc(docRef.id)
+                .collection('players')
+                .doc(user!.value!.uid)
+                .set({
+                  uid: user!.value!.uid,
+                  name: user!.value!.displayName,
+                  avatar: user!.value!.photoURL,
+                  role: null,
+                  isAlive: true,
+                  votedPlayer: null,
+                  bittenPlayer: null,
+                  protectedPlayer: null,
+                  divinedPlayer: null,
+                })
+            const sendMessage = 
+              db.collection('rooms')
+                .doc(docRef.id)
+                .collection('messages')
+                .add({
+                  from: '',
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  body: `${user!.value!.displayName} has joined.`, 
+                  gameName: 'GM',
+                  avatar: '',
+                  isFromGrave: false,
+                })
 
-          promises.push(putPlayer)
-          promises.push(sendMessage)
+            promises.push(putPlayer)
+            promises.push(sendMessage)
 
-          Promise.all(promises)
-            .then(() => {
-              router.push({
-                name: 'game',
-                params: { id: docRef.id },
-              })
-            }) 
-        })
+            Promise.all(promises)
+              .then(() => {
+                router.push({
+                  name: 'game',
+                  params: { id: docRef.id },
+                })
+              }) 
+          })
+        }
       }
 
       function cancel(): void {
