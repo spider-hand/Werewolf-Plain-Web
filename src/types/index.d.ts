@@ -34,7 +34,7 @@ export interface Message {
   timestamp: Date,
   body: string,
   gameName: string,
-  avatar: string,
+  avatar: string | null,
   isFromGrave: boolean,
 }
 
