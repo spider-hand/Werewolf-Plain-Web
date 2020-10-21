@@ -17,9 +17,8 @@ const ifNotAuthenticated = ((to: any, from: any, next: any) => {
   if (!store.getters.token) {
     next()
     return
-  } else {
-    next('/')
   }
+  next('/')
 })
 
 const ifAuthenticated = ((to: any, from: any, next: any) => {
@@ -27,9 +26,8 @@ const ifAuthenticated = ((to: any, from: any, next: any) => {
   if (store.getters.token) {
     next()
     return
-  } else {
-    next('/sign-in')
   }
+  next('/sign-in')
 })
 
 export default new Router ({
