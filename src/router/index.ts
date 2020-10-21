@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 import RoomList from '@/pages/RoomList.vue'
 import Game from '@/pages/Game.vue'
@@ -10,6 +11,26 @@ import AuthAction from '@/pages/AuthAction.vue'
 import AccountDelete from '@/pages/AccountDelete.vue'
 
 Vue.use(Router)
+
+const ifNotAuthenticated = ((to: any, from: any, next: any) => {
+  // Redirect to the main page if the user is already authenticated
+  if (!store.getters.token) {
+    next()
+    return
+  } else {
+    next('/')
+  }
+})
+
+const ifAuthenticated = ((to: any, from: any, next: any) => {
+  // Have the user sign in when the user is not authenticated
+  if (store.getters.token) {
+    next()
+    return
+  } else {
+    next('/sign-in')
+  }
+})
 
 export default new Router ({
 	mode: 'history',
@@ -32,16 +53,19 @@ export default new Router ({
       path: '/sign-in',
       name: 'sign-in',
       component: SignIn,
+      beforeEnter: ifNotAuthenticated,
     },
     {
       path: '/sign-up',
       name: 'sign-up',
       component: SignUp,
+      beforeEnter: ifNotAuthenticated,
     },
     {
       path: '/password/reset',
       name: 'password-reset',
       component: PasswordReset,
+      beforeEnter: ifNotAuthenticated,
     },
     {
       path: '/auth/action',
@@ -52,6 +76,7 @@ export default new Router ({
       path: '/account/delete',
       name: 'account-delete',
       component: AccountDelete,
+      beforeEnter: ifAuthenticated,
     },
 	]
 })

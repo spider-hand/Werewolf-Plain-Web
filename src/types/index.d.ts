@@ -47,6 +47,7 @@ export interface User {
 export interface UserState {
   user: FirebaseUser | null,
   status: boolean,
+  token: string | null,
 }
 
 export interface GameState {
