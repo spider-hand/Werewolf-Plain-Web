@@ -55,3 +55,7 @@ export interface GameState {
   room: Room | null,
   myself: Player | null,
 }
+
+export interface DialogComponent {
+  open(): void,
+}

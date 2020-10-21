@@ -207,7 +207,7 @@
   import 'firebase/firestore'
   import { User as FirebaseUser } from 'firebase'
 
-  import { Room, Player } from '@/types/index'
+  import { Room, Player, DialogComponent, } from '@/types/index'
   import DialogRoomCreate from '@/components/dialog/DialogRoomCreate.vue'
   import DialogAccessCode from '@/components/dialog/DialogAccessCode.vue'
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
@@ -225,8 +225,8 @@
       const router = context.root.$router
       const store = context.root.$store
 
-      const dialogAccessCode = ref(null)
-      const dialogMessage = ref(null)
+      const dialogAccessCode = ref<DialogComponent | null>(null)
+      const dialogMessage = ref<DialogComponent | null>(null)
 
       const state = reactive<{
         selectedTab: number,
@@ -269,7 +269,7 @@
       }
 
       function validateAccessCode(): void {
-        dialogAccessCode.value.open()
+        dialogAccessCode!.value!.open()
       }
 
       function enterRoom(): void {
@@ -369,7 +369,7 @@
       }
 
       function showErrorDialog(): void {
-        dialogMessage.value.open()
+        dialogMessage!.value!.open()
       }
 
       function updateRoomList(): void {

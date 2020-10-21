@@ -151,7 +151,7 @@
     setup(props, context) {
       const store = context.root.$store
 
-      const avatarInput = ref(null)
+      const avatarInput = ref<HTMLInputElement | null>(null)
 
       const state = reactive<{
         dialog: boolean,
@@ -199,7 +199,7 @@
 
       function update(): void {
         const promises0: Promise<void>[] = [] 
-        // TODO: What if auth user has been updated while updating firestore has been failed
+
         if (user.value) {
           if (state.newAvatar) {
             const storage = firebase.storage()
@@ -216,7 +216,7 @@
                   })
 
                 const updateProfile = 
-                  user.value.updateProfile({
+                  user!.value!.updateProfile({
                     displayName: state.newGameName,
                     photoURL: url
                   })
@@ -253,27 +253,30 @@
       }
 
       function onClickAvatarInput(): void {
-        avatarInput.value.click()
+        avatarInput!.value!.click()
       }
 
       function getFile(event: Event): void {
         const files = (event.target as HTMLInputElement).files
         const fileReader = new FileReader()
-        if (files[0].size > 2000000) {
-          state.avatarErrorMessage = 'Image size cannot exceed 2MB.'
-        } else {
-          fileReader.addEventListener('load', () => {
-            state.newAvatarUrl = fileReader.result
-          })
-          fileReader.readAsDataURL(files[0])
-          state.newAvatar = files[0]
-          state.avatarErrorMessage = ''
+
+        if (files?.length >= 1) {
+          if (files![0].size > 2000000) {
+            state.avatarErrorMessage = 'Image size cannot exceed 2MB.'
+          } else {
+            fileReader.addEventListener('load', () => {
+              state.newAvatarUrl = fileReader.result
+            })
+            fileReader.readAsDataURL(files![0])
+            state.newAvatar = files![0]
+            state.avatarErrorMessage = ''
+          }
         }
       }
 
       function cancel(): void {
         state.isEditing = false
-        state.newGameName = user.value.displayName
+        state.newGameName = user!.value!.displayName as string
         state.newAvatarUrl = ''
         state.newAvatar = null
         state.inGameNameErrorMessage = ''
@@ -282,7 +285,7 @@
 
       function close(): void {
         state.dialog = false
-        state.newGameName = user.value.displayName
+        state.newGameName = user!.value!.displayName as string
         state.newAvatarUrl = ''
         state.newAvatar = null
         state.inGameNameErrorMessage = ''
@@ -290,7 +293,7 @@
       }
 
       onMounted(() => {
-        state.newGameName = user.value.displayName
+        state.newGameName = user!.value!.displayName as string
       })
 
       return {

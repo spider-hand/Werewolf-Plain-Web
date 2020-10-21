@@ -29,7 +29,7 @@
   import 'firebase/firestore'
   import 'firebase/functions'
 
-  import { Room, Player } from '@/types/index'
+  import { Room, Player, DialogComponent, } from '@/types/index'
   import DialogRoomLeave from '@/components/dialog/DialogRoomLeave.vue'
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
 
@@ -43,7 +43,7 @@
       const route = context.root.$route
       const store = context.root.$store
 
-      const dialogMessage = ref(null)
+      const dialogMessage = ref<DialogComponent | null>(null)
 
       const state = reactive<{
         errorMessage: string,
@@ -120,7 +120,7 @@
       }
 
       function showErrorDialog(): void {
-        dialogMessage.value.open()
+        dialogMessage!.value!.open()
       }
 
       function decideRoles(capacity: number): void {
