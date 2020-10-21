@@ -150,7 +150,7 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background-color: $black2;
+    background-color: $black1;
   }
 
   .sign-in-form-wrapper {
