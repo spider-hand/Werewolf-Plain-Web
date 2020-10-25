@@ -1,6 +1,7 @@
 <template>
   <v-dialog 
     persistent
+    :fullscreen="$viewport.width < 450"
     max-width="600"
     v-model="state.dialog">
     <template v-slot:activator="{ on }">
@@ -528,5 +529,18 @@
 
   .input-error {
     border: 1.5px solid $red1;
+  }
+
+  @media(max-width: 450px) {
+    .input-wrapper, .input-capacity-wrapper, .input-daytime-wrapper, 
+    .input-night-wrapper, .input-wrapper-2 {
+      padding: 0;     
+    }
+
+    .dialog-actions {
+      position: absolute;
+      width: 100%;
+      bottom: 0px;
+    }
   }
 </style>

@@ -153,4 +153,16 @@
   .input-error {
     border: 1.5px solid $red1;
   }
+
+  @media(max-width: 450px) {
+    .password-reset-form-wrapper {
+      width: 100%;
+      margin: 0 10px 0 10px;
+    }
+
+    .input-wrapper, .btn-wrapper {
+      padding: 0 15px 0 15px;
+      margin: 15px 0 20px 0;
+    }
+  }
 </style>

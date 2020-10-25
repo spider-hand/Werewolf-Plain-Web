@@ -273,10 +273,6 @@
     text-decoration: none;
   }
 
-  .link-wrapper {
-    margin: 0 0 5px 30px;
-  }
-
  .link-wrapper span {
     font-size: 14px;
     color: $gray1;
@@ -288,5 +284,17 @@
 
   .input-error {
     border: 1.5px solid $red1;
+  }
+
+  @media(max-width: 450px) {
+    .sign-up-form-wrapper {
+      width: 100%;
+      margin: 0 10px 0 10px;
+    }
+
+    .input-wrapper, .btn-wrapper {
+      padding: 0 15px 0 15px;
+      margin: 15px 0 20px 0; 
+    }   
   }
 </style>

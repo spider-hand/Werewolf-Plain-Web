@@ -1,6 +1,12 @@
 <template>
   <div id="page">
-    <div class="nav-player-list"> 
+    <v-navigation-drawer 
+      class="nav-player-list"
+      width="320"
+      absolute
+      :permanent="$viewport.width >= 450"
+      :temporary="$viewport.width < 450"
+      v-model="state.sidebar"> 
       <v-list class="player-list-wrapper">
         <v-list-item-group v-model="state.selectedPlayerIndex">
           <v-list-item class="player-item">
@@ -79,12 +85,12 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
-    </div>
+    </v-navigation-drawer>
     <div 
       class="chat-container"
       :style="{ 
         height: isFormVisible ? $viewport.height - 193 + 'px' : $viewport.height - 64 + 'px', 
-        width: $viewport.width - 337 + 'px' }">
+        width: $viewport.width >= 450 ? $viewport.width - 337 + 'px' : 100 + '%' }">
       <ul>
         <li v-for="message in selectedMessages">
           <div class="message">
@@ -108,6 +114,7 @@
       v-if="isFormVisible"
       @submit.prevent="validate">
       <textarea 
+        :style="{ width: $viewport.width >= 450 ? $viewport.width - 337 + 'px' : 100 + '%' }"
         class="message-input"
         maxlength="500"
         rows="4"
@@ -164,6 +171,7 @@
         isInitialWerewolfgTriggerDone: boolean,
         isInitialSeerTriggerDone: boolean,
         isInitialMediumTriggerDone: boolean,
+        sidebar: boolean,
       }>({
         room: null,
         myself: null,
@@ -183,6 +191,7 @@
         isInitialWerewolfgTriggerDone: false,
         isInitialSeerTriggerDone: false,
         isInitialMediumTriggerDone: false,
+        sidebar: false,
       })
 
       const user = computed<FirebaseUser | null>(() => {
@@ -585,11 +594,6 @@
   }
 
   .nav-player-list {
-    position: absolute;
-    height: 100%;
-    top: 0px;
-    left: 0px;
-    width: 320px;
     background-color: $black2;
     border-right: 0.2px solid $gray21;
   }
@@ -665,7 +669,6 @@
 
   .message-input {
     position: fixed;
-    width: calc(100% - 320px);
     right: 0px;
     bottom: 28px;
     padding: 5px 10px 0 10px;

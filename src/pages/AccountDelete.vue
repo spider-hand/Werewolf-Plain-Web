@@ -1,13 +1,13 @@
 <template>
   <div id="page">
     <v-container 
-      class="sign-in-form-container"
+      class="delete-account-form-container"
       fill-height
       fluid>
       <v-row>
-        <div class="sign-in-form-wrapper">
+        <div class="delete-account-form-wrapper">
           <form 
-            class="sign-in-form-group"
+            class="delete-account-form-group"
             @submit.prevent="validate">
             <div class="input-wrapper">
               <label 
@@ -17,7 +17,7 @@
                 class="input-label ml-2"
                 :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>
               <input 
-                class="sign-in-input"
+                class="delete-account-input"
                 :class="{ 'input-error': hasEmailError }"
                 type="email" 
                 name="email"
@@ -31,7 +31,7 @@
                 class="input-label ml-2"
                 :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
               <input 
-                class="sign-in-input"
+                class="delete-account-input"
                 :class="{ 'input-error': hasPasswordError }"
                 type="password" 
                 name="password"
@@ -39,7 +39,7 @@
             </div>
             <div class="btn-wrapper">
               <button 
-                class="sign-in-btn"
+                class="delete-account-btn"
                 type="submit">DELETE ACCOUNT</button>
             </div>
           </form>
@@ -153,7 +153,7 @@
     background-color: $black1;
   }
 
-  .sign-in-form-wrapper {
+  .delete-account-form-wrapper {
     width: 500px;
     border-radius: 3px;
     background-color: $black3;
@@ -179,7 +179,7 @@
     font-weight: 500;
   }
 
-  .sign-in-input {
+  .delete-account-input {
     font-size: 16px;
     width: 100%;
     height: 45px;
@@ -190,11 +190,11 @@
     padding: 0 10px 0 10px;
   }
 
-  .sign-in-input:focus {
+  .delete-account-input:focus {
     outline: none;
   }
 
-  .sign-in-btn {
+  .delete-account-btn {
     font-size: 16px;
     width: 100%;
     height: 50px;
@@ -232,5 +232,17 @@
 
   .input-error {
     border: 1.5px solid $red1;
+  }
+
+  @media(max-width: 450px) {
+    .delete-account-form-wrapper {
+      width: 100%;
+      margin: 0 10px 0 10px;
+    }
+
+    .input-wrapper, .btn-wrapper {
+      padding: 0 15px 0 15px;
+      margin: 15px 0 20px 0; 
+    }   
   }
 </style>
