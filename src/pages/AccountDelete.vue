@@ -111,18 +111,21 @@
           user!.value!.reauthenticateWithCredential(credentials)
             .then((credential) => {
               // Delete the account if the email and the password are correct
-              user!.value!.delete().then(() => {
-                const db = firebase.firestore()
-                const docRef = db.collection('users').doc(user!.value!.uid)
+              const db = firebase.firestore()
+              const docRef = db.collection('users').doc(credential!.user!.uid)
 
-                docRef.delete().then(() => {
+              docRef.delete().then(() => {
+                user!.value!.delete().then(() => {
                   router.push({
                     name: 'room-list',
                   })
                 })
+                .catch((err) => {
+                  console.log(err)
+                })
               })
               .catch((err) => {
-                // TODO: Set an error message in case auth user can not be deleted for some reasons
+                console.log(err)
               })
             })
             .catch((err) => {
