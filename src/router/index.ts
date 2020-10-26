@@ -41,6 +41,7 @@ export default new Router ({
       path: '/room-list',
       name: 'room-list',
       component: RoomList,
+      props: true,
     },
     {
       path: '/game/:id',

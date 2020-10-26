@@ -118,6 +118,9 @@
                 user!.value!.delete().then(() => {
                   router.push({
                     name: 'room-list',
+                    params: {
+                      snackbarText: 'Your account has been deleted.',
+                    }
                   })
                 })
                 .catch((err) => {
