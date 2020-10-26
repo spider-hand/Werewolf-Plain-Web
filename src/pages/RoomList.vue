@@ -196,16 +196,7 @@
           </v-simple-table>
         </v-tab-item>
       </v-tabs>
-      <v-snackbar 
-        class="snackbar"
-        color="#2F3136"
-        :timeout="6000"
-        :value="props.snackbarText"
-        absolute
-        bottom
-        centered>
-        {{ props.snackbarText }}
-      </v-snackbar>
+      <Snackbar :text="props.snackbarText" />
     </v-container>
   </div>
 </template>
@@ -222,6 +213,7 @@
   import DialogAccessCode from '@/components/dialog/DialogAccessCode.vue'
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
   import DialogRoomDetails from '@/components/dialog/DialogRoomDetails.vue'
+  import Snackbar from '@/components/snackbar/Snackbar.vue'
 
   export default defineComponent({
     props: {
@@ -236,6 +228,7 @@
       DialogAccessCode,
       DialogMessage,
       DialogRoomDetails,
+      Snackbar,
     },
 
     setup(props, context) {
