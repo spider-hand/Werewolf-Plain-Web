@@ -407,18 +407,12 @@
       }
 
       return {
-        router,
         store,
-        user,
         state,
         hasRoomNameError,
         hasDescriptionError,
         hasAccessCodeError,
         validate,
-        validateRoomName,
-        validateRoomDescription,
-        validateAccessCode,
-        createRoom,
         cancel,
       }
     }

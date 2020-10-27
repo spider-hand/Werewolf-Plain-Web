@@ -75,7 +75,6 @@
 
       return {
         state,
-        handleVerifyEmail,
       }
     }
   })

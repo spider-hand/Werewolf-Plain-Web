@@ -419,17 +419,10 @@
 
       return {
         props,
-        store,
-        user,
         state,
-        selectedStatus,
-        dialogAccessCode,
-        dialogMessage,
         onClickTableRow,
-        validateAccessCode,
         enterRoom,
-        showErrorDialog,
-        updateRoomList
+        validateAccessCode,
       }
     }
   })

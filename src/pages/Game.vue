@@ -546,29 +546,21 @@
       })
 
       return {
-        router,
-        route,
-        store,
-        user,
         state,
-        isMyselfOwner,
         hasGameStarted,
         isGameOngoing,
-        hasGameDone,
+        isMyselfOwner,
         isWerewolf,
         isSeer,
         isMedium,
-        isKnight,
-        isAlive,
         isFormVisible,
         selectedMessages,
         isMyself,
-        validate,
-        sendMessage,
         vote,
         bite,
         protect,
-        checkRole
+        checkRole,
+        validate,
       }
     },
   })

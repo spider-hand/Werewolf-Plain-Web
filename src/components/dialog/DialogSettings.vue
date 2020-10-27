@@ -297,19 +297,16 @@
       })
 
       return {
-        store,
-        user,
-        avatarInput,
         state,
+        user,
         hasInGameNameError,
         hasAvatarError,
-        edit,
-        validate,
-        update,
         onClickAvatarInput,
         getFile,
-        cancel,
+        edit,
+        validate,
         close,
+        cancel,
       }
     }
   })

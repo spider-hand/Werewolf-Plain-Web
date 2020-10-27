@@ -186,21 +186,12 @@
       }
 
       return {
-        route,
-        store,
-        isJoiningThisGame,
-        user,
-        room,
-        myself,
-        dialogMessage,
         state,
+        isGameReady,
         isOwner,
         hasGameStarted,
-        isGameReady,
+        isJoiningThisGame,
         startGame,
-        showErrorDialog,
-        decideRoles,
-        callCloudFunction,
       }
     }
   })

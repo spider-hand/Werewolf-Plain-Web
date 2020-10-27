@@ -199,7 +199,6 @@
         hasUsernameError,
         hasPasswordError,
         validate,
-        signUpWithEmailAndPassword,
       }
     }
   })  

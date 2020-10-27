@@ -147,7 +147,6 @@
         hasEmailError,
         hasPasswordError,
         validate,
-        signInWithEmailAndPassword,
       }
     }
   })
