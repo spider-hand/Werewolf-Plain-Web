@@ -94,6 +94,7 @@
         state,
         hasAccessCodeError,
         validate,
+        open,
         cancel,
       }
     }

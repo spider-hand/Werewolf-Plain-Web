@@ -53,6 +53,7 @@
       return {
         props,
         state,
+        open,
         close,
       }
     }

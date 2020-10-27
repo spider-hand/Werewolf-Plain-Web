@@ -298,6 +298,7 @@
 
       return {
         state,
+        avatarInput,
         user,
         hasInGameNameError,
         hasAvatarError,
