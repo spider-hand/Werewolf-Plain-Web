@@ -306,9 +306,10 @@
 
           room.get().then((roomDoc) => {
             if (roomDoc.exists) {
-              if (roomDoc.data()!.banList!.length) {
-                for (let i = 0; i < roomDoc.data()!.banList!.length; i++) {
-                  if (roomDoc.data()!.banList[i]! === user!.value!.uid) {
+              const roomData = roomDoc.data() as Room
+              if (roomData.banList!.length) {
+                for (let i = 0; i < roomData.banList!.length; i++) {
+                  if (roomData.banList[i]! === user!.value!.uid) {
                     isBanned = true
                     break
                   }
@@ -317,7 +318,9 @@
 
               if (!isBanned) {
                 room.collection('players').doc(user!.value!.uid).get().then((playerDoc) => {
-                  if (!playerDoc.exists && roomDoc.data()!.status === 'new' && roomDoc.data()!.numberOfParticipants < roomDoc.data()!.capacity) {
+                  if (!playerDoc.exists 
+                      && roomData.status === 'new' 
+                      && roomData.numberOfParticipants < roomData.capacity) {
                     const updateRoom = 
                       room.update({
                         numberOfParticipants: firebase.firestore.FieldValue.increment(1),
@@ -392,14 +395,16 @@
         db.collection('rooms').orderBy('timestamp', 'desc').get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-              if (doc.data()!.status! === 'new') {
-                state.newRooms.push(doc.data() as Room)
+              const roomData = doc.data() as Room
+
+              if (roomData.status === 'new') {
+                state.newRooms.push(roomData)
                 state.newRooms[state.newRooms.length - 1].id = doc.id
-              } else if (doc.data()!.status! === 'ongoing') {
-                state.ongoingRooms.push(doc.data() as Room)
+              } else if (roomData.status === 'ongoing') {
+                state.ongoingRooms.push(roomData)
                 state.ongoingRooms[state.ongoingRooms.length - 1].id = doc.id
               } else {
-                state.closedRooms.push(doc.data() as Room)
+                state.closedRooms.push(roomData)
                 state.closedRooms[state.closedRooms.length - 1].id = doc.id
               }
             })
@@ -420,6 +425,8 @@
       return {
         props,
         state,
+        dialogAccessCode,
+        dialogMessage,
         onClickTableRow,
         enterRoom,
         validateAccessCode,

@@ -487,33 +487,34 @@
 
         docRef.collection('players').onSnapshot((querySnapshot) => {
           querySnapshot.docChanges().forEach((change) => {
+            const playerData = change.doc.data() as Player
             if (change.type === 'added') {
-              state.players.push(change.doc.data() as Player)
+              state.players.push(playerData)
             }
 
             if (change.type === 'modified') {
               for (let i = 0; i < state.players.length; i++) {
-                if (state.players[i].uid === change.doc.data().uid) {
-                  state.players[i] = change.doc.data() as Player
+                if (state.players[i].uid === playerData.uid) {
+                  state.players[i] = playerData
                 }
               }
             }
 
             if (change.type === 'removed') {
               for (let i = 0; i < state.players.length; i++) {
-                if (state.players[i].uid === change.doc.data().uid) {
+                if (state.players[i].uid === playerData.uid) {
                   state.players.splice(i, 1)
                 }
               }
             }
 
             if (user.value) {
-              if (user.value.uid === change.doc.data().uid) {
+              if (user.value.uid === playerData.uid) {
                 state.isJoiningThisGame = true
                 store.commit('isJoiningUpdated', true)
 
                 if (change.type === 'added' || change.type === 'modified') {
-                  state.myself = change.doc.data() as Player
+                  state.myself = playerData
                   store.commit('onMyselfUpdated', state.myself)
                 } else {
                   // Force the player to exit the game when the player doc has been removed
