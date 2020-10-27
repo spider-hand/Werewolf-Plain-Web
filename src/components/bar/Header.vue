@@ -59,10 +59,10 @@
  }
 
  .sign-in-btn {
- 	color: $red1 !important;
+  color: $red1 !important;
  }
 
  .sign-in-btn, .sign-up-btn {
- 	text-transform: none;
+  text-transform: none;
  }
 </style>

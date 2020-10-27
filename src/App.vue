@@ -15,8 +15,8 @@
     name: 'App',
 
     components: {
-    	'headerDefault': Header,
-    	'headerGame': HeaderGame,
+      'headerDefault': Header,
+      'headerGame': HeaderGame,
     },
 
     setup(props, context) {
