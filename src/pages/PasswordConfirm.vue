@@ -68,6 +68,7 @@
     },
 
     setup(props, context) {
+      const router = context.root.$router
       const auth = firebase.auth()
 
       const state = reactive<{
@@ -85,13 +86,14 @@
       })
 
       function handleResetPassword(auth: firebase.auth.Auth, actionCode: string, lang: string): void {
-        auth.verifyPasswordResetCode(actionCode).then((email) => {
+        auth.verifyPasswordResetCode(actionCode)
+          .then((email) => {
 
-        })
-        .catch((err) => {
-          // Invalid or expired action code.
-          state.passwordErrorMessage = "This credential is invalid or has been expired."
-        })
+          })
+          .catch((err) => {
+            // Invalid or expired action code.
+            state.passwordErrorMessage = "This credential is invalid or has been expired."
+          })
       }
 
       function validate(): void {
@@ -104,18 +106,24 @@
       }
 
       function confirmPasswordReset(): void {
-        auth.confirmPasswordReset(props.actionCode, state.newPassword).then((resp) => {
-
-        })
-        .catch((err) => {
-          if (err.code === 'auth/expired-action-code' || err.code === 'auth/invalid-action-code') {
-            state.passwordErrorMessage = "This credential is invalid or has been expired."
-          } else if (err.code === 'auth/user-not-found' || err.code === 'auth/user-disabled') {
-            state.passwordErrorMessage = "This user can not be found."
-          } else if (err.code === 'auth/weak-password') {
-            state.passwordErrorMessage = "This password is too weak."
-          }
-        })
+        auth.confirmPasswordReset(props.actionCode, state.newPassword)
+          .then((resp) => {
+            router.push({
+              name: 'sign-in',
+              params: {
+                snackbarText: 'Your password has been reset.',
+              }
+            })
+          })
+          .catch((err) => {
+            if (err.code === 'auth/expired-action-code' || err.code === 'auth/invalid-action-code') {
+              state.passwordErrorMessage = "This credential is invalid or has been expired."
+            } else if (err.code === 'auth/user-not-found' || err.code === 'auth/user-disabled') {
+              state.passwordErrorMessage = "This user can not be found."
+            } else if (err.code === 'auth/weak-password') {
+              state.passwordErrorMessage = "This password is too weak."
+            }
+          })
       }
 
       onMounted(() => {
@@ -125,6 +133,7 @@
       return {
         state,
         hasPasswordError,
+        validate,
       }
     }
   })

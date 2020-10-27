@@ -63,6 +63,7 @@
           </div>
         </v-col>
       </v-row>
+      <Snackbar :text="props.snackbarText" />
     </v-container>
   </div>
 </template>
@@ -73,7 +74,19 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
 
+  import Snackbar from '@/components/snackbar/Snackbar.vue'
+
   export default defineComponent({
+    props: {
+      snackbarText: {
+        type: String,
+        required: false,
+      }
+    },
+
+    components: {
+      Snackbar,
+    },
 
     setup(props, context) {
       const router = context.root.$router
@@ -123,14 +136,13 @@
             })
           })
           .catch((err) => {
-            console.log(err)
-
             state.emailErrorMessage = emailDoesNotMatch
             state.passwordErrorMessage = passwordDoesNotMatch
           })
       }
 
       return {
+        props,
         state,
         hasEmailError,
         hasPasswordError,

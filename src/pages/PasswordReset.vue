@@ -40,8 +40,9 @@
   import 'firebase/auth'
 
   export default defineComponent({
-
     setup(props, context) {
+      const router = context.root.$router
+
       const state = reactive<{
         email: string,
         emailErrorMessage: string,
@@ -65,16 +66,22 @@
       function sendPasswordResetEmail(): void {
         const auth = firebase.auth()
 
-        auth.sendPasswordResetEmail(state.email).then(() => {
-          // Email sent.
-          // TODO: Notify something so the user can check the email.
-        }).catch((err) => {
-          if (err.code === 'auth/user-not-found') {
-            state.emailErrorMessage = "This email address can not be found."
-          } else if (err.code === 'auth/invalid-email') {
-            state.emailErrorMessage = "This email is invalid."
-          }
-        })
+        auth.sendPasswordResetEmail(state.email)
+          .then(() => {
+            router.push({
+              name: 'room-list',
+              params: {
+                snackbarText: 'Password reset email has been sent.',
+              }
+            })
+          })
+          .catch((err) => {
+            if (err.code === 'auth/user-not-found') {
+              state.emailErrorMessage = "This email address can not be found."
+            } else if (err.code === 'auth/invalid-email') {
+              state.emailErrorMessage = "This email is invalid."
+            }
+          })
       }
 
       return {

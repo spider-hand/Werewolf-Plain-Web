@@ -53,6 +53,7 @@ export default new Router ({
       name: 'sign-in',
       component: SignIn,
       beforeEnter: ifNotAuthenticated,
+      props: true,
     },
     {
       path: '/sign-up',
