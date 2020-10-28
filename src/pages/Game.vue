@@ -268,7 +268,7 @@
         } else if (state.isResultsMediumOpened) {
           return state.resultsMedium
         } else {
-          let individualMessages = []
+          const individualMessages = []
 
           try {
             for (let i = 0; i < state.messages.length; i++) {
@@ -400,9 +400,10 @@
       )
 
       watch(
-        () => state.myself,
-        (newVal: Player | null, oldVal: Player | null) => {
-          if (oldVal?.role === null && newVal?.role !== null) {
+        () => state?.myself?.role,
+        (newVal: string | null, oldVal: string | null) => {
+          // Trigger listener for extra messages when the role has been decided
+          if (newVal !== null) {
             const db = firebase.firestore()
             const docRef = db.collection('rooms').doc(route.params.id)
 
