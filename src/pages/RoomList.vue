@@ -14,7 +14,8 @@
       <v-tabs
         background-color="#2F3136"
         color="#FF5252"
-        dark>
+        dark
+        v-model="state.selectedTab">
         <v-tab>New</v-tab>
         <v-tab>Ongoing</v-tab>
         <v-tab>Closed</v-tab>
@@ -101,7 +102,7 @@
                 :key="room.id">
                 <tr
                   :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
-                  @click="onClickTableRow(index)">
+                  @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
                       class="icon-private"
@@ -160,7 +161,7 @@
                 :key="room.id">
                 <tr
                   :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
-                  @click="onClickTableRow(index)">
+                  @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
                       class="icon-private"

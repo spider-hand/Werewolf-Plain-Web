@@ -17,7 +17,6 @@
               <span class="player-name">All</span>
             </v-list-item-content>
           </v-list-item>
-          <v-divider />
           <v-list-item 
             class="player-item"
             v-for="player in state.players"
@@ -49,37 +48,41 @@
                 v-if="isGameOngoing && state.isJoiningThisGame && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
                 icon
                 @click="vote(player)">
-                <v-icon class="icon-action">mdi-vote</v-icon>
+                <v-icon :color="state.myself.votedPlayer !== null && player.uid === state.myself.votedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
               </v-btn>
               <v-btn
                 v-if="isGameOngoing && state.isJoiningThisGame && isWerewolf && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
                 icon
                 @click="bite(player)">
-                <v-icon class="icon-bite">mdi-vote</v-icon>
+                <v-icon :color="state.myself.bittenPlayer !== null && player.uid === state.myself.bittenPlayer.uid ? '#FF5252' : '#757575'">mdi-vote</v-icon>
               </v-btn>
               <v-btn
                 v-if="isGameOngoing && state.isJoiningThisGame && isKnight && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
                 icon
                 @click="protect(player)">
-                <v-icon class="icon-action">mdi-shield-cross-outline</v-icon>
+                <v-icon :color="state.myself.protectedPlayer !== null && player.uid === state.myself.protectedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-shield-cross-outline</v-icon>
               </v-btn>
               <v-btn
                 v-if="isGameOngoing && state.isJoiningThisGame && isSeer && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
                 icon
                 @click="checkRole(player)">
-                <v-icon class="icon-action">mdi-eye</v-icon>
+                <v-icon :color="state.myself.divinedPlayer !== null && player.uid === state.myself.divinedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
               </v-btn>            
             </v-list-item-action>
           </v-list-item>
           <v-divider v-if="isWerewolf || isSeer || isMedium" />
           <v-list-item v-if="isWerewolf || isSeer || isMedium">
-            <v-list-icon>
+            <v-list-item-icon>
               <v-icon class="icon-pound">mdi-pound</v-icon>
-            </v-list-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span v-if="isWereowlf">Werewolf Chat</span>
-                <span v-if="isSeer || isMedium">Result</span>
+                <span 
+                  class="player-name"
+                  v-if="isWerewolf">Werewolf Chat</span>
+                <span 
+                  class="player-name"
+                  v-if="isSeer || isMedium">Result</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -404,7 +407,7 @@
             const docRef = db.collection('rooms').doc(route.params.id)
 
             // Get werewolf messages if the player's role is werewolf
-            if (isWerewolf) {
+            if (isWerewolf.value) {
               docRef.collection('werewolfMessages').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
                   Promise.all(querySnapshot.docs.map((doc) => {
@@ -425,7 +428,7 @@
             }
 
             // Get the results messages if the player's role is seer
-            if (isSeer) {
+            if (isSeer.value) {
               docRef.collection('resultsSeer').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
                   Promise.all(querySnapshot.docs.map((doc) => {
@@ -446,7 +449,7 @@
             }
 
             // Get the results messages if the player's role is medium
-            if (isMedium) {
+            if (isMedium.value) {
               docRef.collection('resultsMedium').orderBy('timestamp', 'asc').get()
                 .then((querySnapshot) => {
                   Promise.all(querySnapshot.docs.map((doc) => {
@@ -554,6 +557,7 @@
         isWerewolf,
         isSeer,
         isMedium,
+        isKnight,
         isFormVisible,
         selectedMessages,
         isMyself,

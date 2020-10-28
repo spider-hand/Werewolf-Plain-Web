@@ -8,11 +8,10 @@
     <div class="flex-grow-1"></div>
     <v-btn
       class="start-btn"
-      :class="{ 'text-danger': isGameReady }"
       v-if="isOwner && !hasGameStarted"
       text
       @click="startGame">
-      <span>START</span>
+      <span :class="{ 'text-danger': isGameReady }">START</span>
     </v-btn>
     <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
     <DialogMessage 
@@ -109,9 +108,14 @@
 
           Promise.all(promises)
             .then(() => {
-              decideRoles(room!.value!.capacity)
-
+              const roles = shuffleRoles(room!.value!.capacity)
+              return decideRoles(roles)
+            })
+            .then(() => {
               callCloudFunction()
+            })
+            .catch((err) => {
+              console.log(err)
             })
         } else {
           state.errorMessage = "This room is not ready."
@@ -123,7 +127,7 @@
         dialogMessage!.value!.open()
       }
 
-      function decideRoles(capacity: number): void {
+      function shuffleRoles(capacity: number): string[] {
         let roles: string[]
         switch (capacity) {
           case 5:
@@ -155,7 +159,10 @@
           roles[i] = roles[j]
           roles[j] = temp
         }
+        return roles
+      }
 
+      async function decideRoles(roles: string[]): Promise<void> {
         const db = firebase.firestore()
         const playersCollectionRef = db.collection('rooms').doc(route.params.id).collection('players')
 
