@@ -102,7 +102,7 @@
               :src="message.avatar ? message.avatar : 'https://source.unsplash.com/random'"></v-img>
             <small 
               class="message-from"
-              :style="{ color: '#FFFFFF' }">{{ message.gameName }}</small>
+              :style="{ color: message.from == 'GM' ? '#43B581' : (message.isFromGrave ? '#F44336': '#FFFFFF') }">{{ message.gameName }}</small>
             <div class="message-timestamp">
               <span>{{ message.timestamp.toDate().toLocaleString() }}</span>
             </div>
@@ -248,7 +248,7 @@
       // Get the messages that shows on chat
       const selectedMessages = computed<Message[]>(() => {
         if (state.isChatAllOpened) {
-          if (isAlive && isGameOngoing) {
+          if (isAlive.value && isGameOngoing.value) {
             return state.messages.filter((message) => {
               return !message.isFromGrave
             })
@@ -256,7 +256,7 @@
             return state.messages
           }
         } else if (state.isWerewolfChatOpened) {
-          if (isAlive) {
+          if (isAlive.value) {
             return state.werewolfMessages.filter((werewolfMessage: Message) => {
               return !werewolfMessage.isFromGrave
             })
@@ -274,7 +274,7 @@
             for (let i = 0; i < state.messages.length; i++) {
               if (state.messages[i].from === state.players[state.selectedPlayerIndex - 1].uid) {
                 // Players can not see the messages from the grave while the game is ongoing and the player is alive
-                if (!isAlive || !isGameOngoing || !state.messages[i].isFromGrave) {
+                if (!isAlive.value || !isGameOngoing.value || !state.messages[i].isFromGrave) {
                   individualMessages.push(state.messages[i])
                 }
               }
@@ -314,7 +314,7 @@
             body: state.message,
             gameName: state!.myself!.name,
             avatar: state!.myself!.avatar,
-            isFromGrave: !isAlive,
+            isFromGrave: !isAlive.value,
           })
           .then((docRef) => {
             state.message = ''
@@ -326,7 +326,7 @@
             body: state.message,
             gameName: state!.myself!.name,
             avatar: state!.myself!.avatar,
-            isFromGrave: !isAlive,
+            isFromGrave: !isAlive.value,
           })
           .then((docRef) => {
             state.message = ''
@@ -401,9 +401,9 @@
 
       watch(
         () => state?.myself?.role,
-        (newVal: string | null, oldVal: string | null) => {
+        (newVal: string | null | undefined, oldVal: string | null | undefined) => {
           // Trigger listener for extra messages when the role has been decided
-          if (newVal !== null) {
+          if (newVal !== null && newVal !== undefined) {
             const db = firebase.firestore()
             const docRef = db.collection('rooms').doc(route.params.id)
 

@@ -158,7 +158,11 @@ exports.executeDaytimeTask = functions.https.onRequest((req, res) => {
             countsWerewolf += 1
 
             if (bittenPlayer !== null) {
-              countsBite[bittenPlayer.uid] += 1
+              if (countsBite[bittenPlayer.uid] === undefined) {
+                countsBite[bittenPlayer.uid] = 1
+              } else {
+                countsBite[bittenPlayer.uid] += 1
+              }
 
               if (countsBite[bittenPlayer.uid] > compareBite) {
                 compareBite = countsBite[bittenPlayer.uid]
@@ -331,8 +335,7 @@ exports.executeDaytimeTask = functions.https.onRequest((req, res) => {
 
 function resetPlayerStatus(roomRef: FirebaseFirestore.DocumentReference, playerDoc: FirebaseFirestore.DocumentData): Promise<FirebaseFirestore.WriteResult | void> {
   const promise = 
-    roomRef.collection('players').doc(playerDoc.id)
-      .update({
+    roomRef.collection('players').doc(playerDoc.id).update({
         votedPlayer: null,
         bittenPlayer: null,
         protectedPlayer: null,
@@ -347,8 +350,7 @@ function resetPlayerStatus(roomRef: FirebaseFirestore.DocumentReference, playerD
 
 function killPlayer(roomRef: FirebaseFirestore.DocumentReference, uid: string): Promise<FirebaseFirestore.WriteResult | void> {
   const promise = 
-    roomRef.collection('players').doc(uid)
-      .update({
+    roomRef.collection('players').doc(uid).update({
         isAlive: false,
       })
       .catch((err) => {
@@ -359,8 +361,7 @@ function killPlayer(roomRef: FirebaseFirestore.DocumentReference, uid: string): 
 
 function sendDaytimeMessage(roomRef: FirebaseFirestore.DocumentReference, daytimeMessage: string): Promise<FirebaseFirestore.DocumentReference | void> {
   const promise = 
-    roomRef.collection('messages')
-      .add({
+    roomRef.collection('messages').add({
         from: 'GM',
         timestamp: admin.firestore.Timestamp.now(),
         body: daytimeMessage,
@@ -379,8 +380,7 @@ function sendSeerResult(roomRef: FirebaseFirestore.DocumentReference, divinedPla
   const divinedPlayerRole = divinedPlayer.role !== 'werewolf' ? 'human' : 'werewolf'
 
   const promise = 
-    roomRef.collection('resultsSeer')
-      .add({
+    roomRef.collection('resultsSeer').add({
         from: 'GM',
         timestamp: admin.firestore.Timestamp.now(),
         body: `${divinedPlayer.name} is ${divinedPlayerRole}.`,
@@ -399,8 +399,7 @@ function sendMediumResult(roomRef: FirebaseFirestore.DocumentReference, mostVote
   const mostVotedPlayerRole = mostVotedPlayer.role !== 'werewolf' ? 'human' : 'werewolf'
 
   const promise = 
-    roomRef.collection('resultsMedium')
-      .add({
+    roomRef.collection('resultsMedium').add({
         from: 'GM',
         timestamp: admin.firestore.Timestamp.now(),
         body: `${mostVotedPlayer.name} is ${mostVotedPlayerRole}.`,
@@ -444,7 +443,7 @@ exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').
       	const roomDoc = doc.data() as Room
 
         const status = roomDoc.status
-        const createdAt = roomDoc.timestamp.getTime()
+        const createdAt = (doc.data().timestamp as FirebaseFirestore.Timestamp).toMillis()
         const currentDate = Date.now()
         const difference = currentDate - createdAt
 

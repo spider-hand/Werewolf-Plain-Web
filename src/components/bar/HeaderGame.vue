@@ -194,6 +194,7 @@
 
       return {
         state,
+        dialogMessage,
         isGameReady,
         isOwner,
         hasGameStarted,
