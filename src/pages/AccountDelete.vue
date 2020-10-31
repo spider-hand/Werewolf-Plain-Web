@@ -55,6 +55,7 @@
   import firebase from 'firebase/app'
   import 'firebase/auth'
   import 'firebase/firestore'
+  import 'firebase/storage'
   import { User as FirebaseUser } from 'firebase'
 
   export default defineComponent({
@@ -115,6 +116,13 @@
               const docRef = db.collection('users').doc(credential!.user!.uid)
 
               docRef.delete().then(() => {
+                // Delete an avatar associated with the user
+                const storage = firebase.storage()
+                const storageRef = storage.ref('avatars/' + user!.value!.uid)
+
+                // Log the error when the image doesn't exist and move on
+                storageRef.delete().catch((err) => console.log(err))
+
                 user!.value!.delete().then(() => {
                   router.push({
                     name: 'room-list',
