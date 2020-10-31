@@ -9,6 +9,7 @@ import SignUp from '@/pages/SignUp.vue'
 import PasswordReset from '@/pages/PasswordReset.vue'
 import AuthAction from '@/pages/AuthAction.vue'
 import AccountDelete from '@/pages/AccountDelete.vue'
+import About from '@/pages/About.vue'
 
 Vue.use(Router)
 
@@ -42,6 +43,11 @@ export default new Router ({
       name: 'room-list',
       component: RoomList,
       props: true,
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About,
     },
     {
       path: '/game/:id',

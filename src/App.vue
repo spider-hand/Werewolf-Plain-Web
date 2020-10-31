@@ -2,6 +2,7 @@
   <v-app>
     <component :is="headerComponent" />
     <router-view />
+    <component :is="footerComponent" />
   </v-app>
 </template>
 
@@ -10,6 +11,7 @@
 
   import Header from '@/components/bar/Header.vue'
   import HeaderGame from '@/components/bar/HeaderGame.vue'
+  import Footer from '@/components/footer/Footer.vue'
   
   export default defineComponent({
     name: 'App',
@@ -17,6 +19,7 @@
     components: {
       'headerDefault': Header,
       'headerGame': HeaderGame,
+      'footerDefault': Footer,
     },
 
     setup(props, context) {
@@ -40,8 +43,19 @@
         }
       })
 
+      const footerComponent = computed<string | null>(() => {
+        const route = context.root.$route
+        switch (route.name) {
+          case 'about':
+            return 'footerDefault'
+          default:
+            return null
+        }
+      })
+
       return {
         headerComponent,
+        footerComponent,
       }
     }
   })
