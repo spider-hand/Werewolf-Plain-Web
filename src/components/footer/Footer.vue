@@ -6,12 +6,12 @@
      <v-row justify="center">
         <v-btn
           icon
-          href="">
+          href="https://github.com/spider-hand/Werewolf-Red">
           <v-icon size="30">mdi-github-circle</v-icon>
         </v-btn>
         <v-btn 
           icon
-          href="">
+          href="https://discord.gg/cVJG96cced">
           <v-icon size="30">mdi-discord</v-icon>
         </v-btn>
         <v-btn 
