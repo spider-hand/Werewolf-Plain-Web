@@ -1,63 +1,66 @@
 <template>
   <v-app>
-    <Title :title="$t('Title.title')" />
-    <Header 
-      v-if="$route.name != 'game'"
-      @updateSettings="updateSettings" />
-    <HeaderGame
-      v-else
-      :room="room"
-      :myself="myself"
-      :isJoiningThisGame="isJoining" />
-    <router-view 
-      :gameName="gameName"
-      :avatar="avatar"
-      @updateRoom="updateRoom"
-      @updateMyself="updateMyself"
-      @isJoiningThisGame="isJoiningThisGame" />
+    <component :is="headerComponent" />
+    <router-view />
+    <component :is="footerComponent" />
   </v-app>
 </template>
 
-<script>
-  import Title from '@/components/Title'
-  import Header from '@/components/Header'
-  import HeaderGame from '@/components/HeaderGame'
+<script lang="ts">
+  import { defineComponent, computed, onMounted, } from '@vue/composition-api'
 
-  export default {
+  import Header from '@/components/bar/Header.vue'
+  import HeaderGame from '@/components/bar/HeaderGame.vue'
+  import Footer from '@/components/footer/Footer.vue'
+  
+  export default defineComponent({
+    name: 'App',
+
     components: {
-      Title,
-      Header,
-      HeaderGame,
+      'headerDefault': Header,
+      'headerGame': HeaderGame,
+      'footerDefault': Footer,
     },
-    data() {
+
+    setup(props, context) {
+      const store = context.root.$store
+
+      const headerComponent = computed<string | null>(() => {
+        const route = context.root.$route
+        switch (route.name) {
+          case 'sign-in':
+          case 'sign-up':
+          case 'password-reset':
+          case 'password-confirm':
+          case 'email-verify':
+          case 'auth-action':
+          case 'account-delete':
+            return null
+          case 'game':
+            return 'headerGame'
+          default:
+            return 'headerDefault'
+        }
+      })
+
+      const footerComponent = computed<string | null>(() => {
+        const route = context.root.$route
+        switch (route.name) {
+          case 'about':
+            return 'footerDefault'
+          default:
+            return null
+        }
+      })
+
       return {
-        room: null,
-        myself: null,
-        isJoining: false,
-        gameName: '',
-        avatar: '',
+        headerComponent,
+        footerComponent,
       }
-    },
-    methods: {
-      updateRoom(room) {
-        this.room = room
-      },
-      updateMyself(myself) {
-        this.myself = myself
-      },
-      updateSettings(gameName, avatar) {
-        this.gameName = gameName
-        this.avatar = avatar
-      },
-      isJoiningThisGame(isJoining) {
-        this.isJoining = isJoining
-      },
     }
-  }
+  })
 </script>
 
-<style>
-  * {
-    text-transform: none !important;
-  }
+<style scoped>
+  
 </style>
