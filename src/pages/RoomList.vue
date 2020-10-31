@@ -1,7 +1,14 @@
 <template>
   <div id="page">
     <v-container class="mt-4">
-      <DialogRoomCreate />
+      <v-btn
+        class="host-game-btn"
+        depressed
+        :disabled="!user"
+        @click="showRoomCreateDialog">
+        <span>Host Game</span>
+      </v-btn>
+      <DialogRoomCreate ref="dialogRoomCreate" />
       <DialogAccessCode 
         ref="dialogAccessCode"
         :validAccessCode="state.validAccessCode"
@@ -9,6 +16,7 @@
       <DialogMessage 
         ref="dialogMessage"
         :message="state.errorMessage" />
+      <DialogSendVerificationEmail ref="dialogSendVerificationEmail"/>
     </v-container>
     <v-container>
       <v-tabs
@@ -214,6 +222,7 @@
   import DialogAccessCode from '@/components/dialog/DialogAccessCode.vue'
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
   import DialogRoomDetails from '@/components/dialog/DialogRoomDetails.vue'
+  import DialogSendVerificationEmail from '@/components/dialog/DialogSendVerificationEmail.vue'
   import Snackbar from '@/components/snackbar/Snackbar.vue'
 
   export default defineComponent({
@@ -229,6 +238,7 @@
       DialogAccessCode,
       DialogMessage,
       DialogRoomDetails,
+      DialogSendVerificationEmail,
       Snackbar,
     },
 
@@ -236,8 +246,10 @@
       const router = context.root.$router
       const store = context.root.$store
 
+      const dialogRoomCreate = ref<DialogComponent | null> (null)
       const dialogAccessCode = ref<DialogComponent | null>(null)
       const dialogMessage = ref<DialogComponent | null>(null)
+      const dialogSendVerificationEmail = ref<DialogComponent | null>(null) 
 
       const state = reactive<{
         selectedTab: number,
@@ -300,79 +312,84 @@
         }
 
         if (user.value) {
-          const db = firebase.firestore()
-          const room = db.collection('rooms').doc(roomId)
-          const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
-          let isBanned = false
+          if (user.value.emailVerified) {
+            const db = firebase.firestore()
+            const room = db.collection('rooms').doc(roomId)
+            const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
+            let isBanned = false
 
-          room.get().then((roomDoc) => {
-            if (roomDoc.exists) {
-              const roomData = roomDoc.data() as Room
-              if (roomData.banList!.length) {
-                for (let i = 0; i < roomData.banList!.length; i++) {
-                  if (roomData.banList[i]! === user!.value!.uid) {
-                    isBanned = true
-                    break
+            room.get().then((roomDoc) => {
+              if (roomDoc.exists) {
+                const roomData = roomDoc.data() as Room
+                if (roomData.banList!.length) {
+                  for (let i = 0; i < roomData.banList!.length; i++) {
+                    if (roomData.banList[i]! === user!.value!.uid) {
+                      isBanned = true
+                      break
+                    }
                   }
                 }
-              }
 
-              if (!isBanned) {
-                room.collection('players').doc(user!.value!.uid).get().then((playerDoc) => {
-                  if (!playerDoc.exists 
-                      && roomData.status === 'new' 
-                      && roomData.numberOfParticipants < roomData.capacity) {
-                    const updateRoom = 
-                      room.update({
-                        numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+                if (!isBanned) {
+                  room.collection('players').doc(user!.value!.uid).get().then((playerDoc) => {
+                    if (!playerDoc.exists 
+                        && roomData.status === 'new' 
+                        && roomData.numberOfParticipants < roomData.capacity) {
+                      const updateRoom = 
+                        room.update({
+                          numberOfParticipants: firebase.firestore.FieldValue.increment(1),
+                        })
+
+                      const putPlayer = 
+                        room.collection('players').doc(user!.value!.uid).set({
+                          uid: user!.value!.uid,
+                          name: user!.value!.displayName,
+                          avatar: user!.value!.photoURL,
+                          isAlive: true,
+                          votedPlayer: null,
+                          bittenPlayer: null,
+                          protectedPlayer: null,
+                          divinedPlayer: null,
+                        })
+
+                      const sendMessage = 
+                        room.collection('messages').add({
+                          from: 'GM',
+                          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                          body: `${user!.value!.displayName} has entered.`, 
+                          gameName: 'GM',
+                          avatar: '',
+                          isFromGrave: false,
+                        })
+
+                      promises.push(updateRoom)
+                      promises.push(putPlayer)
+                      promises.push(sendMessage)
+                    }
+
+                    Promise.all(promises)
+                      .then(() => {
+                        router.push({
+                          name: 'game',
+                          params: { id: roomId },
+                        })
                       })
-
-                    const putPlayer = 
-                      room.collection('players').doc(user!.value!.uid).set({
-                        uid: user!.value!.uid,
-                        name: user!.value!.displayName,
-                        avatar: user!.value!.photoURL,
-                        isAlive: true,
-                        votedPlayer: null,
-                        bittenPlayer: null,
-                        protectedPlayer: null,
-                        divinedPlayer: null,
-                      })
-
-                    const sendMessage = 
-                      room.collection('messages').add({
-                        from: 'GM',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        body: `${user!.value!.displayName} has entered.`, 
-                        gameName: 'GM',
-                        avatar: '',
-                        isFromGrave: false,
-                      })
-
-                    promises.push(updateRoom)
-                    promises.push(putPlayer)
-                    promises.push(sendMessage)
-                  }
-
-                  Promise.all(promises)
-                    .then(() => {
-                      router.push({
-                        name: 'game',
-                        params: { id: roomId },
-                      })
-                    })
-                })
+                  })
+                } else {
+                  // When player has been blocked
+                  state.errorMessage = "You have been blocked by the owner of this room."
+                  showErrorDialog()
+                }
               } else {
-                // When player has been blocked
-                state.errorMessage = "You have been blocked by the owner of this room."
+                // When the room has been deleted
+                state.errorMessage = "Can not find this room. Looks like this room has been deleted."
                 showErrorDialog()
               }
-            } else {
-              // When the room has been deleted
-              state.errorMessage = "Can not find this room. Looks like this room has been deleted."
-              showErrorDialog()
-            }
-          })
+            })
+          } else {
+            // When the user hasn't verified the email
+            showSendEmailVerificationDialog()
+          }
         }  else {
           // User who didn't sign in can see the game as a viewer
           router.push({
@@ -382,8 +399,22 @@
         }
       }
 
+      function showRoomCreateDialog(): void {
+        if (user.value) {
+          if (user!.value!.emailVerified) {
+            dialogRoomCreate!.value!.open()
+          } else {
+            showSendEmailVerificationDialog()
+          }
+        }
+      }
+
       function showErrorDialog(): void {
         dialogMessage!.value!.open()
+      }
+
+      function showSendEmailVerificationDialog(): void {
+        dialogSendVerificationEmail!.value!.open()
       }
 
       function updateRoomList(): void {
@@ -426,11 +457,15 @@
       return {
         props,
         state,
+        user,
+        dialogRoomCreate,
         dialogAccessCode,
         dialogMessage,
+        dialogSendVerificationEmail,
         onClickTableRow,
         enterRoom,
         validateAccessCode,
+        showRoomCreateDialog,
       }
     }
   })
@@ -466,5 +501,13 @@
   .enter-btn span {
     font-size: 14px;
     text-transform: none;
+  }
+
+  .host-game-btn span {
+    color: $white;
+  }
+
+  .host-game-btn {
+    background-color: $red1 !important;
   }
 </style>

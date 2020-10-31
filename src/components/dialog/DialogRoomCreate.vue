@@ -4,15 +4,6 @@
     :fullscreen="$viewport.width < 450"
     max-width="600"
     v-model="state.dialog">
-    <template v-slot:activator="{ on }">
-      <v-btn
-        class="host-game-btn"
-        depressed
-        :disabled="!store.getters.isSignedIn"
-        v-on="on">
-        <span>Host Game</span>
-      </v-btn>
-    </template>
     <v-card class="dialog-wrapper">
       <v-card-title class="dialog-title">
         <span>Create a game</span>
@@ -399,6 +390,10 @@
         }
       }
 
+      function open(): void {
+        state.dialog = true
+      }
+
       function cancel(): void {
         state.dialog = false
         state.roonNameErrorMessage = ''
@@ -413,6 +408,7 @@
         hasDescriptionError,
         hasAccessCodeError,
         validate,
+        open,
         cancel,
       }
     }
@@ -420,14 +416,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .host-game-btn span {
-    color: $white;
-  }
-
-  .host-game-btn {
-    background-color: $red1 !important;
-  }
-
   .dialog-wrapper {
     background-color: $black3;
   }
