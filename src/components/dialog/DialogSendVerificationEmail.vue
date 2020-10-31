@@ -33,7 +33,7 @@
 <script lang="ts">
   import { defineComponent, reactive, computed, } from '@vue/composition-api'
 
-  import { User as FirebaseUser } from '@/types/index'
+  import { User as FirebaseUser } from 'firebase'
 
   export default defineComponent({
     setup(props, context) {

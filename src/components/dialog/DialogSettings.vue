@@ -260,7 +260,7 @@
         const files = (event.target as HTMLInputElement).files
         const fileReader = new FileReader()
 
-        if (files?.length >= 1) {
+        if (files && files.length >= 1) {
           if (files![0].size > 2000000) {
             state.avatarErrorMessage = 'Image size cannot exceed 2MB.'
           } else {
