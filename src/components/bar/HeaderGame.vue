@@ -7,6 +7,12 @@
     </v-btn>
     <div class="flex-grow-1"></div>
     <v-btn
+      v-if="myself !== null && myself.role !== null"
+      icon
+      @click="showRoleDialog">
+      <v-icon class="icon-notification">mdi-bell</v-icon>    
+    </v-btn>
+    <v-btn
       class="start-btn"
       v-if="isOwner && !hasGameStarted"
       text
@@ -15,7 +21,10 @@
     </v-btn>
     <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
     <DialogMessage 
-      ref="dialogMessage"
+      ref="dialogRole"
+      :message="state.roleText" />
+    <DialogMessage 
+      ref="dialogErrorMessage"
       :message="state.errorMessage" />
   </v-app-bar>
 </template>
@@ -43,11 +52,14 @@
       const route = context.root.$route
       const store = context.root.$store
 
-      const dialogMessage = ref<DialogComponent | null>(null)
+      const dialogRole = ref<DialogComponent | null>(null)
+      const dialogErrorMessage = ref<DialogComponent | null>(null)
 
       const state = reactive<{
+        roleText: string,
         errorMessage: string,
       }>({
+        roleText: '',
         errorMessage: '',
       })
 
@@ -119,12 +131,17 @@
             })
         } else {
           state.errorMessage = "This room is not ready."
-          showErrorDialog()
+          showErrorMessageDialog()
         }
       }
 
-      function showErrorDialog(): void {
-        dialogMessage!.value!.open()
+      function showRoleDialog(): void {
+        state.roleText = `You are ${myself!.value!.role}.`
+        dialogRole!.value!.open()
+      }
+
+      function showErrorMessageDialog(): void {
+        dialogErrorMessage!.value!.open()
       }
 
       function shuffleRoles(capacity: number): string[] {
@@ -193,12 +210,15 @@
 
       return {
         state,
-        dialogMessage,
+        dialogRole,
+        dialogErrorMessage,
+        myself,
         isGameReady,
         isOwner,
         hasGameStarted,
         isJoiningThisGame,
         startGame,
+        showRoleDialog,
       }
     }
   })
@@ -213,7 +233,7 @@
     color: $gray2;
   }
 
-  .icon-exit {
+  .icon-exit, .icon-notification {
     color: $gray2 !important;
   }
 
