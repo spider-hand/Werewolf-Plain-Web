@@ -58,6 +58,8 @@
   import 'firebase/storage'
   import { User as FirebaseUser } from 'firebase'
 
+  import { userCollection } from '@/firebase'
+
   export default defineComponent({
 
     setup(props, context) {
@@ -112,8 +114,7 @@
           user!.value!.reauthenticateWithCredential(credentials)
             .then((credential) => {
               // Delete the account if the email and the password are correct
-              const db = firebase.firestore()
-              const docRef = db.collection('users').doc(credential!.user!.uid)
+              const docRef = userCollection.doc(credential!.user!.uid)
 
               docRef.delete().then(() => {
                 // Delete an avatar associated with the user

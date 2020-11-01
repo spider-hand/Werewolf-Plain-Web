@@ -28,6 +28,7 @@
   import 'firebase/firestore'
   import 'firebase/functions'
 
+  import { roomCollection } from '@/firebase'
   import { Room, Player, DialogComponent, } from '@/types/index'
   import DialogRoomLeave from '@/components/dialog/DialogRoomLeave.vue'
   import DialogMessage from '@/components/dialog/DialogMessage.vue'
@@ -84,8 +85,7 @@
 
       function startGame(): void {
         if (isGameReady.value) {
-          const db = firebase.firestore()
-          const docRef = db.collection('rooms').doc(route.params.id)
+          const docRef = roomCollection.doc(route.params.id)
           const promises = [] as Promise<void | firebase.firestore.DocumentReference>[]
 
           const updateRoom =
@@ -163,8 +163,7 @@
       }
 
       async function decideRoles(roles: string[]): Promise<void> {
-        const db = firebase.firestore()
-        const playersCollectionRef = db.collection('rooms').doc(route.params.id).collection('players')
+        const playersCollectionRef = roomCollection.doc(route.params.id).collection('players')
 
         let k = 0
         playersCollectionRef.get()

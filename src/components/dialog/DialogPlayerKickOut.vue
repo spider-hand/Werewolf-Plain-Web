@@ -44,6 +44,7 @@
   import firebase from 'firebase/app'
   import 'firebase/firestore'
 
+  import { roomCollection } from '@/firebase'
   import { Player, Room } from '@/types/index'
 
   export default defineComponent({
@@ -70,8 +71,7 @@
       })
 
       function kickOut(): void {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id)
+        const docRef = roomCollection.doc(route.params.id)
         const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
         // Disable the button while the function is executed
         state.isButtonEnabled = false

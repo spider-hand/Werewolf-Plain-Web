@@ -142,6 +142,7 @@
   import 'firebase/firestore'
   import { User as FirebaseUser } from 'firebase'
 
+  import { roomCollection, } from '@/firebase'
   import { Room, Player, Message } from '@/types/index'
   import DialogPlayerKickOut from '@/components/dialog/DialogPlayerKickOut.vue'
 
@@ -242,7 +243,8 @@
       })
 
       const isFormVisible = computed<boolean>(() => {
-        return state.isJoiningThisGame && (state.isChatAllOpened && !state.room?.isNight) || state.isWerewolfChatOpened
+        return state.isJoiningThisGame && 
+          (state.isChatAllOpened && !state.room?.isNight) || state.isWerewolfChatOpened
       })
 
       // Get the messages that shows on chat
@@ -305,10 +307,8 @@
       }
 
       function sendMessage(): void {
-        const db = firebase.firestore()
-
         if (state.isWerewolfChatOpened) {
-          db.collection('rooms').doc(route.params.id).collection('werewolfMessages').add({
+          roomCollection.doc(route.params.id).collection('werewolfMessages').add({
             from: state!.myself!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
@@ -320,7 +320,7 @@
             state.message = ''
           })
         } else {
-          db.collection('rooms').doc(route.params.id).collection('messages').add({
+          roomCollection.doc(route.params.id).collection('messages').add({
             from: state!.myself!.uid,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             body: state.message,
@@ -335,8 +335,10 @@
       }
 
       function vote(player: Player): void {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
+        const docRef = 
+          roomCollection.doc(route.params.id)
+                        .collection('players')
+                        .doc(state!.myself!.uid)
 
         docRef.update({
           votedPlayer: player,
@@ -344,8 +346,10 @@
       }
 
       function bite(player: Player): void {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
+        const docRef = 
+          roomCollection.doc(route.params.id)
+                        .collection('players')
+                        .doc(state!.myself!.uid)
 
         docRef.update({
           bittenPlayer: player,
@@ -353,8 +357,10 @@
       }
 
       function protect(player: Player): void {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
+        const docRef = 
+          roomCollection.doc(route.params.id)
+                        .collection('players')
+                        .doc(state!.myself!.uid)
 
         docRef.update({
           protectedPlayer: player,
@@ -362,8 +368,10 @@
       }
 
       function checkRole(player: Player): void {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id).collection('players').doc(state!.myself!.uid)
+        const docRef = 
+          roomCollection.doc(route.params.id)
+                        .collection('players')
+                        .doc(state!.myself!.uid)
 
         docRef.update({
           divinedPlayer: player,
@@ -404,8 +412,7 @@
         (newVal: string | null | undefined, oldVal: string | null | undefined) => {
           // Trigger listener for extra messages when the role has been decided
           if (newVal !== null && newVal !== undefined) {
-            const db = firebase.firestore()
-            const docRef = db.collection('rooms').doc(route.params.id)
+            const docRef = roomCollection.doc(route.params.id)
 
             // Get werewolf messages if the player's role is werewolf
             if (isWerewolf.value) {
@@ -474,8 +481,7 @@
       )
 
       onMounted(() => {
-        const db = firebase.firestore()
-        const docRef = db.collection('rooms').doc(route.params.id)
+        const docRef = roomCollection.doc(route.params.id)
 
         docRef.onSnapshot((doc) => {
           if (!doc.exists) {

@@ -217,6 +217,7 @@
   import 'firebase/firestore'
   import { User as FirebaseUser } from 'firebase'
 
+  import { roomCollection, } from '@/firebase'
   import { Room, Player, DialogComponent, } from '@/types/index'
   import DialogRoomCreate from '@/components/dialog/DialogRoomCreate.vue'
   import DialogAccessCode from '@/components/dialog/DialogAccessCode.vue'
@@ -313,8 +314,7 @@
 
         if (user.value) {
           if (user.value.emailVerified) {
-            const db = firebase.firestore()
-            const room = db.collection('rooms').doc(roomId)
+            const room = roomCollection.doc(roomId)
             const promises: Promise<void | firebase.firestore.DocumentReference>[] = [] 
             let isBanned = false
 
@@ -422,9 +422,7 @@
         state.ongoingRooms = []
         state.closedRooms = []
 
-        const db = firebase.firestore()
-
-        db.collection('rooms').orderBy('timestamp', 'desc').get()
+        roomCollection.orderBy('timestamp', 'desc').get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               const roomData = doc.data() as Room

@@ -147,6 +147,8 @@
   import 'firebase/firestore'
   import { User as FirebaseUser } from 'firebase'
 
+  import { roomCollection } from '@/firebase'
+
   declare interface Item {
     text: string,
     value: number,
@@ -328,10 +330,9 @@
 
       function createRoom(): void {
         if (user.value) {
-          const db = firebase.firestore()
           const promises: Promise<void | firebase.firestore.DocumentReference>[]  = []
 
-          db.collection('rooms').add({
+          roomCollection.add({
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             name: state.roomName,
             description: state.roomDescription,
@@ -348,7 +349,7 @@
           })
           .then((docRef) => {
             const putPlayer =
-              db.collection('rooms')
+              roomCollection
                 .doc(docRef.id)
                 .collection('players')
                 .doc(user!.value!.uid)
@@ -364,7 +365,7 @@
                   divinedPlayer: null,
                 })
             const sendMessage = 
-              db.collection('rooms')
+              roomCollection
                 .doc(docRef.id)
                 .collection('messages')
                 .add({

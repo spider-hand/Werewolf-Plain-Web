@@ -32,8 +32,6 @@
 <script lang="ts">
   import { defineComponent } from '@vue/composition-api'
 
-  import firebase from 'firebase/app'
-
   import DialogSettings from '@/components/dialog/DialogSettings.vue'
   import DialogUserSignOut from '@/components/dialog/DialogUserSignOut.vue'
 

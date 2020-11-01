@@ -79,7 +79,8 @@
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
-  import 'firebase/firestore'
+
+  import { userCollection } from '@/firebase'
 
   export default defineComponent({
 
@@ -138,18 +139,16 @@
 
       function signUpWithEmailAndPassword(): void {
         // Check if the username is alreay taken
-        const db = firebase.firestore()
-        const userCollectionRef = db.collection('users')
         const promises0: Promise<void>[] = [] 
 
-        userCollectionRef.where('username', '==', state.username).limit(1).get()
+        userCollection.where('username', '==', state.username).limit(1).get()
           .then((querySnapshot) => {
             if (querySnapshot.empty) {
               firebase.auth().createUserWithEmailAndPassword(state.email, state.password)
                 .then((data) => {
                   // Sign up and create the user document
                   const createUserDoc = 
-                    userCollectionRef.doc(data.user!.uid).set({
+                    userCollection.doc(data.user!.uid).set({
                       username: state.username,
                       inGameName: 'Anonymous',
                       avatar: '',

@@ -46,6 +46,7 @@
   import firebase from 'firebase/app'
   import 'firebase/firestore'
 
+  import { roomCollection } from '@/firebase'
   import { Player } from '@/types/index'
 
   export default defineComponent({
@@ -66,8 +67,7 @@
 
       function leaveRoom(): void {
         if (myself.value) {
-          const db = firebase.firestore()
-          const docRef = db.collection('rooms').doc(route.params.id)
+          const docRef = roomCollection.doc(route.params.id)
           const promises0: Promise<void | firebase.firestore.DocumentReference>[] = [] 
           const promises1: Promise<void>[] = [] 
 

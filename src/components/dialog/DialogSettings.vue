@@ -146,6 +146,8 @@
   import 'firebase/storage'
   import { User as FirebaseUser } from 'firebase'
 
+  import { userCollection } from '@/firebase'
+
   export default defineComponent({
 
     setup(props, context) {
@@ -206,8 +208,7 @@
             const storageRef = storage.ref('avatars/' + user!.value!.uid)
             storageRef.put(state.newAvatar).then((snapShot) => {
               storageRef.getDownloadURL().then((url) => {
-                const db = firebase.firestore()
-                const docRef = db.collection('users').doc(user!.value!.uid)
+                const docRef = userCollection.doc(user!.value!.uid)
 
                 const updateUserdoc = 
                   docRef.update({
@@ -230,8 +231,7 @@
               })
             })
           } else {
-            const db = firebase.firestore()
-            const docRef = db.collection('users').doc(user!.value!.uid)
+            const docRef = userCollection.doc(user!.value!.uid)
 
             const updateInGameName = 
               docRef.update({
