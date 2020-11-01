@@ -247,7 +247,7 @@
       const router = context.root.$router
       const store = context.root.$store
 
-      const dialogRoomCreate = ref<DialogComponent | null> (null)
+      const dialogRoomCreate = ref<DialogComponent | null>(null)
       const dialogAccessCode = ref<DialogComponent | null>(null)
       const dialogMessage = ref<DialogComponent | null>(null)
       const dialogSendVerificationEmail = ref<DialogComponent | null>(null) 

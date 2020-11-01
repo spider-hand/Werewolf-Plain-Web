@@ -10,6 +10,7 @@
   import { defineComponent, computed, onMounted, } from '@vue/composition-api'
 
   import Header from '@/components/bar/Header.vue'
+  import HeaderMobile from '@/components/bar/HeaderMobile.vue'
   import HeaderGame from '@/components/bar/HeaderGame.vue'
   import Footer from '@/components/footer/Footer.vue'
   
@@ -18,12 +19,14 @@
 
     components: {
       'headerDefault': Header,
+      'headerMobile': HeaderMobile,
       'headerGame': HeaderGame,
       'footerDefault': Footer,
     },
 
     setup(props, context) {
       const store = context.root.$store
+      const viewport = context.root.$viewport
 
       const headerComponent = computed<string | null>(() => {
         const route = context.root.$route
@@ -39,7 +42,11 @@
           case 'game':
             return 'headerGame'
           default:
-            return 'headerDefault'
+            if (viewport.width >= 450) {
+              return 'headerDefault'
+            } else {
+              return 'headerMobile'
+            }
         }
       })
 

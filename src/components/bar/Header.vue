@@ -7,9 +7,27 @@
       </v-img>
     </div>
     <div class="flex-grow-1"></div>
+    <v-btn
+      class="about-btn"
+      text
+      @click="$router.push({ name: 'about' })">
+      <span>About</span>
+    </v-btn>
     <div v-if="store.getters.isSignedIn">
-      <DialogSettings />
-      <DialogUserSignOut />
+      <v-btn
+        class="settings-btn"
+        text
+        @click="showSettingsDialog">
+        <span>Settings</span>
+      </v-btn>
+      <v-btn
+        class="sign-out-btn"
+        text
+        @click="showSignOutDialog">
+        <span>Sign Out</span>
+      </v-btn>
+      <DialogSettings ref="dialogSettings" />
+      <DialogUserSignOut ref="dialogUserSignOut" />
     </div>
     <div v-else>
       <v-btn
@@ -30,8 +48,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from '@vue/composition-api'
+  import { defineComponent, ref, } from '@vue/composition-api'
 
+  import { DialogComponent } from '@/types/index'
   import DialogSettings from '@/components/dialog/DialogSettings.vue'
   import DialogUserSignOut from '@/components/dialog/DialogUserSignOut.vue'
 
@@ -44,23 +63,42 @@
     setup(props, context) {
       const store = context.root.$store
 
+      const dialogSettings = ref<DialogComponent | null>(null)
+      const dialogUserSignOut = ref<DialogComponent | null>(null)
+
+      function showSettingsDialog(): void {
+        dialogSettings!.value!.open()
+      }
+
+      function showSignOutDialog(): void {
+        dialogUserSignOut!.value!.open()
+      }
+
       return {
         store,
+        dialogSettings,
+        dialogUserSignOut,
+        showSettingsDialog,
+        showSignOutDialog,
       }
     }
   })
 </script>
 
 <style lang="scss" scoped>
- .header {
-  background-color: $black1 !important;
- }
+  .header {
+    background-color: $black1 !important;
+  }
 
- .sign-in-btn {
-  color: $red1 !important;
- }
+  .about-btn, .settings-btn {
+    color: $white !important;
+  }
 
- .sign-in-btn, .sign-up-btn {
-  text-transform: none;
- }
+  .sign-in-btn, .sign-out-btn {
+    color: $red1 !important;
+  }
+
+  .v-btn {
+    text-transform: none;
+  }
 </style>

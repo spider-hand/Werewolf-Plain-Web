@@ -3,14 +3,6 @@
     persistent
     max-width="400"
     v-model="state.dialog">
-    <template v-slot:activator="{ on }">
-      <v-btn
-        class="settings-btn"
-        text
-        v-on="on">
-        <span>Settings</span>
-      </v-btn>
-    </template>
     <v-card class="dialog-wrapper">
       <v-card-title class="dialog-title">
         <span>Settings</span>
@@ -274,6 +266,10 @@
         }
       }
 
+      function open(): void {
+        state.dialog = true
+      }
+
       function cancel(): void {
         state.isEditing = false
         state.newGameName = user!.value!.displayName as string
@@ -306,6 +302,7 @@
         getFile,
         edit,
         validate,
+        open,
         close,
         cancel,
       }
@@ -314,11 +311,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .settings-btn {
-    color: $white !important;
-    text-transform: none;
-  }
-
   .dialog-wrapper {
     background-color: $black3 !important;
   }

@@ -3,14 +3,6 @@
     persistent
     max-width="400"
     v-model="state.dialog">
-    <template v-slot:activator="{ on }">
-      <v-btn
-        class="sign-out-btn"
-        text
-        v-on="on">
-        <span>Sign Out</span>
-      </v-btn>
-    </template>
     <v-card class="dialog-wrapper">
       <v-card-title class="dialog-title">
         <span>Sign Out</span>
@@ -65,6 +57,10 @@
         })
       }
 
+      function open(): void {
+        state.dialog = true
+      }
+
       function cancel(): void {
         state.dialog = false
       }
@@ -72,6 +68,7 @@
       return {
         state,
         signOut,
+        open,
         cancel,
       }
     }
@@ -79,11 +76,6 @@
 </script>
 
 <style lang="scss" scoped>
-  .sign-out-btn {
-  color: $red1 !important;
-  text-transform: none;
-  }
-
   .dialog-wrapper {
     background-color: $black3 !important;
   }
