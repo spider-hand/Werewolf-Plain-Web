@@ -22,7 +22,7 @@
             v-for="player in state.players"
             :key="player.uid">
             <v-list-item-avatar>
-              <v-img :src="player.avatar ? player.avatar : 'https://source.unsplash.com/random'" />
+              <v-img :src="player.avatar ? player.avatar : require(`@/assets/logo.png`)" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -99,7 +99,7 @@
           <div class="message">
             <v-img 
               class="message-avatar" 
-              :src="message.avatar ? message.avatar : 'https://source.unsplash.com/random'"></v-img>
+              :src="message.from == 'GM' ? '' : (message.avatar ? message.avatar : require(`@/assets/logo.png`))"></v-img>
             <small 
               class="message-from"
               :style="{ color: message.from == 'GM' ? '#43B581' : (message.isFromGrave ? '#F44336': '#FFFFFF') }">{{ message.gameName }}</small>

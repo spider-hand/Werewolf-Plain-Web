@@ -369,7 +369,7 @@
                 .doc(docRef.id)
                 .collection('messages')
                 .add({
-                  from: '',
+                  from: 'GM',
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                   body: `${user!.value!.displayName} has joined.`, 
                   gameName: 'GM',
