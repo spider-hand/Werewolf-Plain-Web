@@ -1,44 +1,26 @@
 <template>
   <v-container
-    class="password-confirm-form-container"
+    class="form-container"
     fill-height
     fluid>
     <v-row>
-      <div class="password-confirm-form-wrapper">
+      <div class="form-wrapper">
         <form 
-          class="password-confirm-form-group"
+          class="form-group"
           @submit.prevent="validate">
-          <div class="input-wrapper">
-            <label 
-              class="input-label"
-              :class="{ 'text-error': hasPasswordError }">NEW PASSWORD</label>
-            <label 
-              class="input-label ml-2"
-              :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
-            <input 
-              class="password-confirm-input"
-              :class="{ 'input-error': hasPasswordError }"
-              type="password" 
-              name="new-password"
-              v-model="state.newPassword">
-          </div>
-          <div class="input-wrapper">
-            <label 
-              class="input-label"
-              :class="{ 'text-error': hasPasswordError }">CONFIRM PASSWORD</label>
-            <label 
-              class="input-label ml-2"
-              :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
-            <input 
-              class="password-confirm-input" 
-              :class="{ 'input-error': hasPasswordError }"
-              type="password" 
-              name="confirm-password"
-              v-model="state.confirmPassword">
-          </div>
-          <div class="btn-wrapper">
-            <button class="password-confirm-btn">RESET PASSWORD</button>
-          </div>
+          <TextField
+            :label="'NEW PASSWORD'" 
+            :type="'password'"
+            :errorMessage="state.passwordErrorMessage"
+            :eventName="'onNewPasswordChanged'"
+            @onNewPasswordChanged="onNewPasswordChanged" />
+          <TextField
+            :label="'CONFIRM PASSWORD'" 
+            :type="'password'"
+            :errorMessage="state.passwordErrorMessage"
+            :eventName="'onConfirmPasswordChanged'"
+            @onConfirmPasswordChanged="onConfirmPasswordChanged" />
+          <FormButton :text="'RESET PASSWORD'" />
         </form>
       </div>
     </v-row>
@@ -50,6 +32,9 @@
 
   import firebase from 'firebase/app'
   import 'firebase/auth'
+
+  import TextField from '@/components/forms/TextField.vue'
+  import FormButton from '@/components/forms/FormButton.vue'
 
   export default defineComponent({
     props: {
@@ -67,6 +52,11 @@
       }
     },
 
+    components: {
+      TextField,
+      FormButton,
+    },
+
     setup(props, context) {
       const router = context.root.$router
       const auth = firebase.auth()
@@ -81,9 +71,13 @@
         passwordErrorMessage: '',
       })
 
-      const hasPasswordError = computed<boolean>(() => {
-        return state.passwordErrorMessage !== ''
-      })
+      function onNewPasswordChanged(val: string): void {
+        state.newPassword = val
+      }
+
+      function onConfirmPasswordChanged(val: string): void {
+        state.confirmPassword = val
+      }
 
       function handleResetPassword(auth: firebase.auth.Auth, actionCode: string, lang: string): void {
         auth.verifyPasswordResetCode(actionCode)
@@ -132,7 +126,8 @@
 
       return {
         state,
-        hasPasswordError,
+        onNewPasswordChanged,
+        onConfirmPasswordChanged,
         validate,
       }
     }
@@ -140,72 +135,17 @@
 </script>
 
 <style lang="scss" scoped>
-  .password-confirm-form-wrapper {
+  .form-wrapper {
     width: 500px;
     border-radius: 3px;
     background-color: $black3;
     margin: auto;
   }
-  .form-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: $white;
-  }
-
-  .input-wrapper, .btn-wrapper {
-    width: 100%;
-    position: relative;
-    padding: 0 25px 0 25px;
-    margin: 30px 0 30px 0;
-  }
-
-  .input-label {
-    color: $gray3;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .password-confirm-input {
-    font-size: 16px;
-    width: 100%;
-    height: 45px;
-    color: $white;
-    background-color: $black4;
-    border-radius: 3px;
-    border: 1.5px solid $black5;
-    padding: 0 10px 0 10px;
-  }
-
-  .password-confirm-input:focus {
-    outline: none;
-  }
-
-  .password-confirm-btn {
-    font-size: 16px;
-    width: 100%;
-    height: 50px;
-    background-color: $red1;
-    color: $white;
-    border-radius: 3px;
-  }
-
-  .text-error {
-    color: $red1;
-  }
-
-  .input-error {
-    border: 1.5px solid $red1;
-  }
 
   @media(max-width: 450px) {
-    .password-confirm-form-wrapper {
+    .form-wrapper {
       width: 100%;
       margin: 0 10px 0 10px;
-    }
-
-    .input-wrapper, .btn-wrapper {
-      padding: 0 15px 0 15px;
-      margin: 15px 0 20px 0;
     }
   }
 </style>

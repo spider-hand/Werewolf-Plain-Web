@@ -1,47 +1,27 @@
 <template>
   <div id="page">
     <v-container 
-      class="delete-account-form-container"
+      class="form-container"
       fill-height
       fluid>
       <v-row>
-        <div class="delete-account-form-wrapper">
+        <div class="form-wrapper">
           <form 
-            class="delete-account-form-group"
+            class="form-group"
             @submit.prevent="validate">
-            <div class="input-wrapper">
-              <label 
-                class="input-label"
-                :class="{ 'text-error': hasEmailError }">EMAIL</label>
-              <label 
-                class="input-label ml-2"
-                :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>
-              <input 
-                class="delete-account-input"
-                :class="{ 'input-error': hasEmailError }"
-                type="email" 
-                name="email"
-                v-model="state.email">
-            </div>
-            <div class="input-wrapper">
-              <label 
-                class="input-label"
-                :class="{ 'text-error': hasPasswordError }">PASSWORD</label>
-              <label 
-                class="input-label ml-2"
-                :class="{ 'text-error': hasPasswordError }">{{ state.passwordErrorMessage }}</label>
-              <input 
-                class="delete-account-input"
-                :class="{ 'input-error': hasPasswordError }"
-                type="password" 
-                name="password"
-                v-model="state.password">
-            </div>
-            <div class="btn-wrapper">
-              <button 
-                class="delete-account-btn"
-                type="submit">DELETE ACCOUNT</button>
-            </div>
+            <TextField
+              :label="'EMAIL'" 
+              :type="'email'"
+              :errorMessage="state.emailErrorMessage"
+              :eventName="'onEmailChanged'"
+              @onEmailChanged="onEmailChanged" />
+            <TextField
+              :label="'PASSWORD'" 
+              :type="'password'"
+              :errorMessage="state.passwordErrorMessage"
+              :eventName="'onPasswordChanged'"
+              @onPasswordChanged="onPasswordChanged" />
+            <FormButton :text="'DELETE ACCOUNT'" />
           </form>
         </div>
       </v-row>
@@ -59,8 +39,15 @@
   import { User as FirebaseUser } from 'firebase'
 
   import { userCollection } from '@/firebase'
+  import TextField from '@/components/forms/TextField.vue'
+  import FormButton from '@/components/forms/FormButton.vue'
 
   export default defineComponent({
+
+    components: {
+      TextField,
+      FormButton,
+    },
 
     setup(props, context) {
       const router = context.root.$router
@@ -86,13 +73,13 @@
         return store.getters.user
       })
 
-      const hasEmailError = computed<boolean>(() => {
-        return state.emailErrorMessage !== ''
-      })
+      function onPasswordChanged(val: string): void {
+        state.password = val
+      }
 
-      const hasPasswordError = computed<boolean>(() => {
-        return state.passwordErrorMessage !== ''
-      })
+      function onEmailChanged(val: string): void {
+        state.email = val
+      }
 
       function validate(): void {
         if (state.email === '' || state.password === '') {
@@ -149,8 +136,8 @@
 
       return {
         state,
-        hasEmailError,
-        hasPasswordError,
+        onPasswordChanged,
+        onEmailChanged,
         validate,
       }
     }
@@ -168,96 +155,17 @@
     background-color: $black1;
   }
 
-  .delete-account-form-wrapper {
+  .form-wrapper {
     width: 500px;
     border-radius: 3px;
     background-color: $black3;
     margin: auto;
   }
 
-  .form-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: $white;
-  }
-
-  .input-wrapper, .btn-wrapper {
-    width: 100%;
-    position: relative;
-    padding: 0 25px 0 25px;
-    margin: 30px 0 30px 0;
-  }
-
-  .input-label {
-    color: $gray3;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .delete-account-input {
-    font-size: 16px;
-    width: 100%;
-    height: 45px;
-    color: $white;
-    background-color: $black4;
-    border-radius: 3px;
-    border: 1.5px solid $black5;
-    padding: 0 10px 0 10px;
-  }
-
-  .delete-account-input:focus {
-    outline: none;
-  }
-
-  .delete-account-btn {
-    font-size: 16px;
-    width: 100%;
-    height: 50px;
-    background-color: $red1;
-    color: $white;
-    border-radius: 3px;
-  }
-
-  .sign-up-link {
-    font-size: 14px;
-    font-weight: 500;
-    color: $white;
-    text-decoration: none;
-  }
-
-  .sign-up-link-wrapper {
-    margin: 0 0 5px 30px;
-  }
-
-  .sign-up-link-wrapper span {
-    font-size: 14px;
-    color: $gray1;
-  }
-
-  .password-reset-link {
-    font-size: 14px;
-    font-weight: 400;
-    color: $gray3;
-    text-decoration: none;
-  }
-
-  .text-error {
-    color: $red1;
-  }
-
-  .input-error {
-    border: 1.5px solid $red1;
-  }
-
   @media(max-width: 450px) {
-    .delete-account-form-wrapper {
+    .form-wrapper {
       width: 100%;
       margin: 0 10px 0 10px;
     }
-
-    .input-wrapper, .btn-wrapper {
-      padding: 0 15px 0 15px;
-      margin: 15px 0 20px 0; 
-    }   
   }
 </style>

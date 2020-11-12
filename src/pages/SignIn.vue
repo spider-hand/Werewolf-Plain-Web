@@ -1,28 +1,20 @@
 <template>
   <div id="page">
     <v-container 
-      class="sign-in-form-container"
+      class="form-container"
       fill-height
       fluid>
       <v-row>
-        <div class="sign-in-form-wrapper">
+        <div class="form-wrapper">
           <form 
-            class="sign-in-form-group"
+            class="form-group"
             @submit.prevent="validate">
-            <div class="input-wrapper">
-              <label 
-                class="input-label"
-                :class="{ 'text-error': hasEmailError }">EMAIL</label>
-              <label 
-                class="input-label ml-2"
-                :class="{ 'text-error': hasEmailError }">{{ state.emailErrorMessage }}</label>
-              <input 
-                class="sign-in-input"
-                :class="{ 'input-error': hasEmailError }"
-                type="email" 
-                name="email"
-                v-model="state.email">
-            </div>
+            <TextField
+              :label="'EMAIL'" 
+              :type="'email'"
+              :errorMessage="state.emailErrorMessage"
+              :eventName="'onEmailChanged'"
+              @onEmailChanged="onEmailChanged" />
             <div class="input-wrapper">
               <label 
                 class="input-label"
@@ -42,11 +34,7 @@
                 Forgot your password?
               </router-link>
             </div>
-            <div class="btn-wrapper">
-              <button 
-                class="sign-in-btn"
-                type="submit">SIGN IN</button>
-            </div>
+            <FormButton :text="'SIGN IN'" />
           </form>
         </div>
         <v-col cols="12">
@@ -75,6 +63,8 @@
   import 'firebase/auth'
 
   import Snackbar from '@/components/snackbar/Snackbar.vue'
+  import TextField from '@/components/forms/TextField.vue'
+  import FormButton from '@/components/forms/FormButton.vue'
 
   export default defineComponent({
     props: {
@@ -86,6 +76,8 @@
 
     components: {
       Snackbar,
+      TextField,
+      FormButton,
     },
 
     setup(props, context) {
@@ -107,13 +99,13 @@
         passwordErrorMessage: '',
       })
 
-      const hasEmailError = computed<boolean>(() => {
-        return state.emailErrorMessage !== ''
-      })
-
       const hasPasswordError = computed<boolean>(() => {
         return state.passwordErrorMessage !== ''
       })
+
+      function onEmailChanged(val: string): void {
+        state.email = val
+      }
 
       function validate(): void {
         if (state.email === '' || state.password === '') {
@@ -144,8 +136,8 @@
       return {
         props,
         state,
-        hasEmailError,
         hasPasswordError,
+        onEmailChanged,
         validate,
       }
     }
@@ -163,20 +155,14 @@
     background-color: $black1;
   }
 
-  .sign-in-form-wrapper {
+  .form-wrapper {
     width: 500px;
     border-radius: 3px;
     background-color: $black3;
     margin: auto;
   }
 
-  .form-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: $white;
-  }
-
-  .input-wrapper, .btn-wrapper {
+  .input-wrapper {
     width: 100%;
     position: relative;
     padding: 0 25px 0 25px;
@@ -204,13 +190,12 @@
     outline: none;
   }
 
-  .sign-in-btn {
-    font-size: 16px;
-    width: 100%;
-    height: 50px;
-    background-color: $red1;
-    color: $white;
-    border-radius: 3px;
+  .text-error {
+    color: $red1;
+  }
+
+  .input-error {
+    border: 1.5px solid $red1;
   }
 
   .sign-up-link {
@@ -232,21 +217,13 @@
     text-decoration: none;
   }
 
-  .text-error {
-    color: $red1;
-  }
-
-  .input-error {
-    border: 1.5px solid $red1;
-  }
-
   @media(max-width: 450px) {
-    .sign-in-form-wrapper {
+    .form-wrapper {
       width: 100%;
       margin: 0 10px 0 10px;
     }
 
-    .input-wrapper, .btn-wrapper {
+    .input-wrapper {
       padding: 0 15px 0 15px; 
     }
   }
