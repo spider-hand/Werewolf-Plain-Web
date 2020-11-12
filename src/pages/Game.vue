@@ -1,5 +1,5 @@
 <template>
-  <div id="page">
+  <div class="game-page">
     <v-navigation-drawer 
       class="nav-player-list"
       width="320"
@@ -587,7 +587,7 @@
     margin: 5px 0 15px 0;
   }
 
-  #page {
+  .game-page {
     position: relative;
     height: 100%;
     width: 100%;

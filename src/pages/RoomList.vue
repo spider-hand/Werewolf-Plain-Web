@@ -1,5 +1,5 @@
 <template>
-  <div id="page">
+  <div class="page">
     <v-container class="mt-4">
       <v-btn
         class="host-game-btn"
@@ -480,16 +480,6 @@
 
   td span {
     color: $white;
-  }
-
-  #page {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: $black1;
   }
 
   .icon-private {

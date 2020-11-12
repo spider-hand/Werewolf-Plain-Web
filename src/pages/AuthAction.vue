@@ -1,5 +1,5 @@
 <template>
-  <div id="page">
+  <div class="page">
     <component 
       :is="authActionComponent"
       :mode="mode"
@@ -58,13 +58,5 @@
 </script>
 
 <style lang="scss" scoped>
-  #page {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: $black1;
-  }
+
 </style>

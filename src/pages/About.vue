@@ -1,5 +1,5 @@
 <template>
-  <div id="page">
+  <div class="page">
     <v-container>
       <v-card
         flat
@@ -94,16 +94,6 @@
 <style lang="scss" scoped>
   span {
     color: $gray4 !important;
-  }
-
-  #page {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: $black1;
   }
 
   .v-divider {

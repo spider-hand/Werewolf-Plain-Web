@@ -1,5 +1,5 @@
 <template>
-  <div id="page">
+  <div class="page">
     <v-container
       class="form-container"
       fill-height
@@ -92,16 +92,6 @@
 </script>
 
 <style lang="scss" scoped>
-  #page {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    background-color: $black1;
-  }
-
   .form-wrapper {
     width: 500px;
     border-radius: 3px;
