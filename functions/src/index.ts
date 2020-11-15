@@ -30,11 +30,15 @@ function addNightTask(roomId: string, dayLength: number): Promise<any> {
   const location = functions.config().werewolf.location
   const parent = client.queuePath(projectId, location, queue)
   const url = `https://${location}-${projectId}.cloudfunctions.net/executeNightTask?roomId=${roomId}`
+  const serviceAccountEmail = functions.config().werewolf.email
 
   const task: tasks.protos.google.cloud.tasks.v2.ITask = {
     httpRequest: {
       httpMethod: 'POST',
       url: url,
+      oidcToken: {
+        serviceAccountEmail: serviceAccountEmail,
+      },
     },
     scheduleTime: {
       seconds: dayLength * 60 + Date.now() / 1000,
@@ -57,11 +61,15 @@ function addDaytimeTask(roomId: string, dayLength: number, nightLength: number):
   const location = functions.config().werewolf.location
   const parent = client.queuePath(projectId, location, queue)
   const url = `https://${location}-${projectId}.cloudfunctions.net/executeDaytimeTask?roomId=${roomId}&dayLength=${dayLength}&nightLength=${nightLength}`
+  const serviceAccountEmail = functions.config().werewolf.email
 
   const task: tasks.protos.google.cloud.tasks.v2.ITask = {
     httpRequest: {
       httpMethod: 'POST',
       url: url,
+      oidcToken: {
+        serviceAccountEmail: serviceAccountEmail,
+      },
     },
     scheduleTime: {
       seconds: (dayLength + nightLength) * 60 + Date.now() / 1000,
