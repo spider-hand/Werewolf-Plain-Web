@@ -6,7 +6,11 @@ import { Count, Player, Room } from './types/index'
 
 admin.initializeApp()
 
-exports.addTasks = functions.https.onCall((data, context) => {
+export const addTasks = functions.https.onCall((data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'You are not authenticated.')
+  }
+
   const promises: Promise<void>[] = []
   const roomId: string = data.roomId
   const dayLength: number = data.dayLength
@@ -25,7 +29,7 @@ function addNightTask(roomId: string, dayLength: number): Promise<any> {
   const queue = 'night'
   const location = functions.config().werewolf.location
   const parent = client.queuePath(projectId, location, queue)
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/executeNightTask?roomId=' + roomId
+  const url = `https://${location}-${projectId}.cloudfunctions.net/executeNightTask?roomId=${roomId}`
 
   const task: tasks.protos.google.cloud.tasks.v2.ITask = {
     httpRequest: {
@@ -52,7 +56,7 @@ function addDaytimeTask(roomId: string, dayLength: number, nightLength: number):
   const queue = 'daytime'
   const location = functions.config().werewolf.location
   const parent = client.queuePath(projectId, location, queue)
-  const url = 'https://' + location + '-' + projectId + '.cloudfunctions.net/executeDaytimeTask?roomId=' + roomId + '&dayLength=' + dayLength + '&nightLength=' + nightLength
+  const url = `https://${location}-${projectId}.cloudfunctions.net/executeDaytimeTask?roomId=${roomId}&dayLength=${dayLength}&nightLength=${nightLength}`
 
   const task: tasks.protos.google.cloud.tasks.v2.ITask = {
     httpRequest: {
@@ -72,7 +76,7 @@ function addDaytimeTask(roomId: string, dayLength: number, nightLength: number):
   return client.createTask(request)  
 }
 
-exports.executeNightTask = functions.https.onRequest((req, res) => {
+export const executeNightTask = functions.https.onRequest((req, res) => {
   // Execute tasks when turning into night
   const db = admin.firestore()
   const roomId = req.query.roomId
@@ -91,7 +95,7 @@ exports.executeNightTask = functions.https.onRequest((req, res) => {
       isFromGrave: false,
     })
     .then((messageRef) => {
-      res.send("It's night.")
+      res.status(200).send("It's night.")
     })
     .catch((err) => {
       functions.logger.error(err)
@@ -102,7 +106,7 @@ exports.executeNightTask = functions.https.onRequest((req, res) => {
   })
 })
 
-exports.executeDaytimeTask = functions.https.onRequest((req, res) => {
+export const executeDaytimeTask = functions.https.onRequest((req, res) => {
   // Execute tasks when turning into daytime
   const db = admin.firestore()
   const roomId = req.query.roomId as string
@@ -322,7 +326,7 @@ exports.executeDaytimeTask = functions.https.onRequest((req, res) => {
         return Promise.all(promises3)       
       })
       .then(() => {
-        res.send("It's daytime.")
+        res.status(200).send("It's daytime.")
       })
       .catch((err) => {
         functions.logger.error(err)
@@ -434,7 +438,7 @@ function endGame(roomRef: FirebaseFirestore.DocumentReference): Promise<Firebase
   return promise
 }
 
-exports.deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').onRun((context) => {
+export const deleteExpiredRooms = functions.pubsub.schedule('every wednesday 00:00').onRun((context) => {
   const db = admin.firestore()
 
   return db.collection('rooms').get()
