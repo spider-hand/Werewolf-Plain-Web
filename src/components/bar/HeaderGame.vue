@@ -7,7 +7,7 @@
     </v-btn>
     <div class="flex-grow-1"></div>
     <v-btn
-      v-if="myself !== null && myself.role !== null"
+      v-if="myself && myself.role"
       icon
       @click="showRoleDialog">
       <v-icon class="icon-notification">mdi-bell</v-icon>    
@@ -21,8 +21,9 @@
     </v-btn>
     <DialogRoomLeave v-if="isJoiningThisGame && !hasGameStarted" />
     <DialogMessage 
+      v-if="myself && myself.role"
       ref="dialogRole"
-      :message="state.roleText" />
+      :message="`You are ${myself.role}.`" />
     <DialogMessage 
       ref="dialogErrorMessage"
       :message="state.errorMessage" />
@@ -56,10 +57,8 @@
       const dialogErrorMessage = ref<DialogComponent | null>(null)
 
       const state = reactive<{
-        roleText: string,
         errorMessage: string,
       }>({
-        roleText: '',
         errorMessage: '',
       })
 
@@ -136,7 +135,6 @@
       }
 
       function showRoleDialog(): void {
-        state.roleText = `You are ${myself!.value!.role}.`
         dialogRole!.value!.open()
       }
 
