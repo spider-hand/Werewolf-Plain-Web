@@ -22,7 +22,10 @@
             v-for="player in state.players"
             :key="player.uid">
             <v-list-item-avatar>
-              <v-img :src="player.avatar ? player.avatar : require(`@/assets/logo.png`)" />
+              <v-img :src="player.avatar 
+                            ? player.avatar 
+                            : require(`@/assets/logo.png`)" 
+              />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -39,34 +42,81 @@
             </v-list-item-content>
             <v-list-item-action>
               <DialogPlayerKickOut
-                v-if="!hasGameStarted && isMyselfOwner && !isMyself(player.uid)"
+                v-if="!hasGameStarted && 
+                      isMyselfOwner && 
+                      !isMyself(player.uid)"
                 :player="player"
                 :room="state.room" />
             </v-list-item-action>
             <v-list-item-action>
               <v-btn
-                v-if="isGameOngoing && state.isJoiningThisGame && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                v-if="isGameOngoing && 
+                      state.isJoiningThisGame && 
+                      state.myself.isAlive && 
+                      player.isAlive && 
+                      !isMyself(player.uid)"
                 icon
-                @click="vote(player)">
-                <v-icon :color="state.myself.votedPlayer !== null && player.uid === state.myself.votedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-vote</v-icon>
+                @click="vote(player)"
+              >
+                <v-icon :color="state.myself.votedPlayer !== null && 
+                                player.uid === state.myself.votedPlayer.uid 
+                                  ? '#FFFFFF' 
+                                  : '#757575'"
+                >
+                  mdi-vote
+                </v-icon>
               </v-btn>
               <v-btn
-                v-if="isGameOngoing && state.isJoiningThisGame && isWerewolf && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                v-if="isGameOngoing && 
+                      state.isJoiningThisGame && 
+                      isWerewolf && 
+                      state.myself.isAlive && 
+                      player.isAlive && 
+                      !isMyself(player.uid)"
                 icon
                 @click="bite(player)">
-                <v-icon :color="state.myself.bittenPlayer !== null && player.uid === state.myself.bittenPlayer.uid ? '#FF5252' : '#757575'">mdi-vote</v-icon>
+                <v-icon :color="state.myself.bittenPlayer !== null && 
+                                player.uid === state.myself.bittenPlayer.uid 
+                                  ? '#FF5252' 
+                                  : '#757575'"
+                >
+                  mdi-vote
+                </v-icon>
               </v-btn>
               <v-btn
-                v-if="isGameOngoing && state.isJoiningThisGame && isKnight && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                v-if="isGameOngoing && 
+                      state.isJoiningThisGame && 
+                      isKnight && 
+                      state.myself.isAlive && 
+                      player.isAlive && 
+                      !isMyself(player.uid)"
                 icon
-                @click="protect(player)">
-                <v-icon :color="state.myself.protectedPlayer !== null && player.uid === state.myself.protectedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-shield-cross-outline</v-icon>
+                @click="protect(player)"
+                >
+                <v-icon :color="state.myself.protectedPlayer !== null && 
+                                player.uid === state.myself.protectedPlayer.uid 
+                                  ? '#FFFFFF' 
+                                  : '#757575'"
+                >
+                  mdi-shield-cross-outline
+                </v-icon>
               </v-btn>
               <v-btn
-                v-if="isGameOngoing && state.isJoiningThisGame && isSeer && state.myself.isAlive && player.isAlive && !isMyself(player.uid)"
+                v-if="isGameOngoing && 
+                      state.isJoiningThisGame && 
+                      isSeer && 
+                      state.myself.isAlive && 
+                      player.isAlive && 
+                      !isMyself(player.uid)"
                 icon
                 @click="checkRole(player)">
-                <v-icon :color="state.myself.divinedPlayer !== null && player.uid === state.myself.divinedPlayer.uid ? '#FFFFFF' : '#757575'">mdi-eye</v-icon>
+                <v-icon :color="state.myself.divinedPlayer !== null && 
+                                player.uid === state.myself.divinedPlayer.uid 
+                                  ? '#FFFFFF' 
+                                  : '#757575'"
+                >
+                  mdi-eye
+                </v-icon>
               </v-btn>            
             </v-list-item-action>
           </v-list-item>
@@ -92,17 +142,35 @@
     <div 
       class="chat-container"
       :style="{ 
-        height: isFormVisible ? $viewport.height - 193 + 'px' : $viewport.height - 64 + 'px', 
-        width: $viewport.width >= 450 ? $viewport.width - 337 + 'px' : 100 + '%' }">
+        height: isFormVisible 
+                  ? $viewport.height - 193 + 'px' 
+                  : $viewport.height - 64 + 'px', 
+        width: $viewport.width >= 450 
+                  ? $viewport.width - 337 + 'px' 
+                  : 100 + '%' 
+      }">
       <ul>
         <li v-for="message in selectedMessages">
           <div class="message">
             <v-img 
               class="message-avatar" 
-              :src="message.from == 'GM' ? '' : (message.avatar ? message.avatar : require(`@/assets/logo.png`))"></v-img>
+              :src="message.from === 'GM' 
+                      ? '' 
+                      : (message.avatar 
+                          ? message.avatar 
+                          : require(`@/assets/logo.png`)
+                        )" 
+            />
             <small 
               class="message-from"
-              :style="{ color: message.from == 'GM' ? '#43B581' : (message.isFromGrave ? '#F44336': '#FFFFFF') }">{{ message.gameName }}</small>
+              :style="{ color: message.from === 'GM' 
+                        ? '#43B581' 
+                        : (message.isFromGrave 
+                          ? '#F44336' 
+                          : '#FFFFFF') }"
+            >
+              {{ message.gameName }}
+            </small>
             <div class="message-timestamp">
               <span>{{ message.timestamp.toDate().toLocaleString() }}</span>
             </div>
@@ -117,7 +185,11 @@
       v-if="isFormVisible"
       @submit.prevent="validate">
       <textarea 
-        :style="{ width: $viewport.width >= 450 ? $viewport.width - 337 + 'px' : 100 + '%' }"
+        :style="{ 
+          width: $viewport.width >= 450 
+                  ? $viewport.width - 337 + 'px' 
+                  : 100 + '%' 
+        }"
         class="message-input"
         maxlength="500"
         rows="4"

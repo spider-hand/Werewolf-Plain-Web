@@ -50,7 +50,11 @@
                 v-for="(room, index) in state.newRooms"
                 :key="room.id">
                 <tr
-                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  :style="
+                  { backgroundColor: state.selectedTableRow === index 
+                      ? '#393C43' 
+                      : '#2F3136' 
+                  }"
                   @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
@@ -109,7 +113,10 @@
                 v-for="(room, index) in state.ongoingRooms"
                 :key="room.id">
                 <tr
-                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  :style="{ backgroundColor: state.selectedTableRow === index 
+                    ? '#393C43' 
+                    : '#2F3136' 
+                  }"
                   @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
@@ -127,7 +134,8 @@
                   </td>
                 </tr>
                 <tr
-                  v-if="state.selectedTab === 1 && state.selectedTableRow === index"
+                  v-if="state.selectedTab === 1 && 
+                        state.selectedTableRow === index"
                   style="background-color: #2F3136;">
                   <td></td>
                   <td></td>
@@ -168,7 +176,10 @@
                 v-for="(room, index) in state.closedRooms"
                 :key="room.id">
                 <tr
-                  :style="{ backgroundColor: state.selectedTableRow === index ? '#393C43' : '#2F3136' }"
+                  :style="{ backgroundColor: state.selectedTableRow === index 
+                    ? '#393C43' 
+                    : '#2F3136' 
+                  }"
                   @click="onClickTableRow(index, room.accessCode)">
                   <td>
                     <v-icon 
@@ -186,7 +197,8 @@
                   </td>
                 </tr>
                 <tr
-                  v-if="state.selectedTab === 2 && state.selectedTableRow === index"
+                  v-if="state.selectedTab === 2 && 
+                        state.selectedTableRow === index"
                   style="background-color: #2F3136;">
                   <td></td>
                   <td></td>
